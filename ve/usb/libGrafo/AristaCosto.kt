@@ -6,19 +6,25 @@ public class AristaCosto(val x: Int,
 
     // Retorna el costo del arco
     fun costo() : Double {
+        return costo //?
     }
 
     // Representación en string de la arista
     override fun toString() : String {
     }
 
-    /* 
-     Se compara dos arista con respecto a su costo. 
-     Si this.obtenerCosto > other.obtenerCosto entonces
-     retorna 1. Si this.obtenerCosto < other.obtenerCosto 
-     entonces retorna -1. Si this.obtenerCosto == other.obtenerCosto
-     entonces retorna 0 
-     */
+     //Se compara dos arista con respecto a su costo.
      override fun compareTo(other: AristaCosto): Int {
+        return when {
+            this.costo > other.costo -> {
+                1
+            }
+            this.costo < other.costo -> {
+                -1
+            }
+            else -> {
+                0
+            }
+        }
      }
 } 
