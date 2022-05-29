@@ -1,7 +1,9 @@
 package linkedList
 
+import javax.management.openmbean.KeyAlreadyExistsException
+
 class LinkedList {
-    var head: HashEntry = HashEntry(null,null)
+    var head: HashEntry = HashEntry(null)
 
     /**
      *  metodo  que dado una lista enlazada y un entero que pertenezca a la lista,
@@ -32,7 +34,7 @@ class LinkedList {
          *  Salida: el HashEntry correspondiente si se encuentra en la lista o null en caso contrario
          */
         var x = L.head
-        while (x.clave != k){
+        while (x.valor != k){
             if (x.next == null) {return null}
             x = x.next!!
         }
@@ -42,12 +44,14 @@ class LinkedList {
     /**
      *  metodo que dado una lista enlazada, un entero y un valor, genera un HashEntry y lo inserta en la lista
      */
-    fun List_Insert(L: LinkedList, k: Int, v: String){
+    fun List_Insert(L: LinkedList, k: Int){
         /** Entrada: una lista enlazada, un entero y un string
          */
-        val x = HashEntry(k, v)
+        val y = List_Search(L, k)
+        if (y != null) {  throw KeyAlreadyExistsException("el objeto esta repetido") }
+        val x = HashEntry(k)
         x.next = L.head
-        if (L.head.clave != null) L.head.prev = x
+        if (L.head.valor != null) L.head.prev = x
         L.head = x
     }
 
@@ -60,8 +64,8 @@ class LinkedList {
         var e= ""
         var inicio = L.head
 
-        while (inicio.clave != null){
-            e += "(${inicio.clave}, ${inicio.valor}), "
+        while (inicio.valor != null){
+            e += "(${inicio.valor}), "
             inicio = inicio.next!!
         }
         return e

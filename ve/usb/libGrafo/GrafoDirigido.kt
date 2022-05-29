@@ -1,11 +1,18 @@
 package ve.usb.libGrafo
 
+import linkedList.LinkedList
 import java.io.File
 
+
 public class GrafoDirigido : Grafo {
+    // atributos agregados por nosotros
+    lateinit var ListaDeAdyacencia: Array<LinkedList?>
+    var numeroDeLados: Int = 0
+
 
     // Se construye un grafo a partir del número de vértices
     constructor(numDeVertices: Int) {
+        ListaDeAdyacencia = arrayOfNulls(numDeVertices)
     }
 
     /*
@@ -14,8 +21,21 @@ public class GrafoDirigido : Grafo {
      La segunda línea es el número de lados. Las siguientes líneas
      corresponden a los lados, con los vértices de un lado separados por un espacio en blanco.
      Se asume que los datos del archivo están correctos, no se verifican.
-     */  
+     */
     constructor(nombreArchivo: String)  {
+        val a = File(nombreArchivo).readLines()
+        val numDeVertices = nombreArchivo[0].toInt()
+        ListaDeAdyacencia = arrayOfNulls(numDeVertices)
+        numeroDeLados = nombreArchivo[1].toInt()
+        var i = 2
+        while (a[i] != ""){
+            val temp = a[i].split(" ").filter {it != ""}
+            if (ListaDeAdyacencia[temp[0].toInt()] == null){
+                ListaDeAdyacencia[temp[0].toInt()] = LinkedList()
+            }
+            ListaDeAdyacencia[temp[0].toInt()]!!.List_Insert(ListaDeAdyacencia[temp[0].toInt()]!!, temp[1].toInt())
+            i++
+        }
     }
 
     /* Agrega un lado al digrafo. Si el lado a agregar contiene
