@@ -3,7 +3,7 @@ package linkedList
 import javax.management.openmbean.KeyAlreadyExistsException
 
 class LinkedList {
-    var head: HashEntry = HashEntry(null)
+    var head: Vertice = Vertice(null)
 
     /**
      *  metodo  que dado una lista enlazada y un entero que pertenezca a la lista,
@@ -29,7 +29,7 @@ class LinkedList {
      *  metodo que dada una lista enlazada y un entero se retorna el HashEntry
      *  si se encuentra en la lista o se retorna null en caso contrario
      */
-    fun List_Search(L: LinkedList, k: Int): HashEntry? {
+    fun List_Search(L: LinkedList, k: Int): Vertice? {
         /** Entrada: una lista enlazada y un entero
          *  Salida: el HashEntry correspondiente si se encuentra en la lista o null en caso contrario
          */
@@ -44,15 +44,22 @@ class LinkedList {
     /**
      *  metodo que dado una lista enlazada, un entero y un valor, genera un HashEntry y lo inserta en la lista
      */
-    fun List_Insert(L: LinkedList, k: Int){
+    fun List_Insert(L: LinkedList, k: Int, PuedeRepetir: Boolean): Boolean {
         /** Entrada: una lista enlazada, un entero y un string
          */
         val y = List_Search(L, k)
-        if (y != null) {  throw KeyAlreadyExistsException("el objeto esta repetido") }
-        val x = HashEntry(k)
+        if (y != null) {
+            if (!PuedeRepetir){
+                throw KeyAlreadyExistsException("el objeto esta repetido")
+            } else {
+                return false
+            }
+        }
+        val x = Vertice(k)
         x.next = L.head
         if (L.head.valor != null) L.head.prev = x
         L.head = x
+        return true
     }
 
     /**
