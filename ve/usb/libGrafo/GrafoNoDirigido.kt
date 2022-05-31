@@ -1,11 +1,18 @@
 package ve.usb.libGrafo
 
+import linkedList.LinkedList
+import linkedList.Vertice
 import java.io.File
 
 public class GrafoNoDirigido: Grafo {
+    //atributos añadidos por nosotros
+    var ListaDeAdyacencia: Array<LinkedList?>? = null
+    var numeroDeLados: Int = 0
+    var ListaDeVertices: LinkedList()
 
     // Se construye un grafo a partir del número de vértices
     constructor(numDeVertices: Int) {
+        ListaDeAdyacencia = arrayOfNulls(numDeVertices)
     }
 
     /*
@@ -16,6 +23,26 @@ public class GrafoNoDirigido: Grafo {
      Se asume que los datos del archivo están correctos, no se verifican.
      */  
     constructor(nombreArchivo: String) {
+        val a = File(nombreArchivo).readLines()
+        val numVertices = nombreArchivo[0].toInt()
+        if(ListaDeAdyacencia == null){ListaDeAdyacencia = arrayOfNulls(numVertices)}
+        numeroDeLados = nombreArchivo[1].toInt()
+        var i = 2
+        var x: Vertice
+        while(a[i] != ""){
+            val helper = a[i].split(" ").filter{it!=""}
+            if (ListaDeAdyacencia!![helper[0].toInt()] == null){
+                ListaDeAdyacencia!![helper[0].toInt()] = LinkedList()
+            }
+            ListaDeAdyacencia!![helper[0].toInt()]!!.List_Insert(ListaDeAdyacencia!![helper[0].toInt()]!!, helper[1].toInt(), false)
+            ListaDeVertices.List_Insert(ListaDeVertices, helper[0].toInt(), true)
+            x = ListaDeVertices.List_Search(ListaDeVertices, helper[0].toInt())!!
+            x.gradoExterior += 1
+            x = ListaDeVertices.List_Search(ListaDeVertices, helper[1].toInt())!!
+            x.gradoInterior += 1
+            i++
+        }
+
     }
 
     /* Agrega un lado al grafo. Si el lado a agregar contiene
@@ -25,14 +52,25 @@ public class GrafoNoDirigido: Grafo {
      no se agraga al grafo y se retorna false. 
      */
     fun agregarArista(a: Arista) : Boolean {
+        val vertice1 = ListaDeVertices.List_Search(ListaDeVertices, a.v)
+        val vertice2 = ListaDeVertices.List_Search(ListaDeVertices, a.u)
+
     }
 
     // Retorna el número de lados del grafo
     override fun obtenerNumeroDeLados() : Int {
+        return numeroDeLados
     }
 
     // Retorna el número de vértices del grafo
     override fun obtenerNumeroDeVertices() : Int {
+        var n = 0
+        var cabeza: Vertice? = ListaDeVertices.head
+        while (cabeza != null && cabeza.valor != null){
+            n += 1
+            cabeza = cabeza.next
+        }
+        return n
     }
 
     // Retorna los lados adyacentes al vértice v, es decir, los lados que contienen al vértice v
