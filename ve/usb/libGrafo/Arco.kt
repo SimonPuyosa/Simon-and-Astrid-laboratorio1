@@ -14,6 +14,6 @@ public open class Arco(val inicio: Int, val fin: Int) : Lado(inicio, fin) {
 
     // Representación del arco
     override fun toString() : String {
-        return "$inicio -> $fin"
+        return "($inicio, $fin) "
      }
 } 

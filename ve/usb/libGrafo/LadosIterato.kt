@@ -1,7 +1,6 @@
 package ve.usb.libGrafo
 
-import ve.usb.libGrafo.linkedList.LinkedList
-import ve.usb.libGrafo.linkedList.Vertice
+import java.util.LinkedList
 
 
 /**
@@ -11,13 +10,13 @@ class LadosIterato(private val G: GrafoDirigido) : Iterator<Arco> {
     /** Entrada: un hashtable con el contenido a iterar
      *  Salida: una iterador que retorna el conjunto de pares de claves y valores
      */
-    private var temp: Array<LinkedList?>? = G.ListaDeAdyacencia!!
+    private var temp: Array<LinkedList<Vertice>?>? = G.listaDeAdyacencia!!
     private var actual: Vertice? = null
     private var i = 0
 
     override fun hasNext(): Boolean {
         while (actual == null && i < G.numeDeVertices){
-            if (temp!![i] != null) actual = temp!![i]!!.head
+            if (temp!![i] != null) actual = temp!![i]!!.first
             i++
         }
 

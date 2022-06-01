@@ -1,18 +1,17 @@
 package ve.usb.libGrafo
 
-import ve.usb.libGrafo.linkedList.LinkedList
-import ve.usb.libGrafo.linkedList.Vertice
+import ve.usb.libGrafo.linkedList.ListaEnlazada
 import java.io.File
 
 public class GrafoNoDirigido: Grafo {
     //atributos añadidos por nosotros
-    var ListaDeAdyacencia: Array<LinkedList?>? = null
+    var listaDeAdyacencia: Array<ListaEnlazada?>? = null
     var numeroDeLados: Int = 0
-    var ListaDeVertices: LinkedList()
+    var listaDeVertices: ListaEnlazada()
 
     // Se construye un grafo a partir del número de vértices
     constructor(numDeVertices: Int) {
-        ListaDeAdyacencia = arrayOfNulls(numDeVertices)
+        listaDeAdyacencia = arrayOfNulls(numDeVertices)
     }
 
     /*
@@ -25,20 +24,20 @@ public class GrafoNoDirigido: Grafo {
     constructor(nombreArchivo: String) {
         val a = File(nombreArchivo).readLines()
         val numVertices = nombreArchivo[0].toInt()
-        if(ListaDeAdyacencia == null){ListaDeAdyacencia = arrayOfNulls(numVertices)}
+        if(listaDeAdyacencia == null){listaDeAdyacencia = arrayOfNulls(numVertices)}
         numeroDeLados = nombreArchivo[1].toInt()
         var i = 2
         var x: Vertice
         while(a[i] != ""){
             val helper = a[i].split(" ").filter{it!=""}
-            if (ListaDeAdyacencia!![helper[0].toInt()] == null){
-                ListaDeAdyacencia!![helper[0].toInt()] = LinkedList()
+            if (listaDeAdyacencia!![helper[0].toInt()] == null){
+                listaDeAdyacencia!![helper[0].toInt()] = ListaEnlazada()
             }
-            ListaDeAdyacencia!![helper[0].toInt()]!!.List_Insert(ListaDeAdyacencia!![helper[0].toInt()]!!, helper[1].toInt(), false)
-            ListaDeVertices.List_Insert(ListaDeVertices, helper[0].toInt(), true)
-            x = ListaDeVertices.List_Search(ListaDeVertices, helper[0].toInt())!!
+            listaDeAdyacencia!![helper[0].toInt()]!!.List_Insert(listaDeAdyacencia!![helper[0].toInt()]!!, helper[1].toInt(), false)
+            listaDeVertices.List_Insert(listaDeVertices, helper[0].toInt(), true)
+            x = listaDeVertices.List_Search(listaDeVertices, helper[0].toInt())!!
             x.gradoExterior += 1
-            x = ListaDeVertices.List_Search(ListaDeVertices, helper[1].toInt())!!
+            x = listaDeVertices.List_Search(listaDeVertices, helper[1].toInt())!!
             x.gradoInterior += 1
             i++
         }
@@ -52,8 +51,8 @@ public class GrafoNoDirigido: Grafo {
      no se agraga al grafo y se retorna false. 
      */
     fun agregarArista(a: Arista) : Boolean {
-        val vertice1 = ListaDeVertices.List_Search(ListaDeVertices, a.v)
-        val vertice2 = ListaDeVertices.List_Search(ListaDeVertices, a.u)
+        val vertice1 = listaDeVertices.List_Search(listaDeVertices, a.v)
+        val vertice2 = listaDeVertices.List_Search(listaDeVertices, a.u)
 
     }
 
@@ -65,7 +64,7 @@ public class GrafoNoDirigido: Grafo {
     // Retorna el número de vértices del grafo
     override fun obtenerNumeroDeVertices() : Int {
         var n = 0
-        var cabeza: Vertice? = ListaDeVertices.head
+        var cabeza: Vertice? = listaDeVertices.head
         while (cabeza != null && cabeza.valor != null){
             n += 1
             cabeza = cabeza.next
