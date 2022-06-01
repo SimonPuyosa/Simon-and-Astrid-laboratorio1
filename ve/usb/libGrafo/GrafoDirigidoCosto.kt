@@ -1,11 +1,19 @@
 package ve.usb.libGrafo
 
 import java.io.File
+import linkedList.LinkedList
+import linkedList.Vertice
 
 public class GrafoDirigidoCosto : Grafo {
+    //atributos agregados por nosotros
+    var ListaDeAdyacencia: Array<LinkedList?>? = null
+    var NumeroDeLados: Int = 0
+    var ListaDeVertices = LinkedList()
+    var ListaDeCostos = LinkedList()
 
     // Se construye un grafo a partir del número de vértices
     constructor(numDeVertices: Int) {
+        ListaDeAdyacencia = arrayOfNulls(numDeVertices)
     }
 
     /*
@@ -17,6 +25,26 @@ public class GrafoDirigidoCosto : Grafo {
      Se asume que los datos del archivo están correctos, no se verifican.
      */  
     constructor(nombreArchivo: String)  {
+        val a = File(nombreArchivo).readLines()
+        val numDeVertices = nombreArchivo[0].toInt()
+        if (ListaDeAdyacencia == null) { ListaDeAdyacencia = arrayOfNulls(numDeVertices) }
+        NumeroDeLados = nombreArchivo[1].toInt()
+        var i = 2
+        var x: Vertice
+        while (a[i] != ""){
+            val temp = a[i].split(" ").filter {it != ""}
+            if (ListaDeAdyacencia!![temp[0].toInt()] == null){
+                ListaDeAdyacencia!![temp[0].toInt()] = LinkedList()
+            }
+            ListaDeAdyacencia!![temp[0].toInt()]!!.List_Insert(ListaDeAdyacencia!![temp[0].toInt()]!!, temp[1].toInt(), false)
+            ListaDeVertices.List_Insert(ListaDeVertices, temp[0].toInt(), true)
+            ListaDeVertices.List_Insert(ListaDeVertices, temp[1].toInt(), true)
+            x = ListaDeVertices.List_Search(ListaDeVertices, temp[0].toInt())!!
+            x.gradoExterior += 1
+            x = ListaDeVertices.List_Search(ListaDeVertices, temp[1].toInt())!!
+            x.gradoInterior += 1
+            ListaDeCostos.List_Insert(ListaDeCostos, temp[2].toInt(), true)
+            i++
     }
 
     /* Agrega un lado al digrafo. Si el lado a agregar contiene
@@ -29,6 +57,21 @@ public class GrafoDirigidoCosto : Grafo {
      está en el grafo, sin importar que tengan diferentes costos.
      */
     fun agregarArcoCosto(a: ArcoCosto) : Boolean {
+        val vertice1 = ListaDeVertices.List_Search(ListaDeVertices,a.x)
+        val vertice2 = ListaDeVertices.List_Search(ListaDeVertices,a.y)
+        if (vertice1 == null){
+            throw RuntimeException("El lado a agregar contiene un vertice que no pertenece al grafo")
+        }
+        if (vertice2 == null){
+            throw RuntimeException("El lado a agregar contiene un vertice que no pertenece al grafo")
+        }
+        if(ListaDeAdyacencia!![a.x]!!.List_Search(ListaDeAdyacencia!![a.x]!!, a.y)?.valor != a.y ){
+            vertice1.gradoExterior += 1
+            vertice2.gradoInterior += 1
+            NumeroDeLados += 1
+            ListaDeCostos.List_Insert(ListaDeCostos, a.costo, true)
+        }
+        return ListaDeAdyacencia!![a.x]!!.List_Insert(ListaDeAdyacencia!![a.x]!!,a.y, false)
     }
 
     // Retorna el grado del grafo. Si el vértice no pertenece al grafo se lanza una RuntimeException
@@ -37,18 +80,30 @@ public class GrafoDirigidoCosto : Grafo {
 
     // Retorna el grado exterior del grafo. Si el vértice no pertenece al grafo se lanza una RuntimeException
     fun gradoExterior(v: Int) : Int {
+        val vertice = ListaDeVertices.List_Search(ListaDeVertices, v)
+        if(vertice == null){
+            throw RuntimeException("El vertice no pertenece al grafo")
+        }
+        return vertice.gradoExterior
     }
 
     // Retorna el grado interior del grafo. Si el vértice no pertenece al grafo se lanza una RuntimeException
     fun gradoInterior(v: Int) : Int {
+        val vertice = ListaDeVertices.List_Search(ListaDeVertices, v)
+        if(vertice == null){
+            throw RuntimeException("El vertice no pertenece al grafo")
+        }
+        return vertice.gradoInterior
     }
 
     // Retorna el número de lados del grafo
     override fun obtenerNumeroDeLados() : Int {
+        return NumeroDeLados
     }
 
     // Retorna el número de vértices del grafo
     override fun obtenerNumeroDeVertices() : Int {
+
     }
 
     /* 
