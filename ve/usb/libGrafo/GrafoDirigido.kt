@@ -31,11 +31,12 @@ public class GrafoDirigido : Grafo {
          */
 
         val a = File(nombreArchivo).readLines()                 // Se guarda el archivo en la variable a de tipo List<String>
-        numeDeVertices = nombreArchivo[0].toInt()               // Se obtiene de la primera linea linea el numero de vertices
+        numeDeVertices = a[0].toInt()               // Se obtiene de la primera linea linea el numero de vertices
         //if (ListaDeAdyacencia == null) { ListaDeAdyacencia = arrayOfNulls(numeDeVertices) }
         listaDeAdyacencia = arrayOfNulls(numeDeVertices)        // Se genera la lista de adyacencia (array de listas enlazadas)
         listaDeVertices = LinkedList<Vertice>()                          // Se genera la lista de vertices la cual sera una lista enlazada
-        numeroDeLados = nombreArchivo[1].toInt()                // Se obtiene de la segunda linea el numero de lados
+        numeroDeLados = a[1].toInt()                // Se obtiene de la segunda linea el numero de lados
+
 
         var i = 2
         var u: Vertice?
@@ -43,7 +44,7 @@ public class GrafoDirigido : Grafo {
         var temp: List<String>
         var j: Int
 
-        while (a[i] != ""){                                     // se itera por las demas lineas del archivo hasta que este se acabe
+        while (i < 1 + numeroDeLados && a[i] != ""){                                     // se itera por las demas lineas del archivo hasta que este se acabe
             temp = a[i].split(" ").filter {it != ""}  // se separa cada linea por espacios
 
             if (listaDeAdyacencia!![temp[0].toInt()] == null){
