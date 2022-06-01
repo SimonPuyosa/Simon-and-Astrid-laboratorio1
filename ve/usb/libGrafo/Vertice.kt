@@ -1,4 +1,4 @@
-package linkedList
+package ve.usb.libGrafo.linkedList
 
 class Vertice(val valor: Int?, var gradoInterior: Int = 0, var gradoExterior: Int = 0){
     var next: Vertice? = null

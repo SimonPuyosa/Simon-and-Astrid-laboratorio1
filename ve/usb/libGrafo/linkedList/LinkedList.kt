@@ -1,4 +1,4 @@
-package linkedList
+package ve.usb.libGrafo.linkedList
 
 import javax.management.openmbean.KeyAlreadyExistsException
 

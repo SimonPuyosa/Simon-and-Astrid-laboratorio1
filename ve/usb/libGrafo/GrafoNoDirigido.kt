@@ -1,7 +1,7 @@
 package ve.usb.libGrafo
 
-import linkedList.LinkedList
-import linkedList.Vertice
+import ve.usb.libGrafo.linkedList.LinkedList
+import ve.usb.libGrafo.linkedList.Vertice
 import java.io.File
 
 public class GrafoNoDirigido: Grafo {
