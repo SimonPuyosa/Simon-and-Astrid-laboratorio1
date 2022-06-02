@@ -10,17 +10,19 @@ class LadAdyacenIterato(private val G: GrafoDirigido, private val v: Arco) : Ite
     /** Entrada: un hashtable con el contenido a iterar
      *  Salida: una iterador que retorna el conjunto de pares de claves y valores
      */
-    private var actual: Array<LinkedList<Vertice>?> = G.listaDeAdyacencia!!
-    private var temp: Vertice? = null
+    private var temp: Array<LinkedList<Int>?> = G.listaDeAdyacencia
+    private var actual: LinkedList<Int>? = null
     private var i = 0
+    private var j: Int = 0
 
     override fun hasNext(): Boolean {
         while (i < G.numeDeVertices){
-            if (actual[i] != null){
-                temp = actual[i]!!.first
-                while(temp != null && temp!!.valor != null){
-                    if (temp!!.valor == v.inicio) return true
-                    temp = temp!!.next
+            if (temp[i] != null){
+                j = 0
+                actual = temp[i]
+                while(actual != null && j < actual!!.size){
+                    if (actual!![j] == v.inicio) return true
+                    j += 1
                 }
             }
             i++

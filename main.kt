@@ -30,8 +30,9 @@ fun main(args: Array<String>) {
     println(clase.gradoExterior(4))
     println(clase.obtenerNumeroDeLados())
     println(clase.obtenerNumeroDeVertices())
-    
+
      */
+    println(clase.toString())
 
 }
 

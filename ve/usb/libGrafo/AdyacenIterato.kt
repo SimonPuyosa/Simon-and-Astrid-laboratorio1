@@ -7,18 +7,17 @@ class AdyacenIterato(G: GrafoDirigido, private val v: Int) : Iterator<Arco> {
     /** Entrada: un hashtable con el contenido a iterar
      *  Salida: una iterador que retorna el conjunto de pares de claves y valores
      */
-    private var actual: Vertice? = G.listaDeAdyacencia!![v]!!.first
+    private val adyacentes = G.listaDeAdyacencia[v]!!
+    var i = 0
 
     override fun hasNext(): Boolean {
-        if (actual == null || actual!!.valor == null) {
-            return false
-        }
+        if (adyacentes.last == adyacentes[i]) return false
         return true
     }
 
     override fun next(): Arco {
-        val result = Arco(v, actual!!.valor!!)
-        actual = actual!!.next!!
+        val result = Arco(v, adyacentes[i])
+        i += 1
         return result
     }
 }

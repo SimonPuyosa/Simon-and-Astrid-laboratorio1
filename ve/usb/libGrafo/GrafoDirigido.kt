@@ -6,9 +6,9 @@ import javax.management.openmbean.KeyAlreadyExistsException
 
 public class GrafoDirigido : Grafo {
     // atributos agregados por nosotros
-    var listaDeAdyacencia: Array<LinkedList<Vertice>?>? = null           // Arreglo, que puede ser nulo, de elementos que puden ser listas enlazadas o nulos
+    var listaDeAdyacencia: Array<LinkedList<Int>?> = arrayOf(LinkedList())       // Arreglo, que puede ser nulo, de elementos que puden ser listas enlazadas o nulos
     var numeroDeLados: Int = 0
-    lateinit var listaDeVertices: LinkedList<Vertice>                    // lista enlazada la cual contiene todos los vertices sin repeticiones
+    lateinit var listaDeVertices: Array<Int?>                 // lista enlazada la cual contiene todos los vertices sin repeticiones
     var numeDeVertices = 0
 
 
@@ -34,38 +34,41 @@ public class GrafoDirigido : Grafo {
         numeDeVertices = a[0].toInt()               // Se obtiene de la primera linea linea el numero de vertices
         //if (ListaDeAdyacencia == null) { ListaDeAdyacencia = arrayOfNulls(numeDeVertices) }
         listaDeAdyacencia = arrayOfNulls(numeDeVertices)        // Se genera la lista de adyacencia (array de listas enlazadas)
-        listaDeVertices = LinkedList<Vertice>()                          // Se genera la lista de vertices la cual sera una lista enlazada
+        listaDeVertices = arrayOfNulls(numeDeVertices)                          // Se genera la lista de vertices la cual sera una lista enlazada
         numeroDeLados = a[1].toInt()                // Se obtiene de la segunda linea el numero de lados
 
 
         var i = 2
-        var u: Vertice?
-        var v: Vertice?
+        var u: Int
+        var v: Int
+        //var u: Vertice?
+        //var v: Vertice?
         var temp: List<String>
         var j: Int
 
         while (i < 1 + numeroDeLados && a[i] != ""){                                     // se itera por las demas lineas del archivo hasta que este se acabe
             temp = a[i].split(" ").filter {it != ""}  // se separa cada linea por espacios
 
-            if (listaDeAdyacencia!![temp[0].toInt()] == null){
-                listaDeAdyacencia!![temp[0].toInt()] = LinkedList<Vertice>()
+            if (listaDeAdyacencia[temp[0].toInt()] == null){
+                listaDeAdyacencia[temp[0].toInt()] = LinkedList<Int>()
             }
 
-            v = Vertice(temp[1].toInt())
-            u = Vertice(temp[0].toInt())
-            if (listaDeAdyacencia!![temp[0].toInt()]!!.indexOf(v) != -1) throw KeyAlreadyExistsException("el objeto esta repetido")
-            listaDeAdyacencia!![temp[0].toInt()]!!.addFirst(v)       // se agrega el vertice final, en el arreglo especificamente en el inicio
-            if (listaDeVertices.indexOf(v) == -1) {
-                listaDeVertices.addFirst(v)     // se agregan los dos vertices a la lista de vertices
+            v = temp[1].toInt()
+            u = temp[0].toInt()
+            if (listaDeAdyacencia[temp[0].toInt()]!!.indexOf(v) != -1) throw KeyAlreadyExistsException("el objeto esta repetido")
+            listaDeAdyacencia[temp[0].toInt()]!!.addFirst(v)       // se agrega el vertice final, en el arreglo especificamente en el inicio
+            if (listaDeVertices[v] == null) {
+                listaDeVertices[v] = v     // se agregan los dos vertices a la lista de vertices
             }
-            if (listaDeVertices.indexOf(u) == -1) {  // si estos ya se encuentran en la lista el programa continua y no los agrega
-                listaDeVertices.addFirst(u)
+            if (listaDeVertices[u] == null) {  // si estos ya se encuentran en la lista el programa continua y no los agrega
+                listaDeVertices[u] = u
             }
 
-            j = listaDeVertices.indexOf(v)              // se buscan los vertices y se aumentan sus respectivos grados interiores y exteriores
-            listaDeVertices[j].gradoExterior +=1
-            j = listaDeVertices.indexOf(u)
-            listaDeVertices[j].gradoInterior +=1
+
+            //j = listaDeVertices.indexOf(v)              // se buscan los vertices y se aumentan sus respectivos grados interiores y exteriores
+            //listaDeVertices[j].gradoExterior +=1
+            //j = listaDeVertices.indexOf(u)
+            //listaDeVertices[j].gradoInterior +=1
             i++
         }
     }
@@ -80,30 +83,28 @@ public class GrafoDirigido : Grafo {
         /** Entrada: un arco a agregar
          *  Salida: Un booleano que indica si el arco ya estaba agregado previamente o no
          */
-        val indexVertice1 = listaDeVertices.indexOf(Vertice(a.inicio))
-        val indexVertice2 = listaDeVertices.indexOf(Vertice(a.fin))
-        if (indexVertice1 == -1 || indexVertice2 == -1){          // se verifica que los vertices existan
+        val indexVertice1 = listaDeVertices[a.inicio]
+        val indexVertice2 = listaDeVertices[a.fin]
+        if (indexVertice1 == null || indexVertice2 == null){          // se verifica que los vertices existan
             throw RuntimeException("El lado a agregar contiene un vertice que no pertenece al grafo")
         }
-        if (listaDeAdyacencia!![a.inicio]!!.indexOf(Vertice(a.fin)) == -1){   // se verifica que el lado no exista
-            listaDeVertices[indexVertice1].gradoExterior += 1
-            listaDeVertices[indexVertice1].gradoInterior += 1
+        if (listaDeAdyacencia[a.inicio]!!.indexOf(a.fin) == -1){   // se verifica que el lado no exista
             this.numeroDeLados += 1
-            listaDeAdyacencia!![a.inicio]!!.add(Vertice(a.fin))
+            listaDeAdyacencia[a.inicio]!!.add(a.fin)
             return true
         }
         return false
     }
+
+    /*
 
     // Retorna el grado del grafo. Si el vértice no pertenece al grafo se lanza una RuntimeException
     override fun grado(v: Int) : Int {
         /** Entrada: una integral del valor del vertice del cual se pide el grado
          *  Salida: una integral del grado del vertice pedido
          */
-        val index = listaDeVertices.indexOf(Vertice(v)) // se busca el vector
-        if (index == 1) throw RuntimeException("El lado a agregar contiene un vertice que no pertenece al grafo")
-        val x = listaDeVertices[index]
-        return x.gradoExterior + x.gradoInterior               // se retorna la suma de los grados interiores y exteriores
+        if (listaDeVertices[v] == null) throw RuntimeException("El lado a agregar contiene un vertice que no pertenece al grafo")
+        return this.gradoExterior(v) + this.gradoInterior(v)               // se retorna la suma de los grados interiores y exteriores
     }
 
     // Retorna el grado exterior del grafo. Si el vértice no pertenece al grafo se lanza una RuntimeException
@@ -127,6 +128,8 @@ public class GrafoDirigido : Grafo {
         val x = listaDeVertices[index]
         return x.gradoInterior                                    // se retorna el grado interior
     }
+
+     */
 
     // Retorna el número de lados del grafo
     override fun obtenerNumeroDeLados() : Int {
@@ -161,7 +164,7 @@ public class GrafoDirigido : Grafo {
         /** Entrada: una integral la cual se buscaran los vertices adyacentes a esta
          *  Salida: un iterable de los arcos adyacentes a v
          */
-        if (listaDeVertices.indexOf(Vertice(v)) == -1) throw RuntimeException("no se encuentra el vertice en el grafo")
+        if (listaDeVertices[v] == null) throw RuntimeException("no se encuentra el vertice en el grafo")
         return AdyacenIterable(this, v)
     }
 
@@ -186,11 +189,11 @@ public class GrafoDirigido : Grafo {
          *  Salida: un iterable de los arcos adyacentes al arco l
          */
         // Se revisa si los vertices pertenecen al grafo
-        if (listaDeVertices.indexOf(Vertice(l.inicio)) == -1) throw RuntimeException("no se encuentra el vertice en el grafo")
-        if (listaDeVertices.indexOf(Vertice(l.fin)) == -1) throw RuntimeException("no se encuentra el vertice en el grafo")
+        if (listaDeVertices[l.inicio] == null) throw RuntimeException("no se encuentra el vertice en el grafo")
+        if (listaDeVertices[l.fin] == null) throw RuntimeException("no se encuentra el vertice en el grafo")
 
-        val temp = listaDeAdyacencia!![l.inicio]!! // se verifica si el arco existe
-        if (temp.indexOf(Vertice(l.fin)) == -1) throw RuntimeException("no se encuentra el lado en el grafo")
+        val temp = listaDeAdyacencia[l.inicio]!! // se verifica si el arco existe
+        if (temp.indexOf(l.fin) == -1) throw RuntimeException("no se encuentra el lado en el grafo")
 
         return LadAdyacenIterable(this, l)
     }
