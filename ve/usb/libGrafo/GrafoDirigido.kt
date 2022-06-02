@@ -113,7 +113,7 @@ public class GrafoDirigido : Grafo {
          *  Postcondicion: gradoExterior < grado
          *  Tiempo: O(1) // Si se toma en cuenta el tiempo de la assersion seria O(|V|)
          */
-        if (listaDeVertices.indexOf(v) == -1) throw RuntimeException("El lado a agregar contiene un vertice que no pertenece al grafo")
+        if (listaDeVertices[v] == null) throw RuntimeException("El lado a agregar contiene un vertice que no pertenece al grafo")
         if (listaDeAdyacencia[v] == null) return 0
         return listaDeAdyacencia[v]!!.size                                    // se retorna el grado exterior
     }
@@ -128,7 +128,7 @@ public class GrafoDirigido : Grafo {
          *  Postcondicion: gradoInterior < grado
          *  Tiempo: O(|V| + |E|)
          */
-        if (listaDeVertices.indexOf(v) == -1) throw RuntimeException("El lado a agregar contiene un vertice que no pertenece al grafo")
+        if (listaDeVertices[v] == null) throw RuntimeException("El lado a agregar contiene un vertice que no pertenece al grafo")
         var i = 0
         var j: Int
         var grados = 0

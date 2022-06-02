@@ -1,6 +1,4 @@
 package ve.usb.libGrafo
-
-import ve.usb.libGrafo.linkedList.ListaEnlazada
 import java.io.File
 import java.util.*
 import javax.management.openmbean.KeyAlreadyExistsException
@@ -77,6 +75,10 @@ public class GrafoNoDirigido: Grafo {
         if (listaDeAdyacencia[a.v]!!.indexOf(a.u) == -1){
             this.numeroDeLados += 1
             listaDeAdyacencia[a.v]!!.add(a.u)
+            if (listaDeAdyacencia[a.u]!!.indexOf(a.v) == -1){
+                this.numeroDeLados += 1
+                listaDeAdyacencia[a.u]!!.add(a.v)
+            }
             return true
         }
         return false
@@ -214,9 +216,12 @@ public class GrafoNoDirigido: Grafo {
     override operator fun iterator() : Iterator<Arista> = LadosIterato(this)
 
     // Grado del grafo
-    override fun grado(v: Int) : Int {
-
+    override fun grado(v: Int) : Int { // para astrid: si es grafo no dirigido su grado es la misma implementacion que si fuera grado exterior de un digrafo
+        if (listaDeVertices[v] == null) throw RuntimeException("El lado a agregar contiene un vertice que no pertenece al grafo")
+        if (listaDeAdyacencia[v] == null) return 0
+        return listaDeAdyacencia[v]!!.size                                    // se retorna el grado exterior
     }
+
 
     // Retorna un string con una representación del grafo, en donde se nuestra todo su contenido
     override fun toString() : String {
