@@ -23,22 +23,25 @@ fun main(args: Array<String>) {
 
      */
     val clase = GrafoDirigido(ubicacion)
+    println(clase.numDeLados)
+    println(clase.agregarArco(Arco(4,4)))
+    println(clase.agregarArco(Arco(4,6)))
+    println(clase.agregarArco(Arco(4,6)))
+    println(clase.numDeLados)
 
-    clase.agregarArco(Arco(4,4))
-    clase.agregarArco(Arco(4,6))
+
 
     println(clase.toString())
-    val a = clase.ladosAdyacentes(Arco(4,6)).iterator()
+    val a = clase.iterator()
+    i = 0
     while(a.hasNext()){
         println(a.next())
+        i++
     }
+    println(i)
     println(clase.grado(4))
     println(clase.gradoExterior(4))
     println(clase.gradoInterior(4))
-
-
-
-
 
 }
 

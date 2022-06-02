@@ -1,19 +1,12 @@
 package ve.usb.libGrafo
 
-class Vertice(val valor: Int?, var Costo: Int = 0, var gradoInterior: Int = 0, var gradoExterior: Int = 0){
+class Vertice(val valor: Int, var Costo: Double = 0.0, var gradoInterior: Int = 0, var gradoExterior: Int = 0) {
 
-    fun compareTo(other: Vertice): Int {
-        return when {
-            this.valor!! > other.valor!! -> {
-                1
-            }
-            this.valor < other.valor -> {
-                -1
-            }
-            else -> {
-                0
-            }
-        }
+    override fun equals(other: Any?): Boolean {
+        val b: Vertice = other as Vertice
+        return this.valor == b.valor
     }
+
+    override fun hashCode(): Int = this.valor
 }
 
