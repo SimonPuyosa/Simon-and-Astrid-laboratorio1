@@ -2,7 +2,7 @@ import ve.usb.libGrafo.*
 
 fun main(args: Array<String>) {
     var i = 0
-    var tipo: Char = " "[0]
+    var tipo: Char
     var ubicacion = ""
     while (i <= args.lastIndex){
         if ("-g" in args[i]){
@@ -15,7 +15,7 @@ fun main(args: Array<String>) {
 
     /*
     val clase = when (tipo) {
-        'd' -> GrafoDirigido(ubicacion)
+        'd' -> GrafoDirigido.kt(ubicacion)
         'n' -> GrafoNoDirigido(ubicacion)
         'c' -> GrafoDirigidoCosto(ubicacion)
         else -> GrafoNoDirigidoCosto(ubicacion)
@@ -24,15 +24,21 @@ fun main(args: Array<String>) {
      */
     val clase = GrafoDirigido(ubicacion)
 
-    /*
-    println(clase.grado(4))
-    println(clase.gradoInterior(4))
-    println(clase.gradoExterior(4))
-    println(clase.obtenerNumeroDeLados())
-    println(clase.obtenerNumeroDeVertices())
+    clase.agregarArco(Arco(4,4))
+    clase.agregarArco(Arco(4,6))
 
-     */
     println(clase.toString())
+    val a = clase.ladosAdyacentes(Arco(4,6)).iterator()
+    while(a.hasNext()){
+        println(a.next())
+    }
+    println(clase.grado(4))
+    println(clase.gradoExterior(4))
+    println(clase.gradoInterior(4))
+
+
+
+
 
 }
 

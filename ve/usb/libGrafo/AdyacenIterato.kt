@@ -11,7 +11,7 @@ class AdyacenIterato(G: GrafoDirigido, private val v: Int) : Iterator<Arco> {
     var i = 0
 
     override fun hasNext(): Boolean {
-        if (adyacentes.last == adyacentes[i]) return false
+        if (adyacentes.size <= i) return false
         return true
     }
 
