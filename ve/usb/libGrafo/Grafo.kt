@@ -1,24 +1,26 @@
 package ve.usb.libGrafo
 
 interface Grafo : Iterable<Lado> {
-    
-    // Retorna el número de lados del grafo
+
+    /** Metodo en el que retorna una integral que representa el numero de lados del grafo
+     */
     fun obtenerNumeroDeLados() : Int
 
-    // Retorna el número de vértices del grafo
+    /** Metodo en el que retorna una integral que representa el numero de vertices del grafo
+     */
     fun obtenerNumeroDeVertices() : Int
 
-    /* 
-     Retorna los adyacentes de v, en este caso los lados que tienen como vértice inicial a v. 
-     Si el vértice no pertenece al grafo se lanza una RuntimeException.
+    /** Metodo que dado una integral que representa un vertice, retorna un iterable de todos los lados en los que
+     *  el vertice dado es adyacente. Si el vertice no se encuentra entonces se lanza un RuntimeException
      */
     fun adyacentes(v: Int) : Iterable<Lado>
-  
-    // Retorna el grado del grafo
+
+    /** Metodo que dado un integral que representa un vertice del grafo, retorna el grado de este vertice, si el
+     *  vertice no se encuentra en el grafo entonces se lanza un RuntimeException
+     */
     fun grado(v: Int) : Int
 
-    /* Retorna un iterador de los lados del grafo.
-       El iterador debe ser creado en clase que implementa esta interface.  
+    /** Metodo que retorna un iterator de todos los lados que pertenecen al grafo
      */
     override operator fun iterator() : Iterator<Lado> 
 }
