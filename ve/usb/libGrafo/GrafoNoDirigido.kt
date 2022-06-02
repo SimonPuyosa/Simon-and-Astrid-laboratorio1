@@ -2,12 +2,15 @@ package ve.usb.libGrafo
 
 import ve.usb.libGrafo.linkedList.ListaEnlazada
 import java.io.File
+import java.util.*
+import javax.management.openmbean.KeyAlreadyExistsException
 
 public class GrafoNoDirigido: Grafo {
     //atributos añadidos por nosotros
-    var listaDeAdyacencia: Array<ListaEnlazada?>? = null
+    var listaDeAdyacencia: Array<LinkedList<Int>?> = arrayOf(LinkedList())
     var numeroDeLados: Int = 0
-    var listaDeVertices: ListaEnlazada()
+    lateinit var listaDeVertices: Array<Int?>
+    var numeDeVertices = 0
 
     // Se construye un grafo a partir del número de vértices
     constructor(numDeVertices: Int) {
@@ -23,22 +26,36 @@ public class GrafoNoDirigido: Grafo {
      */  
     constructor(nombreArchivo: String) {
         val a = File(nombreArchivo).readLines()
-        val numVertices = nombreArchivo[0].toInt()
-        if(listaDeAdyacencia == null){listaDeAdyacencia = arrayOfNulls(numVertices)}
-        numeroDeLados = nombreArchivo[1].toInt()
+        numeDeVertices = a[0].toInt()
+        //if (ListaDeAdyacencia == null) { ListaDeAdyacencia = arrayOfNulls(numeDeVertices) }
+        listaDeAdyacencia = arrayOfNulls(numeDeVertices)
+        listaDeVertices = arrayOfNulls(numeDeVertices)
+        numeroDeLados = a[1].toInt()
+
         var i = 2
-        var x: Vertice
-        while(a[i] != ""){
-            val helper = a[i].split(" ").filter{it!=""}
-            if (listaDeAdyacencia!![helper[0].toInt()] == null){
-                listaDeAdyacencia!![helper[0].toInt()] = ListaEnlazada()
+        var u: Int
+        var v: Int
+        var temp: List<String>
+
+
+        while (i < 2 + numeroDeLados && a[i] != ""){
+            temp = a[i].split(" ").filter {it != ""}
+
+            if (listaDeAdyacencia[temp[0].toInt()] == null){
+                listaDeAdyacencia[temp[0].toInt()] = LinkedList<Int>()
             }
-            listaDeAdyacencia!![helper[0].toInt()]!!.List_Insert(listaDeAdyacencia!![helper[0].toInt()]!!, helper[1].toInt(), false)
-            listaDeVertices.List_Insert(listaDeVertices, helper[0].toInt(), true)
-            x = listaDeVertices.List_Search(listaDeVertices, helper[0].toInt())!!
-            x.gradoExterior += 1
-            x = listaDeVertices.List_Search(listaDeVertices, helper[1].toInt())!!
-            x.gradoInterior += 1
+
+            v = temp[1].toInt()
+            u = temp[0].toInt()
+            if (listaDeAdyacencia[temp[0].toInt()]!!.indexOf(v) != -1) throw KeyAlreadyExistsException("el objeto esta repetido")
+            listaDeAdyacencia[temp[0].toInt()]!!.addFirst(v)
+            if (listaDeVertices[v] == null) {
+                listaDeVertices[v] = v
+            }
+            if (listaDeVertices[u] == null) {
+                listaDeVertices[u] = u
+            }
+
             i++
         }
 
@@ -51,8 +68,18 @@ public class GrafoNoDirigido: Grafo {
      no se agraga al grafo y se retorna false. 
      */
     fun agregarArista(a: Arista) : Boolean {
-        val vertice1 = listaDeVertices.List_Search(listaDeVertices, a.v)
-        val vertice2 = listaDeVertices.List_Search(listaDeVertices, a.u)
+
+        val indexVertice1 = listaDeVertices[a.u]
+        val indexVertice2 = listaDeVertices[a.v]
+        if (indexVertice1 == null || indexVertice2 == null){
+            throw RuntimeException("El lado a agregar contiene un vertice que no pertenece al grafo")
+        }
+        if (listaDeAdyacencia[a.u]!!.indexOf(a.v) == -1){
+            this.numeroDeLados += 1
+            listaDeAdyacencia[a.u]!!.add(a.v)
+            return true
+        }
+        return false
 
     }
 
@@ -63,17 +90,17 @@ public class GrafoNoDirigido: Grafo {
 
     // Retorna el número de vértices del grafo
     override fun obtenerNumeroDeVertices() : Int {
-        var n = 0
-        var cabeza: Vertice? = listaDeVertices.head
-        while (cabeza != null && cabeza.valor != null){
-            n += 1
-            cabeza = cabeza.next
-        }
-        return n
+        return numeDeVertices
     }
+
+    private inner class AdyacenIterable(private val G: GrafoDirigido, private val v: Int) : Iterable<Arista>{
+
+        override fun iterator(): Iterator<Arista> = AdyacenIterato(G, v)
 
     // Retorna los lados adyacentes al vértice v, es decir, los lados que contienen al vértice v
     override fun adyacentes(v: Int) : Iterable<Arista> {
+        if (listaDeVertices[v] == null) throw RuntimeException("no se encuentra el vertice en el grafo")
+        return AdyacenIterable(this, v)
     }
 
     /* Retorna los lados adyacentes de un lado l. 
