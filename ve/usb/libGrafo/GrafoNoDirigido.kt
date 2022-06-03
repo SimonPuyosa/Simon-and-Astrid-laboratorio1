@@ -5,10 +5,10 @@ import javax.management.openmbean.KeyAlreadyExistsException
 
 public class GrafoNoDirigido: Grafo {
     // Propiedades del grafo no dirigido
-    var listaDeAdyacencia: Array<LinkedList<Vertice>?> = arrayOf(LinkedList())
-    var numeroDeLados: Int = 0
+    var listaDeAdyacencia: Array<LinkedList<Vertice>?> = arrayOf(null)
     lateinit var listaDeVertices: Array<Vertice?>
-    var numeDeVertices = 0
+    var numeroDeLados: Int = 0
+    var numeDeVertices: Int = 0
 
     // Se construye un grafo a partir del número de vértices
     constructor(numDeVertices: Int) {
@@ -37,22 +37,26 @@ public class GrafoNoDirigido: Grafo {
         var temp: List<String>
         var vertice1: Vertice
         var vertice2: Vertice
-        var j: Int
 
         while (i < 2 + numeroDeLados && a[i] != ""){                // se itera por las demas lineas del archivo hasta que este se acabe
             temp = a[i].split(" ").filter {it != ""}      // se separa cada linea por espacios
 
-            if (listaDeAdyacencia[temp[0].toInt()] == null){        // si el elemento del arreglo es nulo se le asigna un linked list vacio
-                listaDeAdyacencia[temp[0].toInt()] = LinkedList<Vertice>()
+            u = temp[0].toInt()
+            v = temp[1].toInt()
+            vertice1 = Vertice(u)
+            vertice2 = Vertice(v)
+
+            if (listaDeAdyacencia[u] == null){        // si el elemento del arreglo es nulo se le asigna un linked list vacio
+                listaDeAdyacencia[u] = LinkedList<Vertice>()
+            }
+            if (listaDeAdyacencia[v] == null){        // si el elemento del arreglo es nulo se le asigna un linked list vacio
+                listaDeAdyacencia[v] = LinkedList<Vertice>()
             }
 
-            v = temp[1].toInt()
-            u = temp[0].toInt()
-            vertice2 = Vertice(v)
-            vertice1 = Vertice(u)
-
-            if (listaDeAdyacencia[u]!!.indexOf(vertice1) != -1) throw KeyAlreadyExistsException("el objeto esta repetido")
-            listaDeAdyacencia[temp[u].toInt()]!!.addFirst(vertice2)
+            if (listaDeAdyacencia[u]!!.indexOf(vertice2) != -1) throw KeyAlreadyExistsException("el objeto esta repetido")
+            listaDeAdyacencia[u]!!.addFirst(vertice2)
+            if (listaDeAdyacencia[v]!!.indexOf(vertice1) != -1) throw KeyAlreadyExistsException("el objeto esta repetido")
+            listaDeAdyacencia[v]!!.addFirst(vertice1)
             if (listaDeVertices[u] == null) {
                 listaDeVertices[u] = vertice1
             }
@@ -60,10 +64,8 @@ public class GrafoNoDirigido: Grafo {
                 listaDeVertices[v] = vertice2
             }
 
-            j = listaDeVertices.indexOf(vertice1)
-            listaDeVertices[j]!!.gradoExterior +=1
-            j = listaDeVertices.indexOf(vertice2)
-            listaDeVertices[j]!!.gradoInterior +=1
+            listaDeVertices[u]!!.gradoExterior += 1       // se buscan los vertices y se aumentan sus respectivos grados interiores y exteriores
+            listaDeVertices[v]!!.gradoExterior += 1
             i++
         }
 
@@ -76,16 +78,15 @@ public class GrafoNoDirigido: Grafo {
      no se agraga al grafo y se retorna false. 
      */
     fun agregarArista(a: Arista) : Boolean {
-        val indexVertice1 = listaDeVertices.indexOf(Vertice(a.v))
-        val indexVertice2 = listaDeVertices.indexOf(Vertice(a.u))
-        if (indexVertice1 == -1 || indexVertice2 == -1){
+        if (listaDeVertices[a.v] == null || listaDeVertices[a.u] == null){
             throw RuntimeException("El lado a agregar contiene un vertice que no pertenece al grafo")
         }
         if (listaDeAdyacencia[a.v]!!.indexOf(Vertice(a.u)) == -1){
-            listaDeVertices[indexVertice1]!!.gradoExterior += 1
-            listaDeVertices[indexVertice2]!!.gradoInterior += 1
+            listaDeVertices[a.v]!!.gradoExterior += 1
+            listaDeVertices[a.u]!!.gradoExterior += 1
             this.numeroDeLados += 1
-            listaDeAdyacencia[a.v]!!.add(Vertice(a.u))
+            listaDeAdyacencia[a.v]!!.addFirst(Vertice(a.u))
+            listaDeAdyacencia[a.u]!!.addFirst(Vertice(a.v))
             return true
         }
         return false
@@ -227,7 +228,7 @@ public class GrafoNoDirigido: Grafo {
 
         if (listaDeVertices[v] == null) throw RuntimeException("El lado a agregar contiene un vertice que no pertenece al grafo")
         if (listaDeAdyacencia[v] == null) return 0
-        return listaDeAdyacencia[v]!!.size                                    // se retorna el grado exterior
+        return listaDeVertices[v]!!.gradoExterior                                    // se retorna el grado exterior
     }
 
 

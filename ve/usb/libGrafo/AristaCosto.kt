@@ -11,6 +11,7 @@ public class AristaCosto(val x: Int,
 
     // Representación en string de la arista
     override fun toString() : String {
+        return " ($x, $y, $costo) "
     }
 
      //Se compara dos arista con respecto a su costo.

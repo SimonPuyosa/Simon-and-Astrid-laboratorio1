@@ -1,16 +1,14 @@
 package ve.usb.libGrafo
-
 import java.io.File
 import java.util.*
 import javax.management.openmbean.KeyAlreadyExistsException
 
 public class GrafoDirigidoCosto : Grafo {
     // Propiedades del grafo dirigido
-    var listaDeAdyacencia: Array<LinkedList<Vertice>?> =
-        arrayOf(LinkedList())       // Arreglo, que puede ser nulo, de elementos que puden ser listas enlazadas o nulos
-    var numDeLados: Int = 0
+    var listaDeAdyacencia: Array<LinkedList<Vertice>?> = arrayOf(null)     // Arreglo, que puede ser nulo, de elementos que puden ser listas enlazadas o nulos
     lateinit var listaDeVertices: Array<Vertice?>                 // arreglo que contiene todos los vertices sin repeticiones
-    var numDeVertices = 0
+    var numDeLados: Int = 0
+    var numDeVertices: Int = 0
 
     // Se construye un grafo a partir del número de vértices
     constructor(numDeVertices: Int) {
@@ -56,23 +54,22 @@ public class GrafoDirigidoCosto : Grafo {
         var temp: List<String>
         var vertice1: Vertice
         var vertice2: Vertice
-        var j: Int
 
         while (i < 2 + numDeLados && a[i] != "") {                // se itera por las demas lineas del archivo hasta que este se acabe
             temp = a[i].split(" ").filter { it != "" }   // se separa cada linea por espacios
 
-            if (listaDeAdyacencia[temp[0].toInt()] == null) {     // si el elemento del arreglo es nulo se le asigna un linked list vacio
-                listaDeAdyacencia[temp[0].toInt()] = LinkedList<Vertice>()
+            u = temp[0].toInt()
+            v = temp[1].toInt()
+            vertice1 = Vertice(u)
+            vertice2 = Vertice(v)
+
+            if (listaDeAdyacencia[u] == null) {     // si el elemento del arreglo es nulo se le asigna un linked list vacio
+                listaDeAdyacencia[u] = LinkedList<Vertice>()
             }
 
-            v = temp[1].toInt()
-            u = temp[0].toInt()
-            vertice2 = Vertice(v)
-            vertice1 = Vertice(u)
-
-            if (listaDeAdyacencia[u]!!.indexOf(vertice1) != -1) throw KeyAlreadyExistsException("el objeto esta repetido")
-            listaDeAdyacencia[temp[u].toInt()]!!.addFirst(vertice2)
-            listaDeAdyacencia[temp[u].toInt()]!![0].Costo = temp[2].toDouble()
+            if (listaDeAdyacencia[u]!!.indexOf(vertice2) != -1) throw KeyAlreadyExistsException("el objeto esta repetido")
+            listaDeAdyacencia[u]!!.addFirst(vertice2)
+            listaDeAdyacencia[u]!![0].Costo = temp[2].toDouble() // buenisima no se me hubiera ocurrido
             if (listaDeVertices[u] == null) {
                 listaDeVertices[u] = vertice1
             }
@@ -80,10 +77,8 @@ public class GrafoDirigidoCosto : Grafo {
                 listaDeVertices[v] = vertice2
             }
 
-            j = listaDeVertices.indexOf(vertice1)
-            listaDeVertices[j]!!.gradoExterior += 1
-            j = listaDeVertices.indexOf(vertice2)
-            listaDeVertices[j]!!.gradoInterior += 1
+            listaDeVertices[u]!!.gradoExterior += 1       // se buscan los vertices y se aumentan sus respectivos grados interiores y exteriores
+            listaDeVertices[v]!!.gradoInterior += 1
             i++
         }
     }
@@ -105,7 +100,8 @@ public class GrafoDirigidoCosto : Grafo {
             this.numDeLados += 1
             listaDeVertices[a.inicio]!!.gradoExterior += 1
             listaDeVertices[a.fin]!!.gradoInterior += 1
-            listaDeAdyacencia[a.inicio]!!.add(Vertice(a.fin))
+            listaDeAdyacencia[a.inicio]!!.addFirst(Vertice(a.fin))
+            listaDeAdyacencia[a.inicio]!![0].Costo = a.costo // te falto esta pero la copie de la de arriba
             return true
         }
         return false
@@ -156,7 +152,7 @@ public class GrafoDirigidoCosto : Grafo {
         }
 
         override fun next(): ArcoCosto {
-            val result = ArcoCosto(v, adyacentes[i].valor)
+            val result = ArcoCosto(v, adyacentes[i].valor, adyacentes[i].Costo)
             i += 1
             return result
         }
@@ -206,7 +202,7 @@ public class GrafoDirigidoCosto : Grafo {
         }
 
         override fun next(): ArcoCosto {
-            val result = ArcoCosto(i, v.x)
+            val result = ArcoCosto(i, v.x, actual!![j].Costo)
             i += 1
             return result
         }
@@ -259,7 +255,7 @@ public class GrafoDirigidoCosto : Grafo {
         }
 
         override fun next(): ArcoCosto {
-            val result = ArcoCosto(i, actual!![j].valor)                       // se prepara la variable de salida
+            val result = ArcoCosto(i, actual!![j].valor, actual!![j].Costo)                      // se prepara la variable de salida
             j += 1                                                        // una vez encontrado un vertice adyacente se busca otro vertice adyacente en el otro linkedlist del arreglo
             return result
         }

@@ -6,10 +6,10 @@ import javax.management.openmbean.KeyAlreadyExistsException
 
 public class GrafoNoDirigidoCosto: Grafo {
     // Propiedades del grafo no dirigido
-    var listaDeAdyacencia: Array<LinkedList<Vertice>?> = arrayOf(LinkedList())       // Arreglo, que puede ser nulo, de elementos que puden ser listas enlazadas o nulos
-    var numeroDeLados: Int = 0
+    var listaDeAdyacencia: Array<LinkedList<Vertice>?> = arrayOf(null)       // Arreglo, que puede ser nulo, de elementos que puden ser listas enlazadas o nulos
     lateinit var listaDeVertices: Array<Vertice?>                 // arreglo que contiene todos los vertices sin repeticiones
-    var numeDeVertices = 0
+    var numeroDeLados: Int = 0
+    var numeDeVertices: Int = 0
 
     // Se construye un grafo a partir del número de vértices
     constructor(numDeVertices: Int) {
@@ -37,23 +37,29 @@ public class GrafoNoDirigidoCosto: Grafo {
         var temp: List<String>
         var vertice1: Vertice
         var vertice2: Vertice
-        var j: Int
 
         while (i < 2 + numeroDeLados && a[i] != ""){                // se itera por las demas lineas del archivo hasta que este se acabe
             temp = a[i].split(" ").filter {it != ""}      // se separa cada linea por espacios
 
-            if (listaDeAdyacencia[temp[0].toInt()] == null){        // si el elemento del arreglo es nulo se le asigna un linked list vacio
-                listaDeAdyacencia[temp[0].toInt()] = LinkedList<Vertice>()
+            u = temp[0].toInt()
+            v = temp[1].toInt()
+            vertice1 = Vertice(u)
+            vertice2 = Vertice(v)
+
+            if (listaDeAdyacencia[u] == null){        // si el elemento del arreglo es nulo se le asigna un linked list vacio
+                listaDeAdyacencia[u] = LinkedList<Vertice>()
+            }
+            if (listaDeAdyacencia[v] == null){        // si el elemento del arreglo es nulo se le asigna un linked list vacio
+                listaDeAdyacencia[v] = LinkedList<Vertice>()
             }
 
-            v = temp[1].toInt()
-            u = temp[0].toInt()
-            vertice2 = Vertice(v)
-            vertice1 = Vertice(u)
+            if (listaDeAdyacencia[u]!!.indexOf(vertice2) != -1) throw KeyAlreadyExistsException("el objeto esta repetido")
+            listaDeAdyacencia[u]!!.addFirst(vertice2)       // se agrega el vertice 2, al inicio del arreglo
+            listaDeAdyacencia[u]!![0].Costo = temp[2].toDouble()
+            if (listaDeAdyacencia[v]!!.indexOf(vertice1) != -1) throw KeyAlreadyExistsException("el objeto esta repetido")
+            listaDeAdyacencia[v]!!.addFirst(vertice1)
+            listaDeAdyacencia[v]!![0].Costo = temp[2].toDouble()
 
-            if (listaDeAdyacencia[u]!!.indexOf(vertice1) != -1) throw KeyAlreadyExistsException("el objeto esta repetido")
-            listaDeAdyacencia[temp[u].toInt()]!!.addFirst(vertice2)       // se agrega el vertice 2, al inicio del arreglo
-            listaDeAdyacencia[temp[u].toInt()]!![0].Costo = temp[2].toDouble()
             if (listaDeVertices[u] == null) {
                 listaDeVertices[u] = vertice1             // se agregan los dos vertices a la lista de vertices
             }
@@ -61,10 +67,8 @@ public class GrafoNoDirigidoCosto: Grafo {
                 listaDeVertices[v] = vertice2
             }
 
-            j = listaDeVertices.indexOf(vertice1)            // se buscan los vertices y se aumentan sus respectivos grados interiores y exteriores
-            listaDeVertices[j]!!.gradoExterior +=1
-            j = listaDeVertices.indexOf(vertice2)
-            listaDeVertices[j]!!.gradoInterior +=1
+            listaDeVertices[u]!!.gradoExterior += 1       // se buscan los vertices y se aumentan sus respectivos grados interiores y exteriores
+            listaDeVertices[v]!!.gradoExterior += 1
             i++
         }
     }
@@ -79,16 +83,18 @@ public class GrafoNoDirigidoCosto: Grafo {
      está en el grafo, sin importar que tengan diferentes costos.
      */
     fun agregarAristaCosto(a: AristaCosto) : Boolean {
-        val indexVertice1 = listaDeVertices.indexOf(Vertice(a.x))
-        val indexVertice2 = listaDeVertices.indexOf(Vertice(a.y))
-        if (indexVertice1 == -1 || indexVertice2 == -1){
+        if (listaDeVertices[a.x] == null || listaDeVertices[a.y] == null){
             throw RuntimeException("El lado a agregar contiene un vertice que no pertenece al grafo")
         }
         if (listaDeAdyacencia[a.x]!!.indexOf(Vertice(a.y)) == -1){
-            listaDeVertices[indexVertice1]!!.gradoExterior += 1
-            listaDeVertices[indexVertice2]!!.gradoInterior += 1
+            listaDeVertices[a.x]!!.gradoExterior += 1
+            listaDeVertices[a.u]!!.gradoExterior += 1
             this.numeroDeLados += 1
-            listaDeAdyacencia[a.x]!!.add(Vertice(a.y))
+
+            listaDeAdyacencia[a.x]!!.addFirst(Vertice(a.y))
+            listaDeAdyacencia[a.x]!![0].Costo = a.costo
+            listaDeAdyacencia[a.y]!!.addFirst(Vertice(a.x))
+            listaDeAdyacencia[a.y]!![0].Costo = a.costo
             return true
         }
         return false
@@ -119,7 +125,7 @@ public class GrafoNoDirigidoCosto: Grafo {
         }
 
         override fun next(): AristaCosto {
-            val result = AristaCosto(v, adyacentes[i].valor)
+            val result = AristaCosto(v, adyacentes[i].valor, adyacentes[i].Costo)
             i += 1
             return result
         }
@@ -163,7 +169,7 @@ public class GrafoNoDirigidoCosto: Grafo {
         }
 
         override fun next(): AristaCosto {
-            val result = AristaCosto(i, n.x)
+            val result = AristaCosto(i, n.x, actual!![j].Costo)
             i += 1
             return result
         }
@@ -215,7 +221,7 @@ public class GrafoNoDirigidoCosto: Grafo {
         }
 
         override fun next(): AristaCosto {
-            val result = AristaCosto(i, actual!![j].valor)
+            val result = AristaCosto(i, actual!![j].valor, actual!![j].Costo)
             j += 1
             return result
         }
@@ -228,7 +234,7 @@ public class GrafoNoDirigidoCosto: Grafo {
     override fun grado(v: Int) : Int {
         if (listaDeVertices[v] == null) throw RuntimeException("El lado a agregar contiene un vertice que no pertenece al grafo")
         if (listaDeAdyacencia[v] == null) return 0
-        return listaDeAdyacencia[v]!!.size
+        return listaDeVertices[v]!!.gradoExterior
     }
 
     // Retorna un string con una representación del grafo, en donde se nuestra todo su contenido

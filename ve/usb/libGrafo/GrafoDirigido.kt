@@ -56,16 +56,16 @@ public class GrafoDirigido : Grafo {
         while (i < 2 + numDeLados && a[i] != ""){                // se itera por las demas lineas del archivo hasta que este se acabe
             temp = a[i].split(" ").filter {it != ""}   // se separa cada linea por espacios
 
-            if (listaDeAdyacencia[temp[0].toInt()] == null){     // si el elemento del arreglo es nulo se le asigna un linked list vacio
-                listaDeAdyacencia[temp[0].toInt()] = LinkedList<Vertice>()
-            }
-
             u = temp[0].toInt()                                 // valor del vertice de inicio
             v = temp[1].toInt()                                 // valor del vertice de llegada
             vertice1 = Vertice(u)                               // vertice de inicio
             vertice2 = Vertice(v)                               // vertice de llegada
 
-            if (listaDeAdyacencia[u]!!.indexOf(vertice1) != -1) throw KeyAlreadyExistsException("el objeto esta repetido")
+            if (listaDeAdyacencia[u] == null){     // si el elemento del arreglo es nulo se le asigna un linked list vacio
+                listaDeAdyacencia[u] = LinkedList<Vertice>()
+            }
+
+            if (listaDeAdyacencia[u]!!.indexOf(vertice2) != -1) throw KeyAlreadyExistsException("el objeto esta repetido")
             listaDeAdyacencia[u]!!.addFirst(vertice2)                           // Se agrega el vertice 2, al inicio del linked list.
             if (listaDeVertices[u] == null) listaDeVertices[u] = vertice1       // Se agregan los dos vertices a la lista de vertices, si estos ya se
             if (listaDeVertices[v] == null) listaDeVertices[v] = vertice2     // encuentran en la lista de vectores el programa continua y no los agrega
@@ -94,7 +94,7 @@ public class GrafoDirigido : Grafo {
             this.numDeLados += 1                                                    // si el lado no existe se aumenta el numero de lados
             listaDeVertices[a.inicio]!!.gradoExterior += 1                          // se aumenta el grado exterior del vertice de inicio
             listaDeVertices[a.fin]!!.gradoInterior += 1                             // se aumenta el grado interior del vertice de llegada
-            listaDeAdyacencia[a.inicio]!!.add(Vertice(a.fin))                       // se agrega el arco a la lista de adyacencia
+            listaDeAdyacencia[a.inicio]!!.addFirst(Vertice(a.fin))                       // se agrega el arco a la lista de adyacencia
             return true
         }
         return false
