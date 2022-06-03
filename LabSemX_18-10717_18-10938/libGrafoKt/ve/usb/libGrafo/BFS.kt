@@ -1,4 +1,7 @@
-package ve.usb.libGrafo
+package libGrafoKt.ve.usb.libGrafo
+
+import java.util.*
+import java.util.concurrent.ConcurrentLinkedQueue
 
 /* 
    Implementación del algoritmo BFS. 
@@ -9,6 +12,11 @@ public class BFS(val g: Grafo, val s: Int) {
     
     init {
 	// Se ejecuta BFS
+        for (i in g.listaDeAdyacencia)
+        //val c = ConcurrentLinkedQueue<Int>()
+        //c.add(2)
+        //val b = c.remove()
+
     }
 
     /*

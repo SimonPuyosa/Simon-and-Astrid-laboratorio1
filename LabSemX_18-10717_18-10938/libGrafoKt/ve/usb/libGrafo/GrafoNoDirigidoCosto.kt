@@ -1,4 +1,5 @@
-package ve.usb.libGrafo
+package libGrafoKt.ve.usb.libGrafo
+import libGrafoKt.ve.usb.libGrafo.Vertice
 import java.io.File
 import java.util.*
 import javax.management.openmbean.KeyAlreadyExistsException
@@ -11,10 +12,10 @@ import javax.management.openmbean.KeyAlreadyExistsException
  */
 public class GrafoNoDirigidoCosto: Grafo {
     // Propiedades del grafo no dirigido
-    var listaDeAdyacencia: Array<LinkedList<Vertice>?> = arrayOf(null)
-    lateinit var listaDeVertices: Array<Vertice?>                 //
-    var numeroDeLados: Int = 0
-    var numeDeVertices: Int = 0
+    override var listaDeAdyacencia: Array<LinkedList<Vertice>?> = arrayOf(null)
+    override var listaDeVertices: Array<Vertice?> = arrayOf(null)
+    override var numDeLados: Int = 0
+    override var numDeVertices: Int = 0
 
     /** Contruye un grafo no dirigido partiendo de una integral que representa el numero de vertices
      */
@@ -41,10 +42,10 @@ public class GrafoNoDirigidoCosto: Grafo {
          *  Tiempo de operacion: O(|V| + |E|)
          */
         val a = File(nombreArchivo).readLines()                   // Se guarda el archivo en la variable a de tipo List<String>
-        numeDeVertices = a[0].toInt()                             // Se obtiene de la primera linea linea el numero de vertices
-        listaDeAdyacencia = arrayOfNulls(numeDeVertices)          // Se genera la lista de adyacencia (array de listas enlazadas)
-        listaDeVertices = arrayOfNulls(numeDeVertices)            // Se genera la lista de vertices la cual sera una lista enlazada
-        numeroDeLados = a[1].toInt()                              // Se obtiene de la segunda linea el numero de lados
+        numDeVertices = a[0].toInt()                             // Se obtiene de la primera linea linea el numero de vertices
+        listaDeAdyacencia = arrayOfNulls(numDeVertices)          // Se genera la lista de adyacencia (array de listas enlazadas)
+        listaDeVertices = arrayOfNulls(numDeVertices)            // Se genera la lista de vertices la cual sera una lista enlazada
+        numDeLados = a[1].toInt()                              // Se obtiene de la segunda linea el numero de lados
 
         // Agregamos los lados a la lista de adyacencia
         var i = 2
@@ -53,7 +54,7 @@ public class GrafoNoDirigidoCosto: Grafo {
         var temp: List<String>
         var vertice1: Vertice
         var vertice2: Vertice
-        while (i < 2 + numeroDeLados && a[i] != ""){                // se itera por las demas lineas del archivo hasta que este se acabe
+        while (i < 2 + numDeLados && a[i] != ""){                // se itera por las demas lineas del archivo hasta que este se acabe
             temp = a[i].split(" ").filter {it != ""}      // se separa cada linea por espacios
 
             u = temp[0].toInt()                                 // valor del vertice 1
@@ -98,7 +99,7 @@ public class GrafoNoDirigidoCosto: Grafo {
             throw RuntimeException("El lado a agregar contiene un vertice que no pertenece al grafo")
         }
         if (listaDeAdyacencia[a.x]!!.indexOf(Vertice(a.y)) == -1){      // se verifica que el lado no exista
-            this.numeroDeLados += 1                                     // si el lado no existe se aumenta el numero de lados
+            this.numDeLados += 1                                     // si el lado no existe se aumenta el numero de lados
             listaDeVertices[a.x]!!.gradoExterior += 1                   // se aumenta el grado del vertice x
             listaDeVertices[a.u]!!.gradoExterior += 1                   // se aumenta el grado del vertice x
 
@@ -118,7 +119,7 @@ public class GrafoNoDirigidoCosto: Grafo {
          *  Postcondicion: numDeLados == |E|
          *  Tiempo: O(1)
          */
-        return numeroDeLados
+        return numDeLados
     }
 
     /** Metodo en el que retorna una integral que representa el numero de vertices del grafo
@@ -128,7 +129,7 @@ public class GrafoNoDirigidoCosto: Grafo {
          *  Postcondicion: numDeVertices == |V|
          *  Tiempo: O(1)
          */
-        return numeDeVertices
+        return numDeVertices
     }
 
     /**  clase interna y privada que dado un grafo y un entero que representa el valor de un vertice del grafo,
@@ -204,7 +205,7 @@ public class GrafoNoDirigidoCosto: Grafo {
         private var j: Int = 0
 
         override fun hasNext(): Boolean {
-            while (i < G.numeDeVertices){
+            while (i < G.numDeVertices){
                 if (temp[i] != null){
                     j = 0
                     actual = temp[i]
@@ -273,7 +274,7 @@ public class GrafoNoDirigidoCosto: Grafo {
         private var j: Int = 0
 
         override fun hasNext(): Boolean {
-            while (i < G.numeDeVertices){
+            while (i < G.numDeVertices){
                 if (temp[i] != null){
                     actual = temp[i]
                     if (actual != null && j < actual!!.size){

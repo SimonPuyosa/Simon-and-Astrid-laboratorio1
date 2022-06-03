@@ -1,4 +1,5 @@
-package ve.usb.libGrafo
+package libGrafoKt.ve.usb.libGrafo
+import libGrafoKt.ve.usb.libGrafo.Vertice
 import java.io.File
 import java.util.*
 import javax.management.openmbean.KeyAlreadyExistsException
@@ -11,10 +12,10 @@ import javax.management.openmbean.KeyAlreadyExistsException
  */
 public class GrafoDirigidoCosto : Grafo {
     // Propiedades del grafo dirigido
-    var listaDeAdyacencia: Array<LinkedList<Vertice>?> = arrayOf(null)
-    lateinit var listaDeVertices: Array<Vertice?>
-    var numDeLados: Int = 0
-    var numDeVertices: Int = 0
+    override var listaDeAdyacencia: Array<LinkedList<Vertice>?> = arrayOf(null)
+    override var listaDeVertices: Array<Vertice?> = arrayOf(null)
+    override var numDeLados: Int = 0
+    override var numDeVertices: Int = 0
 
     /**Construye un grafo dirigido partiendo de una integral que representa el número de vértices
      */

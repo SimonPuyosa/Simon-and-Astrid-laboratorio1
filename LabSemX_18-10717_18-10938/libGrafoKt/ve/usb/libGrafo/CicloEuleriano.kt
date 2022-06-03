@@ -1,4 +1,4 @@
-package ve.usb.grafoLib
+package libGrafoKt.ve.usb.libGrafo
 
 /*
  Esta clase al inicializarse determina si un digrafo fuertemente conectado, 

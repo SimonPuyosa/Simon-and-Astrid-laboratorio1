@@ -1,4 +1,4 @@
-package ve.usb.libGrafo
+package libGrafoKt.ve.usb.libGrafo
 
 public class ArcoCosto(val x: Int, val y: Int, val costo: Double) : Arco(x, y) {
 

@@ -1,4 +1,4 @@
-package ve.usb.libGrafo
+package libGrafoKt.ve.usb.libGrafo
 
 abstract class Lado(val a: Int, val b: Int) {
 

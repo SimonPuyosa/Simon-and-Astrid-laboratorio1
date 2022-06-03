@@ -1,6 +1,12 @@
-package ve.usb.libGrafo
+package libGrafoKt.ve.usb.libGrafo
+
+import java.util.*
 
 interface Grafo : Iterable<Lado> {
+    var listaDeAdyacencia: Array<LinkedList<Vertice>?>
+    var listaDeVertices: Array<Vertice?>
+    var numDeLados: Int
+    var numDeVertices: Int
 
     /** Metodo en el que retorna una integral que representa el numero de lados del grafo
      */

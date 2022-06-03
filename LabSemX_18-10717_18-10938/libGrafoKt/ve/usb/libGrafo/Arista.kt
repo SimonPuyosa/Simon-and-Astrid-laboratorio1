@@ -1,4 +1,4 @@
-package ve.usb.libGrafo
+package libGrafoKt.ve.usb.libGrafo
 
 public open class Arista(val v: Int, val u: Int) : Lado(v, u) {
 

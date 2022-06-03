@@ -1,4 +1,4 @@
-package ve.usb.grafoLib
+package libGrafoKt.ve.usb.libGrafo
 
 /*
  Determina si un grafo es 2-coloreable o bipartito. El algoritmo se ejecutan 

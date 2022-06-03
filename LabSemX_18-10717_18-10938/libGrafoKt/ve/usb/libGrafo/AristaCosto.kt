@@ -1,4 +1,4 @@
-package ve.usb.libGrafo
+package libGrafoKt.ve.usb.libGrafo
 
 public class AristaCosto(val x: Int, val y: Int, val costo: Double) : Comparable<AristaCosto>, Arista(x, y) {
 
