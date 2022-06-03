@@ -30,7 +30,7 @@ abstract class Lado(val a: Int, val b: Int) {
                 return a
             }
             else -> {
-                RuntimeExpception("la integral debe ser uno de los dos vertices")
+                RuntimeException("la integral debe ser uno de los dos vertices")
                 return 0
             }
         }
