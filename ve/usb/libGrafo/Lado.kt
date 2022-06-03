@@ -9,7 +9,7 @@ abstract class Lado(val a: Int, val b: Int) {
          *  Precondicion: a.isInt() == true
          *  Tiempo: O(1)
          */
-        return a
+        return this.a
     }
 
     /** Metodo en el que dado una integral que representa un vertice del lado retorna una integral que
@@ -22,16 +22,15 @@ abstract class Lado(val a: Int, val b: Int) {
          *  Postcondicion: result != w
          *  Tiempo: O(1)
          */
-        when (w) {
+        return when (w) {
             a -> {
-                return b
+                b
             }
             b -> {
-                return a
+                a
             }
             else -> {
-                RuntimeException("la integral debe ser uno de los dos vertices")
-                return 0
+                throw RuntimeException("la integral debe ser uno de los dos vertices")
             }
         }
     }

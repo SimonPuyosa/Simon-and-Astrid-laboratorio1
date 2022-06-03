@@ -3,7 +3,7 @@ import java.io.File
 import java.util.*
 import javax.management.openmbean.KeyAlreadyExistsException
 
-/** Grafo el cual tiene como propiedades:
+/** Digrafo el cual tiene como propiedades:
  *      listaDeAdyacencia: un arreglo, que puede ser nulo, de linkedlist de vertices
  *      listaDeVertices: arreglo, que puede ser nulo, de vertices
  *      numDeLados: entero que representa el numero de lados del grafo
@@ -35,8 +35,8 @@ public class GrafoDirigido : Grafo {
         /** Entrada: un string de la ubicacion del archivo a buscar
          *  Precondicion: el string debe tener una ubicacion real y valida del archivo
          *  Postcondicion:
-         *      numDeVertice = Archivo[0]
-         *      numDeLados = Archivo[1]
+         *      numDeVertice == Archivo[0]
+         *      numDeLados == Archivo[1]
          *      listaDeAdyacencia.sizes == listaDeVertices.size == numDeVertices
          *  Tiempo de operacion: O(|V| + |E|)
          */
@@ -94,7 +94,7 @@ public class GrafoDirigido : Grafo {
             this.numDeLados += 1                                                    // si el lado no existe se aumenta el numero de lados
             listaDeVertices[a.inicio]!!.gradoExterior += 1                          // se aumenta el grado exterior del vertice de inicio
             listaDeVertices[a.fin]!!.gradoInterior += 1                             // se aumenta el grado interior del vertice de llegada
-            listaDeAdyacencia[a.inicio]!!.addFirst(Vertice(a.fin))                       // se agrega el arco a la lista de adyacencia
+            listaDeAdyacencia[a.inicio]!!.addFirst(Vertice(a.fin))                  // se agrega el arco a la lista de adyacencia
             return true
         }
         return false
@@ -107,12 +107,11 @@ public class GrafoDirigido : Grafo {
         /** Entrada: una integral del valor del vertice del cual se pide el grado
          *  Salida: una integral del grado del vertice pedido
          *  Precondicion: v in ListaDeVertices
-         *  Postcondicion: grados = gradosInterior + gradosExterior
+         *  Postcondicion: grados == gradosInterior + gradosExterior
          *  Tiempo: O(1)
          */
         if (listaDeVertices[v] == null) throw RuntimeException("El lado a agregar contiene un vertice que no pertenece al grafo")
-        val x = listaDeVertices[v]
-        return x!!.gradoExterior + x.gradoInterior               // se retorna la suma de los grados interiores y exteriores
+        return gradoExterior(v) + gradoInterior(v)               // se retorna la suma de los grados interiores y exteriores
     }
 
     /** Metodo que dado un integral que representa el valor de un vertice del grafo, retorna el grado exterior de este vertice, si el
@@ -149,7 +148,7 @@ public class GrafoDirigido : Grafo {
      */
     override fun obtenerNumeroDeLados() : Int {
         /** Salida: una integral del numero de lados del grafo
-         *  Postcondicion: numDeLados = |E|
+         *  Postcondicion: numDeLados == |E|
          *  Tiempo: O(1)
          */
         return numDeLados
@@ -303,7 +302,6 @@ public class GrafoDirigido : Grafo {
          *  Postcondicion: Arcos in GrafoDirigido
          *  Tiempo: O(|V| + |E|)
          */
-
         private val temp: Array<LinkedList<Vertice>?> = G.listaDeAdyacencia
         private var actual: LinkedList<Vertice>? = null
         private var i = 0

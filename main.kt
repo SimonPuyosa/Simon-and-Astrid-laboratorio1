@@ -1,5 +1,4 @@
 import ve.usb.libGrafo.*
-import java.lang.RuntimeException
 
 fun main(args: Array<String>) {
     var i = 0
@@ -26,33 +25,14 @@ fun main(args: Array<String>) {
         }
     }
 
-
-
+    print("Numero de lados: ")
     println(clase.obtenerNumeroDeLados())
+    print("Numero de vertices: ")
     println(clase.obtenerNumeroDeVertices())
-    //println(clase.agregarArco(Arco(4,4)))
-    //println(clase.agregarArco(Arco(4,6)))
-    //println(clase.agregarArco(Arco(4,6)))
+    print("Grado del vertice 4: ")
     println(clase.grado(4))
-
-
-
+    println()
+    print("Se imprime el grafo (lista de adyacencia): ")
     println(clase.toString())
-    val a = clase.iterator()
-    i = 0
-    while(a.hasNext()){
-        println(a.next())
-        i++
-    }
-    println(i)
-    println(clase.grado(4))
-
-    val b = clase.adyacentes(4).iterator()
-    i = 0
-    while(b.hasNext()){
-        println(b.next())
-        i++
-    }
-
 }
 

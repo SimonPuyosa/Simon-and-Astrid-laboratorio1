@@ -25,7 +25,7 @@ public open class Arco(val inicio: Int, val fin: Int) : Lado(inicio, fin) {
     /** Metodo en el que retorna una string de los valores del arco
      */
     override fun toString() : String {
-        /** Salida: una string de los valores del arci
+        /** Salida: una string de los valores del arco
          *  Precondicion: inicio.isInt() == true && fin.isInt() == true
          *  Tiempo: O(1)
          */
