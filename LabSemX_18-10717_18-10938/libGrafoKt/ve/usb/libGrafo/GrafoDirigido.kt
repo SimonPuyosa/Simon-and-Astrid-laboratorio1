@@ -45,37 +45,28 @@ public class GrafoDirigido : Grafo {
         numDeVertices = a[0].toInt()                            // Se obtiene de la primera linea linea el numero de vertices
         listaDeAdyacencia = arrayOfNulls(numDeVertices)         // Se genera la lista de adyacencia (array de listas enlazadas)
         listaDeVertices = arrayOfNulls(numDeVertices)           // Se genera la lista de vertices la cual sera una lista enlazada
-        numDeLados = a[1].toInt()                               // Se obtiene de la segunda linea el numero de lados
+        val numerodelados = a[1].toInt()                               // Se obtiene de la segunda linea el numero de lados
+        numDeLados = 0
 
         // Agregamos los lados a la lista de adyacencia
         var i = 2
         var v: Int
         var u: Int
         var temp: List<String>
-        var vertice1: Vertice
-        var vertice2: Vertice
-        while (i < 2 + numDeLados && a[i] != ""){                // se itera por las demas lineas del archivo hasta que este se acabe
+        while (i < 2 + numerodelados && a[i] != ""){                // se itera por las demas lineas del archivo hasta que este se acabe
             temp = a[i].split(" ").filter {it != ""}   // se separa cada linea por espacios
-
             u = temp[0].toInt()                                 // valor del vertice de inicio
             v = temp[1].toInt()                                 // valor del vertice de llegada
-            vertice1 = Vertice(u)                               // vertice de inicio
-            vertice2 = Vertice(v)                               // vertice de llegada
-
             if (listaDeAdyacencia[u] == null){     // si el elemento del arreglo es nulo se le asigna un linked list vacio
                 listaDeAdyacencia[u] = LinkedList<Vertice>()
             }
 
-            if (listaDeAdyacencia[u]!!.indexOf(vertice2) != -1) throw KeyAlreadyExistsException("el objeto esta repetido")
-            listaDeAdyacencia[u]!!.addFirst(vertice2)                           // Se agrega el vertice 2, al inicio del linked list.
-            if (listaDeVertices[u] == null) listaDeVertices[u] = vertice1       // Se agregan los dos vertices a la lista de vertices, si estos ya se
-            if (listaDeVertices[v] == null) listaDeVertices[v] = vertice2     // encuentran en la lista de vectores el programa continua y no los agrega
-
-            listaDeVertices[u]!!.gradoExterior += 1       // se buscan los vertices y se aumentan sus respectivos grados interiores y exteriores
-            listaDeVertices[v]!!.gradoInterior += 1
+            if (listaDeVertices[u] == null) listaDeVertices[u] = Vertice(u)     // Se agregan los dos vertices a la lista de vertices, si estos ya se
+            if (listaDeVertices[v] == null) listaDeVertices[v] = Vertice(v)     // encuentran en la lista de vectores el programa continua y no los agrega
+            if (! agregarArco(Arco(u, v))) throw KeyAlreadyExistsException("el objeto esta repetido")
             i++
-
         }
+        if (numDeLados != numerodelados) throw RuntimeException("hubo un error subiendo la data")
     }
 
     /** Metodo que agrega al digrafo un Arco dado y retorna un Booleano determinando si el Arco ya estaba agregado o no,
@@ -88,7 +79,8 @@ public class GrafoDirigido : Grafo {
          *  Postcondicion: Arco in listaDeAdyacencia
          *  Tiempo: O(|E|)
          */
-        if (listaDeVertices[a.inicio] == null || listaDeVertices[a.fin] == null){   // se verifica que los vertices existan
+        if (a.inicio >= listaDeVertices.size || a.fin >= listaDeVertices.size ||
+            listaDeVertices[a.inicio] == null || listaDeVertices[a.fin] == null){   // se verifica que los vertices existan
             throw RuntimeException("El lado a agregar contiene un vertice que no pertenece al grafo")
         }
         if (listaDeAdyacencia[a.inicio]!!.indexOf(Vertice(a.fin)) == -1){           // se verifica que el lado no exista
@@ -111,7 +103,7 @@ public class GrafoDirigido : Grafo {
          *  Postcondicion: grados == gradosInterior + gradosExterior
          *  Tiempo: O(1)
          */
-        if (listaDeVertices[v] == null) throw RuntimeException("El lado a agregar contiene un vertice que no pertenece al grafo")
+        if (v >= listaDeVertices.size || listaDeVertices[v] == null) throw RuntimeException("El lado a agregar contiene un vertice que no pertenece al grafo")
         return gradoExterior(v) + gradoInterior(v)               // se retorna la suma de los grados interiores y exteriores
     }
 
@@ -125,7 +117,7 @@ public class GrafoDirigido : Grafo {
          *  Postcondicion: gradoExterior < grado
          *  Tiempo: O(1)
          */
-        if (listaDeVertices[v] == null) throw RuntimeException("El lado a agregar contiene un vertice que no pertenece al grafo")
+        if (v >= listaDeVertices.size || listaDeVertices[v] == null) throw RuntimeException("El lado a agregar contiene un vertice que no pertenece al grafo")
         val x = listaDeVertices[v]
         return x!!.gradoExterior                                    // se retorna el grado exterior del vertice
     }
@@ -140,7 +132,7 @@ public class GrafoDirigido : Grafo {
          *  Postcondicion: gradoInterior < grado
          *  Tiempo: O(1)
          */
-        if (listaDeVertices[v] == null) throw RuntimeException("El lado a agregar contiene un vertice que no pertenece al grafo")
+        if (v >= listaDeVertices.size || listaDeVertices[v] == null) throw RuntimeException("El lado a agregar contiene un vertice que no pertenece al grafo")
         val x = listaDeVertices[v]
         return x!!.gradoInterior                                    // se retorna el grado interior del vertice
     }
@@ -168,7 +160,7 @@ public class GrafoDirigido : Grafo {
     /**  clase interna y privada que dado un digrafo y un entero que representa el valor de un vertice del digrafo,
      *   se retorna un iterador de arcos en los que el integral dado es el valor del vertice adyacente
      */
-    private inner class AdyacenIterato(G: GrafoDirigido, private val v: Int) : Iterator<Arco> {
+    inner class AdyacenIterato(G: GrafoDirigido, private val v: Int) : Iterator<Arco> {
         /** Entrada:
          *      G: un digrafo en el cual se buscaran los vertices adyacentes
          *      v: un integral que representa el valor del vertice del cual se buscaran los lados en los que este es adyacente
@@ -177,24 +169,21 @@ public class GrafoDirigido : Grafo {
          *  Postcondicion: Arcos in GrafoDirigido
          *  Tiempo: O(1)
          */
-        private val adyacentes = G.listaDeAdyacencia[v]!!
-        private var i = 0
+        private var it = G.listaDeAdyacencia[v]!!.iterator()
 
         override fun hasNext(): Boolean {
-            if (adyacentes.size <= i) return false
-            return true
+            return it.hasNext()
         }
 
         override fun next(): Arco {
-            val result = Arco(v, adyacentes[i].valor)
-            i += 1
-            return result
+            return Arco(v, it.next().valor)
         }
     }
 
+
     /** Clase interna y privada que sobreescribe el metodo iterator y lo iguala a la clase AdyacenIterato
      */
-    private inner class AdyacenIterable(private val G: GrafoDirigido, private val v: Int) : Iterable<Arco>{
+    inner class AdyacenIterable(private val G: GrafoDirigido, private val v: Int) : Iterable<Arco>{
         /** Entrada:
          *      G: un digrafo en el cual se buscaran los vertices adyacentes
          *      v: un integral que representa el valor del vertice del cual se buscaran los lados en los que este es adyacente
@@ -216,14 +205,14 @@ public class GrafoDirigido : Grafo {
          *  Postcondicion: Arcos in GrafoDirigido
          *  Tiempo: O(1)
          */
-        if (listaDeVertices[v] == null) throw RuntimeException("no se encuentra el vertice en el grafo")
+        if (v >= listaDeVertices.size || listaDeVertices[v] == null) throw RuntimeException("no se encuentra el vertice en el grafo")
         return AdyacenIterable(this, v)
     }
 
     /**  clase interna y privada que dado un digrafo y un Arco que representa un lado del digrafo,
      *   se retorna un iterador de Arcos adyacentes al Arco dado
      */
-    private inner class LadAdyacenIterato(private val G: GrafoDirigido, private val v: Arco) : Iterator<Arco> {
+    inner class LadAdyacenIterato(private val G: GrafoDirigido, private val v: Arco) : Iterator<Arco> {
         /** Entrada:
          *      G: un digrafo en el cual se buscaran los vertices adyacentes al arco
          *      v: un arco del cual se buscaran los lados adyacentes al arco
@@ -233,18 +222,15 @@ public class GrafoDirigido : Grafo {
          *  Tiempo: O(|V| + |E|)
          */
         private var adyacList: Array<LinkedList<Vertice>?> = G.listaDeAdyacencia
-        private var actual: LinkedList<Vertice>? = null
         private var i = 0
-        private var j: Int = 0
+        private lateinit var it: MutableIterator<Vertice>
 
         override fun hasNext(): Boolean {
             while (i < G.numDeVertices){                            // se itera sobre el numero de vertices
                 if (adyacList[i] != null){                          // Si la casilla del arreglo listaDeAdyaciencia es nula es porque ese vertice no tiene un vertice adyacente
-                    j = 0
-                    actual = adyacList[i]
-                    while(actual != null && j < actual!!.size){     // Se itera a lo largo de la linkedlist hasta conseguir al vertice v.incio o hasta conseguir un vertice nulo
-                        if (actual!![j].valor == v.inicio) return true
-                        j += 1
+                    it = adyacList[i]!!.iterator()
+                    while(it.hasNext()){     // Se itera a lo largo de la linkedlist hasta conseguir al vertice v.incio o hasta conseguir un vertice nulo
+                        if (it.next().valor == v.inicio) return true
                     }
                 }
                 i++
@@ -261,7 +247,7 @@ public class GrafoDirigido : Grafo {
 
     /** Clase interna y privada que sobreescribe el metodo iterator y lo iguala a la clase LadAdyacenIterato
      */
-    private inner class LadAdyacenIterable(private val G: GrafoDirigido, private val l: Arco) : Iterable<Arco>{
+    inner class LadAdyacenIterable(private val G: GrafoDirigido, private val l: Arco) : Iterable<Arco>{
         /** Entrada:
          *      G: un digrafo en el cual se buscaran los vertices adyacentes
          *      v: un arco del cual se buscaran los lados adyacentes al arco
@@ -283,10 +269,13 @@ public class GrafoDirigido : Grafo {
          *  Postcondicion: Arcos in GrafoDirigido
          *  Tiempo: O(|V| + |E|)
          */
-
         // Se revisa si los vertices pertenecen al grafo
-        if (listaDeVertices[l.inicio] == null) throw RuntimeException("no se encuentra el vertice en el grafo")
-        if (listaDeVertices[l.fin] == null) throw RuntimeException("no se encuentra el vertice en el grafo")
+        if (l.inicio >= listaDeVertices.size || listaDeVertices[l.inicio] == null) {
+            throw RuntimeException("no se encuentra el vertice en el grafo")
+        }
+        if (l.fin >= listaDeVertices.size || listaDeVertices[l.fin] == null) {
+            throw RuntimeException("no se encuentra el vertice en el grafo")
+        }
 
         val temp = listaDeAdyacencia[l.inicio]!! // se verifica si el arco existe
         if (temp.indexOf(Vertice(l.fin)) == -1) throw RuntimeException("no se encuentra el lado en el grafo")
@@ -296,36 +285,37 @@ public class GrafoDirigido : Grafo {
 
     /**  clase interna y privada que dado un digrafo retorna un iterador de todos los Arcos pertenecientes al digrafo
      */
-    private inner class LadosIterato(private val G: GrafoDirigido) : Iterator<Arco> {
+    inner class LadosIterato(private val G: GrafoDirigido) : Iterator<Arco> {
         /** Entrada: un digrafo en el cual se buscaran todos los Arcos pertenecientes a este
          *  Salida: una iterador que retorna todos los Arcos pertenecientes a G
          *  Precondicion: listaDeAdyacencia != arrayOfNulls()
          *  Postcondicion: Arcos in GrafoDirigido
          *  Tiempo: O(|V| + |E|)
          */
-        private val temp: Array<LinkedList<Vertice>?> = G.listaDeAdyacencia
-        private var actual: LinkedList<Vertice>? = null
         private var i = 0
-        private var j: Int = 0
+        private var it = AdyacenIterato(G,0)
+        init {
+            while (i < G.numDeVertices - 1){
+                if (G.listaDeAdyacencia[i] != null) {
+                    it = AdyacenIterato(G, i)
+                    break
+                }
+                i++
+            }
+            if (i == G.numDeVertices - 1) throw RuntimeException("El grafo esta vacio")
+        }
 
         override fun hasNext(): Boolean {
-            while (i < G.numDeVertices){                            // se itera sobre el numero de vertices
-                if (temp[i] != null){                               // Si la casilla del arreglo listaDeAdyaciencia es nula es porque ese vertice no tiene un vertice adyacente
-                    actual = temp[i]
-                    if (actual != null && j < actual!!.size){       // Se itera a lo largo de la linkedlist hasta conseguir un vertice nulo
-                        return true
-                    }
-                }
-                j = 0
+            while (i < G.numDeVertices - 1){                            // se itera sobre el numero de vertices
+                if (it.hasNext()) return true
                 i++
+                if (i < G.numDeVertices - 1) it = AdyacenIterato(G, i)
             }
             return false
         }
 
         override fun next(): Arco {
-            val result = Arco(i, actual!![j].valor)                       // se prepara la variable de salida
-            j += 1                                                        // una vez encontrado un vertice adyacente se busca otro vertice adyacente en el otro linkedlist del arreglo
-            return result
+            return it.next()
         }
     }
 
@@ -347,7 +337,7 @@ public class GrafoDirigido : Grafo {
          *  Postcondicion: Arcos in GrafoDirigido
          *  Tiempo: O(|V| + |E|)
          */
-        val it = iterator()
+        val it = this.iterator()
         var result = "[ "
         while (it.hasNext()){
             result += it.next().toString()

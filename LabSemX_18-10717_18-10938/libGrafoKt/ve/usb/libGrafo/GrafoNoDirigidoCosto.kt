@@ -45,22 +45,18 @@ public class GrafoNoDirigidoCosto: Grafo {
         numDeVertices = a[0].toInt()                             // Se obtiene de la primera linea linea el numero de vertices
         listaDeAdyacencia = arrayOfNulls(numDeVertices)          // Se genera la lista de adyacencia (array de listas enlazadas)
         listaDeVertices = arrayOfNulls(numDeVertices)            // Se genera la lista de vertices la cual sera una lista enlazada
-        numDeLados = a[1].toInt()                              // Se obtiene de la segunda linea el numero de lados
+        val numerodelados = a[1].toInt()                              // Se obtiene de la segunda linea el numero de lados
+        numDeLados = 0
 
         // Agregamos los lados a la lista de adyacencia
         var i = 2
         var u: Int
         var v: Int
         var temp: List<String>
-        var vertice1: Vertice
-        var vertice2: Vertice
-        while (i < 2 + numDeLados && a[i] != ""){                // se itera por las demas lineas del archivo hasta que este se acabe
+        while (i < 2 + numerodelados && a[i] != ""){                // se itera por las demas lineas del archivo hasta que este se acabe
             temp = a[i].split(" ").filter {it != ""}      // se separa cada linea por espacios
-
             u = temp[0].toInt()                                 // valor del vertice 1
             v = temp[1].toInt()                                 // valor del vertice 2
-            vertice1 = Vertice(u)                               // vertice 1
-            vertice2 = Vertice(v)                               // vertice 2
 
             if (listaDeAdyacencia[u] == null){        // si el elemento del arreglo es nulo se le asigna un linked list vacio
                 listaDeAdyacencia[u] = LinkedList<Vertice>()
@@ -69,18 +65,9 @@ public class GrafoNoDirigidoCosto: Grafo {
                 listaDeAdyacencia[v] = LinkedList<Vertice>()
             }
 
-            if (listaDeAdyacencia[u]!!.indexOf(vertice2) != -1) throw KeyAlreadyExistsException("el objeto esta repetido")
-            listaDeAdyacencia[u]!!.addFirst(vertice2)                   // se agrega el vertice 2, al inicio del arreglo
-            listaDeAdyacencia[u]!![0].Costo = temp[2].toDouble()        // se le agrega el costo del lado
-            if (listaDeAdyacencia[v]!!.indexOf(vertice1) != -1) throw KeyAlreadyExistsException("el objeto esta repetido")
-            listaDeAdyacencia[v]!!.addFirst(vertice1)                   // lo mismo para el vertice 1
-            listaDeAdyacencia[v]!![0].Costo = temp[2].toDouble()
-
-            if (listaDeVertices[u] == null) listaDeVertices[u] = vertice1   // se agregan los dos vertices a la lista de vertices
-            if (listaDeVertices[v] == null) listaDeVertices[v] = vertice2   // si estos ya se encuentran en la lista de vectores el programa continua y no los agrega
-
-            listaDeVertices[u]!!.gradoExterior += 1       // se buscan los vertices y se aumentan sus respectivos grados
-            listaDeVertices[v]!!.gradoExterior += 1
+            if (u >= listaDeVertices.size || listaDeVertices[u] == null) listaDeVertices[u] = Vertice(u)   // se agregan los dos vertices a la lista de vertices
+            if (v >= listaDeVertices.size || listaDeVertices[v] == null) listaDeVertices[v] = Vertice(v)   // si estos ya se encuentran en la lista de vectores el programa continua y no los agrega
+            if (! agregarAristaCosto(AristaCosto(u, v, temp[2].toDouble()))) throw KeyAlreadyExistsException("el objeto esta repetido")
             i++
         }
     }
@@ -95,7 +82,8 @@ public class GrafoNoDirigidoCosto: Grafo {
          *  Postcondicion: AristaCosto in listaDeAdyacencia
          *  Tiempo: O(|E|)
          */
-        if (listaDeVertices[a.x] == null || listaDeVertices[a.y] == null){
+        if (a.x >= listaDeVertices.size || a.y >= listaDeVertices.size ||
+            listaDeVertices[a.x] == null || listaDeVertices[a.y] == null){   // se verifica que los vertices existan
             throw RuntimeException("El lado a agregar contiene un vertice que no pertenece al grafo")
         }
         if (listaDeAdyacencia[a.x]!!.indexOf(Vertice(a.y)) == -1){      // se verifica que el lado no exista
@@ -144,24 +132,21 @@ public class GrafoNoDirigidoCosto: Grafo {
          *  Postcondicion: AristaCosto in GrafoNoDirigidoCosto
          *  Tiempo: O(1)
          */
-        private val adyacentes = G.listaDeAdyacencia[v]!!
-        private var i = 0
+        private var it = G.listaDeAdyacencia[v]!!.iterator()
 
         override fun hasNext(): Boolean {
-            if (adyacentes.size <= i) return false
-            return true
+            return it.hasNext()
         }
 
         override fun next(): AristaCosto {
-            val result = AristaCosto(v, adyacentes[i].valor, adyacentes[i].Costo)
-            i += 1
-            return result
+            val temp = it.next()
+            return AristaCosto(v, temp.valor, temp.Costo)
         }
     }
 
     /** Clase interna y privada que sobreescribe el metodo iterator y lo iguala a la clase AdyacenIterato
      */
-    private inner class AdyacenIterable(private val G: GrafoNoDirigidoCosto, private val v: Int) : Iterable<AristaCosto> {
+    inner class AdyacenIterable(private val G: GrafoNoDirigidoCosto, private val v: Int) : Iterable<AristaCosto> {
         /** Entrada:
          *      G: un grafo en el cual se buscaran los vertices adyacentes
          *      v: un integral que representa el valor del vertice del cual se buscaran los lados en los que este es adyacente
@@ -183,14 +168,14 @@ public class GrafoNoDirigidoCosto: Grafo {
          *  Postcondicion: AristaCosto in GrafoNoDirigidoCosto
          *  Tiempo: O(1)
          */
-        if (listaDeVertices[v] == null) throw RuntimeException("no se encuentra el vertice en el grafo")
+        if (v >= listaDeVertices.size || listaDeVertices[v] == null) throw RuntimeException("no se encuentra el vertice en el grafo")
         return AdyacenIterable(this, v)
     }
 
     /**  clase interna y privada que dado un grafo y un AristaCosto que representa un lado del grafo,
      *   se retorna un iterador de AristaCosto adyacentes al AristaCosto dado
      */
-    private inner class LadAdyacenIterato(private val G: GrafoNoDirigidoCosto, private val n: AristaCosto) : Iterator<AristaCosto> {
+    inner class LadAdyacenIterato(private val G: GrafoNoDirigidoCosto, private val n: AristaCosto) : Iterator<AristaCosto> {
         /** Entrada:
          *      G: un grafo en el cual se buscaran los vertices adyacentes al AristaCosto
          *      v: un AristaCosto del cual se buscaran los lados adyacentes al AristaCosto
@@ -199,19 +184,18 @@ public class GrafoNoDirigidoCosto: Grafo {
          *  Postcondicion: AristaCosto in GrafoNoDirigidoCosto
          *  Tiempo: O(|V| + |E|)
          */
-        private var temp: Array<LinkedList<Vertice>?> = G.listaDeAdyacencia
-        private var actual: LinkedList<Vertice>? = null
+        private var adyacList: Array<LinkedList<Vertice>?> = G.listaDeAdyacencia
         private var i = 0
-        private var j: Int = 0
+        private lateinit var it: MutableIterator<Vertice>
+        private lateinit var actual: Vertice
 
         override fun hasNext(): Boolean {
-            while (i < G.numDeVertices){
-                if (temp[i] != null){
-                    j = 0
-                    actual = temp[i]
-                    while(actual != null && j < actual!!.size){
-                        if (actual!![j].valor == n.x) return true
-                        j += 1
+            while (i < G.numDeVertices){                            // se itera sobre el numero de vertices
+                if (adyacList[i] != null){                          // Si la casilla del arreglo listaDeAdyaciencia es nula es porque ese vertice no tiene un vertice adyacente
+                    it = adyacList[i]!!.iterator()
+                    while(it.hasNext()){     // Se itera a lo largo de la linkedlist hasta conseguir al vertice v.incio o hasta conseguir un vertice nulo
+                        actual = it.next()
+                        if (actual.valor == n.v) return true
                     }
                 }
                 i++
@@ -220,15 +204,14 @@ public class GrafoNoDirigidoCosto: Grafo {
         }
 
         override fun next(): AristaCosto {
-            val result = AristaCosto(i, n.x, actual!![j].Costo)
+            val result = AristaCosto(i, n.v, actual.Costo)
             i += 1
             return result
         }
     }
-
     /** Clase interna y privada que sobreescribe el metodo iterator y lo iguala a la clase LadAdyacenIterato
      */
-    private inner class LadAdyacenIterable(private val G: GrafoNoDirigidoCosto, private val l: AristaCosto) : Iterable<AristaCosto>{
+    inner class LadAdyacenIterable(private val G: GrafoNoDirigidoCosto, private val l: AristaCosto) : Iterable<AristaCosto>{
         /** Entrada:
          *      G: un grafo en el cual se buscaran los vertices adyacentes al AristaCosto
          *      v: un AristaCosto del cual se buscaran los lados adyacentes al AristaCosto
@@ -250,8 +233,8 @@ public class GrafoNoDirigidoCosto: Grafo {
          *  Postcondicion: AristaCosto in GrafoNoDirigidoCosto
          *  Tiempo: O(|V| + |E|)
          */
-        if (listaDeVertices[l.x] == null) throw RuntimeException("no se encuentra el vertice en el grafo")
-        if (listaDeVertices[l.y] == null) throw RuntimeException("no se encuentra el vertice en el grafo")
+        if (l.x >= listaDeVertices.size || listaDeVertices[l.x] == null) throw RuntimeException("no se encuentra el vertice en el grafo")
+        if (l.y >= listaDeVertices.size || listaDeVertices[l.y] == null) throw RuntimeException("no se encuentra el vertice en el grafo")
 
         val temp = listaDeAdyacencia[l.x]!!
         if (temp.indexOf(Vertice(l.y)) == -1) throw RuntimeException("no se encuentra el lado en el grafo")
@@ -261,36 +244,37 @@ public class GrafoNoDirigidoCosto: Grafo {
 
     /**  clase interna y privada que dado un grafo retorna un iterador de todos los AristaCosto pertenecientes al grafo
      */
-    class LadosIterato(private val G: GrafoNoDirigidoCosto) : Iterator<AristaCosto> {
+    inner class LadosIterato(private val G: GrafoNoDirigidoCosto) : Iterator<AristaCosto> {
         /** Entrada: un grafo en el cual se buscaran todos los AristaCosto pertenecientes a este
          *  Salida: una iterador que retorna todos los AristaCosto pertenecientes a G
          *  Precondicion: listaDeAdyacencia != arrayOfNulls()
          *  Postcondicion: AristaCosto in GrafoNoDirigidoCosto
          *  Tiempo: O(|V| + |E|)
          */
-        private val temp: Array<LinkedList<Vertice>?> = G.listaDeAdyacencia
-        private var actual: LinkedList<Vertice>? = null
         private var i = 0
-        private var j: Int = 0
+        private var it = AdyacenIterato(G, 0)
+        init {
+            while (i < G.numDeVertices - 1){
+                if (G.listaDeAdyacencia[i] != null) {
+                    it = AdyacenIterato(G, i)
+                    break
+                }
+                i++
+            }
+            if (i == G.numDeVertices - 1) throw RuntimeException("El grafo esta vacio")
+        }
 
         override fun hasNext(): Boolean {
-            while (i < G.numDeVertices){
-                if (temp[i] != null){
-                    actual = temp[i]
-                    if (actual != null && j < actual!!.size){
-                        return true
-                    }
-                }
-                j = 0
+            while (i < G.numDeVertices - 1){                            // se itera sobre el numero de vertices
+                if (it.hasNext()) return true
                 i++
+                if (i < G.numDeVertices - 1) it = AdyacenIterato(G, i)
             }
             return false
         }
 
         override fun next(): AristaCosto {
-            val result = AristaCosto(i, actual!![j].valor, actual!![j].Costo)
-            j += 1
-            return result
+            return it.next()
         }
     }
 
@@ -314,7 +298,7 @@ public class GrafoNoDirigidoCosto: Grafo {
          *  Postcondicion: grados.isInt() == true
          *  Tiempo: O(1)
          */
-        if (listaDeVertices[v] == null) throw RuntimeException("El lado a agregar contiene un vertice que no pertenece al grafo")
+        if (v >= listaDeVertices.size || listaDeVertices[v] == null) throw RuntimeException("El lado a agregar contiene un vertice que no pertenece al grafo")
         if (listaDeAdyacencia[v] == null) return 0
         return listaDeVertices[v]!!.gradoExterior
     }
