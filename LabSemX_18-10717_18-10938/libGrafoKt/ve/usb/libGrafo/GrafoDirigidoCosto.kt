@@ -17,7 +17,7 @@ public class GrafoDirigidoCosto : Grafo {
     override var numDeLados: Int = 0
     override var numDeVertices: Int = 0
 
-    /**Construye un grafo dirigido partiendo de una integral que representa el número de vértices
+    /**Construye un grafo dirigido partiendo de un entero que representa el número de vértices
      */
     constructor(numDeVertices: Int) {
         /** Entrada: un entero que determina el número de vertices que tendra el grafo
@@ -93,12 +93,12 @@ public class GrafoDirigidoCosto : Grafo {
         return false
     }
 
-    /** Metodo que dado un integral que representa el valor de un vertice del grafo, retorna el grado de este vertice, si el
+    /** Metodo que dado un entero que representa el valor de un vertice del grafo, retorna el grado de este vertice, si el
      *  vertice no se encuentra en el grafo entonces se lanza un RuntimeException
       */
     override fun grado(v: Int): Int {
-        /** Entrada: una integral del valor del vertice del cual se pide el grado
-         *  Salida: una integral del grado del vertice pedido
+        /** Entrada: un entero del valor del vertice del cual se pide el grado
+         *  Salida: un entero del grado del vertice pedido
          *  Precondicion: v in listaDeVertices
          *  Postcondicion: grados = gradosInterior + gradosExterior
          *  Tiempo: O(1)
@@ -107,12 +107,12 @@ public class GrafoDirigidoCosto : Grafo {
         return gradoExterior(v) + gradoInterior(v)               // se retorna la suma de los grados interiores y exteriores
     }
 
-    /** Metodo que dado un integral que representa el valor de un vertice del grafo, retorna el grado exterior de este vertice, si el
+    /** Metodo que dado un entero que representa el valor de un vertice del grafo, retorna el grado exterior de este vertice, si el
      *  vertice no se encuentra en el grafo entonces se lanza un RuntimeException
      */
     fun gradoExterior(v: Int): Int {
-        /** Entrada: una integral del valor vertice del cual se pide el grado exterior
-         *  Salida: una integral del grado exterior del vertice pedido
+        /** Entrada: un entero del valor vertice del cual se pide el grado exterior
+         *  Salida: un entero del grado exterior del vertice pedido
          *  Precondicion: v in listaDeVertices
          *  Postcondicion: gradoExterior < grado
          *  Tiempo: O(1)
@@ -122,12 +122,12 @@ public class GrafoDirigidoCosto : Grafo {
         return x!!.gradoExterior                                // se retorna el grado exterior del vertice
     }
 
-    /** Metodo que dado un integral que representa el valor de un vertice del grafo, retorna el grado interior de este vertice, si el
+    /** Metodo que dado un entero que representa el valor de un vertice del grafo, retorna el grado interior de este vertice, si el
      *  vertice no se encuentra en el grafo entonces se lanza un RuntimeException
      */
     fun gradoInterior(v: Int): Int {
-        /** Entrada: una integral del valor del vertice del cual se pide el grado interior
-         *  Salida: una integral del grado interior del vertice pedido
+        /** Entrada: un entero del valor del vertice del cual se pide el grado interior
+         *  Salida: un entero del grado interior del vertice pedido
          *  Precondicion: v in listaDeVertices
          *  Postcondicion: gradoInterior < grado
          *  Tiempo: O(1)
@@ -137,33 +137,33 @@ public class GrafoDirigidoCosto : Grafo {
         return x!!.gradoInterior                                // se retorna el grado interior del vertice
     }
 
-    /** Metodo en el que retorna una integral que representa el numero de lados del grafo
+    /** Metodo en el que retorna un entero que representa el numero de lados del grafo
      */
     override fun obtenerNumeroDeLados(): Int {
-        /** Salida: una integral del numero de lados del grafo
+        /** Salida: un entero del numero de lados del grafo
          *  Postcondicion: numDeLados == |E|
          *  Tiempo: O(1)
          */
         return numDeLados
     }
 
-    /** Metodo en el que retorna una integral que representa el numero de vertices del grafo
+    /** Metodo en el que retorna un entero que representa el numero de vertices del grafo
      */
     override fun obtenerNumeroDeVertices(): Int {
-        /** Salida: una integral del numero de vertices del grafo
+        /** Salida: un entero del numero de vertices del grafo
          *  Postcondicion: numDeVertices = |V|
          *  Tiempo: O(1)
          */
         return numDeVertices
     }
 
-    /**  clase interna y privada que dado un digrafo y un entero que representa el valor de un vertice del digrafo,
-     *   se retorna un iterador de ArcoCosto en los que el integral dado es el valor del vertice adyacente
+    /**  Clase interna que dado un digrafo y un entero que representa el valor de un vertice del digrafo,
+     *   se retorna un iterador de ArcoCosto en los que el entero dado es el valor del vertice adyacente
      */
      inner class AdyacenIterato(G: GrafoDirigidoCosto, private val v: Int) : Iterator<ArcoCosto> {
         /** Entrada:
          *      G: un digrafo en el cual se buscaran los vertices adyacentes
-         *      v: un integral que representa el valor del vertice del cual se buscaran los lados en los que este es adyacente
+         *      v: un entero que representa el valor del vertice del cual se buscaran los lados en los que este es adyacente
          *  Salida: una iterador que retorna ArcoCosto pertenecientes a G en la que la primera posicion se encuentra v
          *  Precondicion: v in listaDeVectores
          *  Postcondicion: ArcosCosto in GrafoDirigidoCosto
@@ -181,12 +181,12 @@ public class GrafoDirigidoCosto : Grafo {
         }
     }
 
-    /** Clase interna y privada que sobreescribe el metodo iterator y lo iguala a la clase AdyacenIterato
+    /** Clase interna que sobreescribe el metodo iterator y lo iguala a la clase AdyacenIterato
      */
     inner class AdyacenIterable(private val G: GrafoDirigidoCosto, private val v: Int) : Iterable<ArcoCosto> {
         /** Entrada:
          *      G: un digrafo en el cual se buscaran los vertices adyacentes
-         *      v: un integral que representa el valor del vertice del cual se buscaran los lados en los que este es adyacente
+         *      v: un entero que representa el valor del vertice del cual se buscaran los lados en los que este es adyacente
          *  Salida: una iterable de ArcoCosto que retorna un iterador de ArcoCosto pertenecientes a G en la que la primera posicion se encuentra el vertice con valor v
          *  Precondicion: v in listaDeVectores
          *  Postcondicion: ArcosCosto in GrafoDirigidoCosto
@@ -195,11 +195,11 @@ public class GrafoDirigidoCosto : Grafo {
         override fun iterator(): Iterator<ArcoCosto> = AdyacenIterato(G, v)
     }
 
-    /** Metodo que dado una integral que representa un vertice, retorna un iterable de todos los ArcoCosto en los que
+    /** Metodo que dado un entero que representa un vertice, retorna un iterable de todos los ArcoCosto en los que
      *  el vertice dado es adyacente. Si el vertice no se encuentra entonces se lanza un RuntimeException
      */
     override fun adyacentes(v: Int): Iterable<ArcoCosto> {
-        /** Entrada: una integral la cual se buscaran los vertices en los que este es adyacente
+        /** Entrada: un entero la cual se buscaran los vertices en los que este es adyacente
          *  Salida: un iterable de los arcos en los que v es adyacente
          *  Precondicion: v in listaDeVectores
          *  Postcondicion: ArcosCosto in GrafoDirigidoCosto
@@ -210,7 +210,7 @@ public class GrafoDirigidoCosto : Grafo {
     }
 
 
-    /**  clase interna y privada que dado un digrafo y un ArcoCosto que representa un lado del digrafo,
+    /**  Clase interna que dado un digrafo y un ArcoCosto que representa un lado del digrafo,
      *   se retorna un iterador de ArcosCosto adyacentes al ArcoCosto dado
      */
     inner class LadAdyacenIterato(private val G: GrafoDirigidoCosto, private val v: ArcoCosto) :
@@ -249,7 +249,7 @@ public class GrafoDirigidoCosto : Grafo {
         }
     }
 
-    /** Clase interna y privada que sobreescribe el metodo iterator y lo iguala a la clase LadAdyacenIterato
+    /** Clase interna que sobreescribe el metodo iterator y lo iguala a la clase LadAdyacenIterato
      */
     inner class LadAdyacenIterable(private val G: GrafoDirigidoCosto, private val l: ArcoCosto) :
         Iterable<ArcoCosto> {
@@ -285,7 +285,7 @@ public class GrafoDirigidoCosto : Grafo {
         return LadAdyacenIterable(this, l)
     }
 
-    /**  clase interna y privada que dado un digrafo retorna un iterador de todos los ArcoCosto pertenecientes al digrafo
+    /**  Clase interna que dado un digrafo retorna un iterador de todos los ArcoCosto pertenecientes al digrafo
      */
     inner class LadosIterato(private val G: GrafoDirigidoCosto) : Iterator<ArcoCosto> {
         /** Entrada: un digrafo en el cual se buscaran todos los ArcosCosto pertenecientes a este

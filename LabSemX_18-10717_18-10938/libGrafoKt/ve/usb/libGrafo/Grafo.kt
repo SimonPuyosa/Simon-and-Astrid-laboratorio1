@@ -8,20 +8,20 @@ interface Grafo : Iterable<Lado> {
     var numDeLados: Int
     var numDeVertices: Int
 
-    /** Metodo en el que retorna una integral que representa el numero de lados del grafo
+    /** Metodo en el que retorna un entero que representa el numero de lados del grafo
      */
     fun obtenerNumeroDeLados() : Int
 
-    /** Metodo en el que retorna una integral que representa el numero de vertices del grafo
+    /** Metodo en el que retorna un entero que representa el numero de vertices del grafo
      */
     fun obtenerNumeroDeVertices() : Int
 
-    /** Metodo que dado una integral que representa un vertice, retorna un iterable de todos los lados en los que
+    /** Metodo que dado un entero que representa un vertice, retorna un iterable de todos los lados en los que
      *  el vertice dado es adyacente. Si el vertice no se encuentra entonces se lanza un RuntimeException
      */
     fun adyacentes(v: Int) : Iterable<Lado>
 
-    /** Metodo que dado un integral que representa un vertice del grafo, retorna el grado de este vertice, si el
+    /** Metodo que dado un entero que representa un vertice del grafo, retorna el grado de este vertice, si el
      *  vertice no se encuentra en el grafo entonces se lanza un RuntimeException
      */
     fun grado(v: Int) : Int

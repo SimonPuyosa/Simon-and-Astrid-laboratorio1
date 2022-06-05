@@ -5,7 +5,7 @@ public class ArcoCosto(val x: Int, val y: Int, val costo: Double) : Arco(x, y) {
     /** Metodo en el que retorna un Double que representa costo del arco
      */
     fun costo() : Double {
-        /** Salida: una integral del valor del costo del arco
+        /** Salida: un entero del valor del costo del arco
          *  Precondicion: costo.isDouble() == true
          *  Tiempo: O(1)
          */

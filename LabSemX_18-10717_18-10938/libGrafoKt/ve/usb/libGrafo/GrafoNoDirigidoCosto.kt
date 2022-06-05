@@ -17,7 +17,7 @@ public class GrafoNoDirigidoCosto: Grafo {
     override var numDeLados: Int = 0
     override var numDeVertices: Int = 0
 
-    /** Contruye un grafo no dirigido partiendo de una integral que representa el numero de vertices
+    /** Contruye un grafo no dirigido partiendo de un entero que representa el numero de vertices
      */
     constructor(numDeVertices: Int) {
         /** Entrada: un entero que determina el numero de vertices que tendra el grafo
@@ -100,33 +100,33 @@ public class GrafoNoDirigidoCosto: Grafo {
         return false
     }
 
-    /** Metodo en el que retorna una integral que representa el numero de lados del grafo
+    /** Metodo en el que retorna un entero que representa el numero de lados del grafo
      */
     override fun obtenerNumeroDeLados() : Int {
-        /** Salida: una integral del numero de lados del grafo
+        /** Salida: un entero del numero de lados del grafo
          *  Postcondicion: numDeLados == |E|
          *  Tiempo: O(1)
          */
         return numDeLados
     }
 
-    /** Metodo en el que retorna una integral que representa el numero de vertices del grafo
+    /** Metodo en el que retorna un entero que representa el numero de vertices del grafo
      */
     override fun obtenerNumeroDeVertices() : Int {
-        /** Salida: una integral del numero de vertices del grafo
+        /** Salida: un entero del numero de vertices del grafo
          *  Postcondicion: numDeVertices == |V|
          *  Tiempo: O(1)
          */
         return numDeVertices
     }
 
-    /**  clase interna y privada que dado un grafo y un entero que representa el valor de un vertice del grafo,
-     *   se retorna un iterador de lados en los que el integral dado es el valor del vertice adyacente
+    /**  clase interna que dado un grafo y un entero que representa el valor de un vertice del grafo,
+     *   se retorna un iterador de lados en los que el entero dado es el valor del vertice adyacente
      */
     private inner class AdyacenIterato(G: GrafoNoDirigidoCosto, private val v: Int) : Iterator<AristaCosto> {
         /** Entrada:
          *      G: un grafo en el cual se buscaran los vertices adyacentes
-         *      v: un integral que representa el valor del vertice del cual se buscaran los lados en los que este es adyacente
+         *      v: un entero que representa el valor del vertice del cual se buscaran los lados en los que este es adyacente
          *  Salida: una iterador que retorna AristaCosto pertenecientes a G en la que la primera posicion se encuentra v
          *  Precondicion: v in listaDeVectores
          *  Postcondicion: AristaCosto in GrafoNoDirigidoCosto
@@ -144,12 +144,12 @@ public class GrafoNoDirigidoCosto: Grafo {
         }
     }
 
-    /** Clase interna y privada que sobreescribe el metodo iterator y lo iguala a la clase AdyacenIterato
+    /** Clase interna que sobreescribe el metodo iterator y lo iguala a la clase AdyacenIterato
      */
     inner class AdyacenIterable(private val G: GrafoNoDirigidoCosto, private val v: Int) : Iterable<AristaCosto> {
         /** Entrada:
          *      G: un grafo en el cual se buscaran los vertices adyacentes
-         *      v: un integral que representa el valor del vertice del cual se buscaran los lados en los que este es adyacente
+         *      v: un entero que representa el valor del vertice del cual se buscaran los lados en los que este es adyacente
          *  Salida: una iterable de lados que retorna AristaCosto pertenecientes a G en la que la primera posicion se encuentra v
          *  Precondicion: v in listaDeVectores
          *  Postcondicion: AristaCosto in GrafoNoDirigidoCosto
@@ -158,11 +158,11 @@ public class GrafoNoDirigidoCosto: Grafo {
         override fun iterator(): Iterator<AristaCosto> = AdyacenIterato(G, v)
     }
 
-    /** Metodo que dado una integral que representa un vertice, retorna un iterable de todos los lados en los que
+    /** Metodo que dado un entero que representa un vertice, retorna un iterable de todos los lados en los que
      *  el vertice dado es adyacente. Si el vertice no se encuentra entonces se lanza un RuntimeException
      */
     override fun adyacentes(v: Int) : Iterable<AristaCosto> {
-        /** Entrada: una integral la cual se buscaran los vertices en los que este es adyacente
+        /** Entrada: un entero la cual se buscaran los vertices en los que este es adyacente
          *  Salida: un iterable de los AristaCosto en los que v es adyacente
          *  Precondicion: v in listaDeVectores
          *  Postcondicion: AristaCosto in GrafoNoDirigidoCosto
@@ -172,7 +172,7 @@ public class GrafoNoDirigidoCosto: Grafo {
         return AdyacenIterable(this, v)
     }
 
-    /**  clase interna y privada que dado un grafo y un AristaCosto que representa un lado del grafo,
+    /**  Clase interna que dado un grafo y un AristaCosto que representa un lado del grafo,
      *   se retorna un iterador de AristaCosto adyacentes al AristaCosto dado
      */
     inner class LadAdyacenIterato(private val G: GrafoNoDirigidoCosto, private val n: AristaCosto) : Iterator<AristaCosto> {
@@ -209,7 +209,7 @@ public class GrafoNoDirigidoCosto: Grafo {
             return result
         }
     }
-    /** Clase interna y privada que sobreescribe el metodo iterator y lo iguala a la clase LadAdyacenIterato
+    /** Clase interna que sobreescribe el metodo iterator y lo iguala a la clase LadAdyacenIterato
      */
     inner class LadAdyacenIterable(private val G: GrafoNoDirigidoCosto, private val l: AristaCosto) : Iterable<AristaCosto>{
         /** Entrada:
@@ -242,7 +242,7 @@ public class GrafoNoDirigidoCosto: Grafo {
         return LadAdyacenIterable(this, l)
     }
 
-    /**  clase interna y privada que dado un grafo retorna un iterador de todos los AristaCosto pertenecientes al grafo
+    /**  Clase interna que dado un grafo retorna un iterador de todos los AristaCosto pertenecientes al grafo
      */
     inner class LadosIterato(private val G: GrafoNoDirigidoCosto) : Iterator<AristaCosto> {
         /** Entrada: un grafo en el cual se buscaran todos los AristaCosto pertenecientes a este
@@ -288,12 +288,12 @@ public class GrafoNoDirigidoCosto: Grafo {
      *  Tiempo: O(|V| + |E|)
      */
 
-    /** Metodo que dado un integral que representa el valor de un vertice del grafo, retorna el grado de este vertice, si el
+    /** Metodo que dado un entero que representa el valor de un vertice del grafo, retorna el grado de este vertice, si el
      *  vertice no se encuentra en el grafo entonces se lanza un RuntimeException
      */
     override fun grado(v: Int) : Int {
-        /** Entrada: una integral del valor del vertice del cual se pide el grado
-         *  Salida: una integral del grado del vertice pedido
+        /** Entrada: un entero del valor del vertice del cual se pide el grado
+         *  Salida: un entero del grado del vertice pedido
          *  Precondicion: v in ListaDeVertices
          *  Postcondicion: grados.isInt() == true
          *  Tiempo: O(1)

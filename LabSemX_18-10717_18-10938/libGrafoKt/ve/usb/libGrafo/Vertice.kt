@@ -11,6 +11,8 @@ class Vertice(val valor: Int, var Costo: Double = 0.0, var gradoExterior: Int = 
     var distancia: Int = POSITIVE_INFINITY.toInt()
     var color: Color = Color.BLANCO
     var pred: Vertice? = null
+    var tiempoInicial: Int = 0
+    var tiempoFinal: Int = 0
 
     /** Metodo que permite comparar dos Vertices y determinar si son iguales por su valor
      */
