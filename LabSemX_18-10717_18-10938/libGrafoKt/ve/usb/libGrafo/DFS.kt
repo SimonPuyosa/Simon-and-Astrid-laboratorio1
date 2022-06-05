@@ -1,6 +1,7 @@
 package libGrafoKt.ve.usb.libGrafo
 
 import kotlin.RuntimeException
+import java.util.concurrent.ConcurrentLinkedQueue
 
 /* 
    Implementación del algoritmo DFS. 
@@ -8,25 +9,19 @@ import kotlin.RuntimeException
    desde todos los vértices del grafo
 */
 
-var tiempo = 0
-
 public class DFS(val g: Grafo) {
+    private var tiempo = 0
+    private var DFStree = ArrayList<Vertice>()
     
     init {
 	// Se ejecuta DFS
-        var v: Vertice
         for(i in g.listaDeAdyacencia.indices) {
-            for (j in g.listaDeAdyacencia[i]!!.indices) {
-                v = g.listaDeAdyacencia[i]!![j]
-                v.color = Color.BLANCO
-                v.pred = null
-            }
+            g.listaDeVertices[i]!!.pred = null
+            g.listaDeVertices[i]!!.color = Color.BLANCO
         }
         for (i in g.listaDeAdyacencia.indices){
-            for (j in g.listaDeAdyacencia[i]!!.indices){
-                v = g.listaDeAdyacencia[i]!![j]
-                if (v.color == Color.BLANCO)
-                    dfsVisit(g, v.valor)
+            if (g.listaDeVertices[i]!!.color == Color.BLANCO){
+                dfsVisit(g, g.listaDeVertices[i]!!.valor)
             }
         }
     }
@@ -35,7 +30,7 @@ public class DFS(val g: Grafo) {
         val temp: Vertice? = g.listaDeVertices[u]!!
 
         tiempo += 1
-        temp!!.t_inicial = tiempo
+        temp!!.tiempoInicial = tiempo
         temp.color = Color.GRIS
         for(v in g.listaDeAdyacencia[u]!!){
             if(v.color == Color.BLANCO){
@@ -45,7 +40,8 @@ public class DFS(val g: Grafo) {
         }
         temp.color = Color.NEGRO
         tiempo += 1
-        temp.t_final = tiempo
+        temp.tiempoFinal = tiempo
+        DFStree.add(temp.pred?.valor!!,temp)
     }
 
     /*
@@ -65,7 +61,7 @@ public class DFS(val g: Grafo) {
     fun obtenerTiempos(v: Int) : Pair<Int, Int> {
         val u: Vertice? = g.listaDeVertices[v]!!
         if(v >= g.listaDeVertices.size || g.listaDeVertices[v] == null) throw RuntimeException("El vértice no se encuentra en el grafo")
-        return Pair(u!!.t_inicial, u.t_final)
+        return Pair(u!!.tiempoInicial, u.tiempoFinal)
     }
 
     /*
@@ -74,12 +70,18 @@ public class DFS(val g: Grafo) {
      En caso de que alguno de los vértices no exista en el grafo se lanza una RuntimeException 
      */ 
     fun hayCamino(u: Int, v: Int) : Boolean {
+        for(i in g.listaDeAdyacencia.indices) {
+            g.listaDeVertices[i]!!.pred = null
+            g.listaDeVertices[i]!!.color = Color.BLANCO
+        }
+        for (i in g.listaDeAdyacencia.indices){
+            if (g.listaDeVertices[i]!!.color == Color.BLANCO){
+                dfsVisit(g, g.listaDeVertices[u]!!.valor)
+            }
+        }
         if( u >= g.listaDeVertices.size || g.listaDeVertices[u] == null|| v >= g.listaDeVertices.size || g.listaDeVertices[v] == null) throw kotlin.RuntimeException("El vértice no se encuentra en el grafo")
 
-        if(g.listaDeVertices[u]!!.t_inicial < g.listaDeVertices[v]!!.t_inicial && g.listaDeVertices[u]!!.t_final < g.listaDeVertices[v]!!.t_final){
-            return true
-        }
-        return false
+        return (g.listaDeVertices[u]!!.tiempoInicial < g.listaDeVertices[v]!!.tiempoInicial && g.listaDeVertices[u]!!.tiempoFinal < g.listaDeVertices[v]!!.tiempoFinal)
     }
 
     /*
@@ -94,19 +96,25 @@ public class DFS(val g: Grafo) {
 
     // Retorna true si hay lados del bosque o false en caso contrario.
     fun hayLadosDeBosque(): Boolean {
-        if(g.listaDeAdyacencia)
-        return false
+        return g.numDeLados > 0
     }
     
     // Retorna los lados del bosque obtenido por DFS.
     // Si no existen ese tipo de lados, entonces se lanza una RuntimeException.
     fun ladosDeBosque() : Iterator<Lado>{
-
     }
 
     // Retorna true si hay forward edges o false en caso contrario.
     fun hayLadosDeIda(): Boolean {
-
+        var forwardEdges = 0
+        for(i in g.listaDeAdyacencia.indices){
+            for(k in g.listaDeAdyacencia[i]!!){
+                if(g.listaDeVertices[i]!!.tiempoInicial < k.tiempoInicial && g.listaDeVertices[i]!!.tiempoFinal > k.tiempoFinal){
+                    forwardEdges += 1
+                }
+            }
+        }
+        return forwardEdges > 0
     }
     
     // Retorna los forward edges del bosque obtenido por DFS.
@@ -117,6 +125,16 @@ public class DFS(val g: Grafo) {
 
     // Retorna true si hay back edges o false en caso contrario.
     fun hayLadosDeVuelta(): Boolean {
+        var backEdges = 0
+        for(i in g.listaDeAdyacencia.indices){
+            for(k in g.listaDeAdyacencia[i]!!){
+                if(g.listaDeVertices[i]!!.tiempoInicial > k.tiempoInicial && g.listaDeVertices[i]!!.tiempoFinal < k.tiempoFinal){
+                    backEdges += 1
+                }
+            }
+        }
+        return backEdges > 0
+    }
 
     }
     
@@ -127,7 +145,7 @@ public class DFS(val g: Grafo) {
     }
 
     // Retorna true si hay cross edges o false en caso contrario.
-    fun hayLadosCruzados(): Boolean {
+    fun hayLadosCruzados(): Boolean{
 
     }
     
