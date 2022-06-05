@@ -11,7 +11,10 @@ import java.util.concurrent.ConcurrentLinkedQueue
 
 public class DFS(val g: Grafo) {
     private var tiempo = 0
-    private var DFStree = ArrayList<Vertice>()
+    private var DFStree = ConcurrentLinkedQueue<Vertice>()
+    private var backEdges = ArrayList<Vertice>()
+    private var forwardEdges = ArrayList<Vertice>()
+    private var crossEdges = ArrayList<Vertice>()
     
     init {
 	// Se ejecuta DFS
@@ -27,21 +30,28 @@ public class DFS(val g: Grafo) {
     }
 
     private fun dfsVisit(g: Grafo, u: Int) {
-        val temp: Vertice? = g.listaDeVertices[u]!!
+        val temp: Vertice = g.listaDeVertices[u]!!
 
         tiempo += 1
-        temp!!.tiempoInicial = tiempo
+        temp.tiempoInicial = tiempo
         temp.color = Color.GRIS
-        for(v in g.listaDeAdyacencia[u]!!){
-            if(v.color == Color.BLANCO){
+        for(v in g.listaDeAdyacencia[u]!!) {
+            if (v.color == Color.BLANCO) {
                 v.pred = temp
-                dfsVisit(g,v.valor)
+                dfsVisit(g, v.valor)
+            } else if (v.color == Color.GRIS) {
+                backEdges[temp.valor] = v
+            } else if (v.color == Color.NEGRO && temp.tiempoInicial < v.tiempoInicial) {
+                forwardEdges[temp.valor] = v
+            } else {
+                crossEdges[temp.valor] = v
             }
         }
+
         temp.color = Color.NEGRO
         tiempo += 1
         temp.tiempoFinal = tiempo
-        DFStree.add(temp.pred?.valor!!,temp)
+        DFStree.add(temp)
     }
 
     /*
@@ -84,6 +94,34 @@ public class DFS(val g: Grafo) {
         return (g.listaDeVertices[u]!!.tiempoInicial < g.listaDeVertices[v]!!.tiempoInicial && g.listaDeVertices[u]!!.tiempoFinal < g.listaDeVertices[v]!!.tiempoFinal)
     }
 
+    inner class CamDesdeHastaIterato(private val G: Grafo, private val u: Int, private val v: Int): Iterator<Int>{
+        private var i: Int = G.listaDeVertices[v]!!.tiempoInicial
+        private var j: Int = G.listaDeVertices[v]!!.tiempoFinal
+        private var n: Int = i
+        private var m: Int = j
+        private lateinit var result: Vertice
+
+        override fun hasNext(): Boolean {
+            return i > G.listaDeVertices[u]!!.tiempoInicial && j < G.listaDeVertices[u]!!.tiempoFinal
+        }
+
+        override fun next(): Int {
+            n = i
+            m = j
+            result = G.listaDeVertices[v]!!
+            while(n>G.listaDeVertices[u]!!.tiempoInicial){
+                result = result.pred!!
+                n = G.listaDeVertices[result.valor]!!.tiempoInicial
+                m = G.listaDeVertices[result.valor]!!.tiempoFinal
+            }
+            return result.valor
+        }
+    }
+
+    inner class CamDesdeHastaIterable(private val G: Grafo, private val u: Int, private val v: Int): Iterable<Int>{
+        override fun iterator(): Iterator<Int> = CamDesdeHastaIterato(G, u, v)
+    }
+
     /*
      Retorna el camino desde el vértice  u hasta el un vértice v. 
      El camino es representado como un objeto iterable con los vértices del camino desde u hasta v.
@@ -91,7 +129,7 @@ public class DFS(val g: Grafo) {
      En caso de que alguno de los vértices no exista en el grafo se lanza una RuntimeException.
      */ 
     fun caminoDesdeHasta(u: Int, v: Int) : Iterable<Int>{
-
+        return CamDesdeHastaIterable(g, u, v)
     }
 
     // Retorna true si hay lados del bosque o false en caso contrario.
@@ -106,15 +144,7 @@ public class DFS(val g: Grafo) {
 
     // Retorna true si hay forward edges o false en caso contrario.
     fun hayLadosDeIda(): Boolean {
-        var forwardEdges = 0
-        for(i in g.listaDeAdyacencia.indices){
-            for(k in g.listaDeAdyacencia[i]!!){
-                if(g.listaDeVertices[i]!!.tiempoInicial < k.tiempoInicial && g.listaDeVertices[i]!!.tiempoFinal > k.tiempoFinal){
-                    forwardEdges += 1
-                }
-            }
-        }
-        return forwardEdges > 0
+        return forwardEdges.size > 0
     }
     
     // Retorna los forward edges del bosque obtenido por DFS.
@@ -125,17 +155,7 @@ public class DFS(val g: Grafo) {
 
     // Retorna true si hay back edges o false en caso contrario.
     fun hayLadosDeVuelta(): Boolean {
-        var backEdges = 0
-        for(i in g.listaDeAdyacencia.indices){
-            for(k in g.listaDeAdyacencia[i]!!){
-                if(g.listaDeVertices[i]!!.tiempoInicial > k.tiempoInicial && g.listaDeVertices[i]!!.tiempoFinal < k.tiempoFinal){
-                    backEdges += 1
-                }
-            }
-        }
-        return backEdges > 0
-    }
-
+        return backEdges.size > 0
     }
     
     // Retorna los back edges del bosque obtenido por DFS.
@@ -146,7 +166,7 @@ public class DFS(val g: Grafo) {
 
     // Retorna true si hay cross edges o false en caso contrario.
     fun hayLadosCruzados(): Boolean{
-
+        return crossEdges.size > 0
     }
     
     // Retorna los cross edges del bosque obtenido por DFS.
