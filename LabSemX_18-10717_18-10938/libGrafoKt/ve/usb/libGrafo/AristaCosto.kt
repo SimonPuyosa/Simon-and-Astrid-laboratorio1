@@ -5,7 +5,7 @@ public class AristaCosto(val x: Int, val y: Int, val costo: Double) : Comparable
     /** Metodo en el que retorna un Double que representa costo del lado
      */
     fun costo() : Double {
-        /** Salida: una integral del valor del costo del lado
+        /** Salida: un entero del valor del costo del lado
          *  Precondicion: costo.isDouble() == true
          *  Tiempo: O(1)
          */
@@ -26,7 +26,7 @@ public class AristaCosto(val x: Int, val y: Int, val costo: Double) : Comparable
      */
      override fun compareTo(other: AristaCosto): Int {
         /** Entrada: un AristaCosto que va a ser comprado con el AristaCosto actual
-         *  Salida: una integral que representa el resultado de la comparacion entre ambos costo
+         *  Salida: un entero que representa el resultado de la comparacion entre ambos costo
          *  Precondicion: this == AristaCosto() && other == AristaCosto()
          *  Postcondicion: result == -1 || result == 1 || result == 0
          *  Tiempo: O(1)
