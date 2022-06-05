@@ -6,6 +6,9 @@ interface Grafo : Iterable<Lado> {
     var listaDeAdyacencia: Array<LinkedList<Vertice>?>
     var listaDeVertices: Array<Vertice?>
     var numDeLados: Int
+    var forwardEdges: Int
+    var backEdges: Int
+    var crossEdges: Int
     var numDeVertices: Int
 
     /** Metodo en el que retorna un entero que representa el numero de lados del grafo
