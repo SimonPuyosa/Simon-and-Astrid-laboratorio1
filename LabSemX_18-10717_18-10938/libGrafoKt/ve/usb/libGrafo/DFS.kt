@@ -126,24 +126,58 @@ public class DFS(val g: Grafo) {
         return false
     }
 
+    /**  Clase interna que dado un grafo y dos enteros que representan el valor de dos vertices u y v del grafo,
+     *   se retorna un iterador de enteros en los que cada uno de ellos es el camino desde el vertice inicial hasta el
+     *   vertice final
+     */
+
     inner class CamDesdeHastaIterato(private val G: Grafo, private val u: Int, private val v: Int): Iterator<Int> {
-        private var i: Vertice = G.listaDeVertices[u]!!
-        private var j: Vertice = G.listaDeVertices[v]!!
+        /** Entrada:
+         *      G: un grafo en el cual se buscara el camino desde el vértice incial hasta el vértice final
+         *      u: un entero que representa el valor del vértice desde donde se empieza a buscar el camino
+         *      v: un entero que representa el valor del vértice hasta donde se termina el camino
+         *  Salida: una iterador que retorna enteros que representan los valores de los vertices desde el vertice inicial hasta el vertice final
+         *  Precondicion: (u < g.listaDeVertices.size && v < g.listaDeVertices.size && g.listaDeVertices[u] != null && g.listaDeVertices[v] != null && hayCamino(u,v))
+         *  Postcondicion: (results <= g.listaDeVertices.size && g.listaDeVertices[results] != null)
+         *  Tiempo: O(|E|)
+         */
+        private var i: Int = G.listaDeVertices[v]!!.tiempoInicial - G.listaDeVertices[u]!!.tiempoInicial
+        private var j: Int = G.listaDeVertices[u]!!.tiempoFinal - G.listaDeVertices[v]!!.tiempoFinal
+        private var n: Int = i
+        private var m: Int = j
         private lateinit var result: Vertice
 
         override fun hasNext(): Boolean {
-            return hayCamino(i.valor, j.valor)
+            return i>=0 && j >=0
         }
 
         override fun next(): Int {
-            while(){
+            n = i
+            m = j
+            result = G.listaDeVertices[v]!!
+            while(n>0 && m>0){
                 result = result.pred!!
+                n--
+                m--
             }
+            i--
+            j--
             return result.valor
         }
     }
 
+    /** Clase interna que sobreescribe el metodo iterator y lo iguala a la clase CamHastaIterato
+     */
     inner class CamDesdeHastaIterable(private val G: Grafo, private val u: Int, private val v: Int): Iterable<Int>{
+        /** Entrada:
+         *      G: un grafo en el cual se buscara el camino desde el vertice incial hasta el vertice final
+         *      u: un entero que representa el valor del vertice inicial desde donde se empieza a buscar el camino
+         *      v: un entero que representa el valor del vertice final hasta donde termina el camino
+         *  Salida: una iterador que retorna enteros que representan los valores de los vertices desde el vertice inicial hasta el vertice final
+         *  Precondicion: (u < g.listaDeVertices.size && v < g.listaDeVertices.size && g.listaDeVertices[u] != null && g.listaDeVertices[v] != null && hayCamino(u,v))
+         *  Postcondicion: (results <= g.listaDeVertices.size && g.listaDeVertices[results] != null)
+         *  Tiempo: O(|E|)
+         */
         override fun iterator(): Iterator<Int> = CamDesdeHastaIterato(G, u, v)
     }
 
@@ -152,6 +186,15 @@ public class DFS(val g: Grafo) {
      *  se lanza una RuntimeException
      */
     fun caminoDesdeHasta(u: Int, v: Int) : Iterable<Int>{
+        /** Entrada:
+         *      G: un grafo en el cual se buscara el camino desde el vertice incial hasta el vertice final
+         *      u: un entero que representa el valor del vertice inicial desde donde se empieza a buscar el camino
+         *      v: un entero que representa el valor del vertice final hasta donde termina el camino
+         *  Salida: una iterador que retorna enteros que representan los valores de los vertices desde el vertice inicial hasta el vertice final
+         *  Precondicion: (u < g.listaDeVertices.size && v < g.listaDeVertices.size && g.listaDeVertices[u] != null && g.listaDeVertices[v] != null && hayCamino(u,v))
+         *  Postcondicion: (results <= g.listaDeVertices.size && g.listaDeVertices[results] != null)
+         *  Tiempo: O(|E|)
+         */
         if(!hayCamino(u, v)) throw RuntimeException("No existe camino desde el vértice $u hasta el vértice $v")
         if(g.listaDeVertices[v] == null || g.listaDeVertices[u] == null) throw RuntimeException("Alguno de los vértices no se encuentran en el grafo")
         return CamDesdeHastaIterable(g, u, v)
