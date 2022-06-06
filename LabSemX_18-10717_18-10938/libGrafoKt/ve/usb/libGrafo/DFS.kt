@@ -3,21 +3,32 @@ package libGrafoKt.ve.usb.libGrafo
 import kotlin.RuntimeException
 import java.util.concurrent.ConcurrentLinkedQueue
 
-/* 
-   Implementación del algoritmo DFS. 
-   Con la creación de la instancia, se ejecuta el algoritmo DFS
-   desde todos los vértices del grafo
-*/
+
+/** Clase que realiza el algoritmo DFS desde todos los vértices cuando se llama,
+ *  esta clase recibe un grafo (de cualquier tipo)
+ */
 
 public class DFS(val g: Grafo) {
-    private var tiempo = 0
-    private var DFStree = ConcurrentLinkedQueue<Vertice>()
-    private var backEdges = ArrayList<Vertice>()
-    private var forwardEdges = ArrayList<Vertice>()
-    private var crossEdges = ArrayList<Vertice>()
-    
+    private var tiempo = 0                                       // Variable Global
+    private var DFStree = ConcurrentLinkedQueue<Vertice>()       // Cola en la que se almacenará en DFStree
+    private var treeEdges = ArrayList<Arco>()                 // Arreglo donde se almacenará los lados del bosque generado por DFS
+    private var forwardEdges = ArrayList<Arco>()              // Arreglo donde se almacenará los lados de ida del bosque generado por DFS
+    private var backEdges = ArrayList<Arco>()                 // Arreglo donde se almacenará los lados de vuelta del bosque generado por DFS
+    private var crossEdges = ArrayList<Arco>()                // Arreglo donde se almacenará los lados cruzados del bosque generado por DFS
+
+    /** Constructor de la clase DFS el cual ejecuta dicho algoritmo tomando los valores del grafo
+     *  previamente descrito, este constructor añade los valores correspondientes del color, tiempo inicial, tiempo final
+     *  y predecesor en cada uno de los vertices de la lista de vertices solo si estos son recorridos, en caso contrario quedaran
+     *  con los valores iniciales
+     */
+
     init {
-	// Se ejecuta DFS
+        /** Entrada:
+         *      q: un grafo no vacio de cualquier tipo
+         *  Precondicion: (q.listaDeVertices.size > 0)
+         *  Postcondicion: ! DFStree.isEmpty()
+         *  Tiempo de operacion: O(|V| + |E|)
+         */
         for(i in g.listaDeAdyacencia.indices) {
             g.listaDeVertices[i]!!.pred = null
             g.listaDeVertices[i]!!.color = Color.BLANCO
@@ -30,89 +41,103 @@ public class DFS(val g: Grafo) {
     }
 
     private fun dfsVisit(g: Grafo, u: Int) {
+        /** Entrada:
+         *      g: un grafo no vacio de cualquier tipo
+         *      u: un entero del valor del vértice a estudiar
+         *  Precondicion: (q.listaDeVertices[u].color == Color.BLANCO)
+         *  Postcondicion: ! DFStree.isEmpty()
+         *  Tiempo de operacion: O(|E|)
+         */
+
         val temp: Vertice = g.listaDeVertices[u]!!
 
-        tiempo += 1
-        temp.tiempoInicial = tiempo
-        temp.color = Color.GRIS
-        for(v in g.listaDeAdyacencia[u]!!) {
+        tiempo += 1                              //Se empieza a explorar
+        temp.tiempoInicial = tiempo              //Actualizamos el tiempo inicial
+        temp.color = Color.GRIS                  //y el color del vértice
+        for(v in g.listaDeAdyacencia[u]!!) {     //Iteramos sobre los vértices adyacentes del vértice actual
             if (v.color == Color.BLANCO) {
-                v.pred = temp
-                dfsVisit(g, v.valor)
+                treeEdges.add(Arco(temp.valor,v.valor))            //Si el vértice es blanco, el algoritmo se ejecuta y por lo tanto genera un lado del bosque
+                v.pred = temp                                      //Guardamos el vértice predecesor
+                dfsVisit(g, v.valor)                               //y volvemos a llamar a visitDFS()
             } else if (v.color == Color.GRIS) {
-                backEdges[temp.valor] = v
-            } else if (v.color == Color.NEGRO && temp.tiempoInicial < v.tiempoInicial) {
-                forwardEdges[temp.valor] = v
+                backEdges.add(Arco(temp.valor, v.valor))           //Si el vértice adyacente al actual es gris, quiere decir que el vértice actual tiene un lado hasta su ancestro
+            } else if (v.color == Color.NEGRO && temp.tiempoInicial < v.tiempoInicial) {            //Si el vértice adyacente al actual es negro, quiere decir que el vértice actual tiene un lado hasta su descendiente
+                forwardEdges.add(Arco(temp.valor, v.valor))                                         //Además, si el tiempo inicial del vértice actual es menor a su adyacente, indica que dicho lado no pertenece a DFSTree
             } else {
-                crossEdges[temp.valor] = v
-            }
+                crossEdges.add(Arco(temp.valor, v.valor))          //En cambio, si el vértice adyacente al actual es negro, pero el tiempo inicial del vértice actual es mayor al adyacente, indica que hay un lado cualquiera
+            }                                                      //que no pertenece al bosque generado
         }
 
-        temp.color = Color.NEGRO
-        tiempo += 1
+        temp.color = Color.NEGRO                                   //se termina de explorar
+        tiempo += 1                                                //almacenamos el tiempo final
         temp.tiempoFinal = tiempo
-        DFStree.add(temp)
+        DFStree.add(temp)                                          //Guardamos el vértice en la cola
     }
 
-    /*
-     Retorna el predecesor de un vértice v. Si el vértice no tiene predecesor 
-     se retorna null. En caso de que el vértice v no exista en el grafo se lanza
-     una RuntimeException 
-     */    
+    /** Método que retorna el valor del vértice predecesor del valor de un vértice dado, si el valor del vértice dado
+     *  no tiene predecesor retorna null. Si no se encuentra en la listaDeVertices entonces se lanza un RuntimeException
+     */
     fun obtenerPredecesor(v: Int) : Int? {
+        /** Entrada: un entero del valor del vértice a buscar su predecesor
+         *  Salida: un entero que representa el valor del vértice predecesor o un valor nulo si este no tiene predecesor
+         *  Precondicion: (v < q.listaDeVertices.size && q.listaDeVertices[v] != null)
+         *  Postcondicion: result == g.listaDeVertices[v].pred.valor
+         *  Tiempo: O(1)
+         */
         if (v >= g.listaDeVertices.size || g.listaDeVertices[v] == null) throw RuntimeException("El vértice no se encuentra en el grafo")
         return g.listaDeVertices[v]!!.pred?.valor
     }
 
-     /*
-     Retorna un par con el tiempo inical y final de un vértice durante la ejecución de DFS. 
-     En caso de que el vértice v no exista en el grafo se lanza una RuntimeException 
+
+    /** Método que retorna un par que contiene el tiempo inicial y final de un vértice durante la ejecución de DFS
+     * Si el vértice no se encuentra en el grafo se lanza una RuntimeException
      */
+
     fun obtenerTiempos(v: Int) : Pair<Int, Int> {
-        val u: Vertice? = g.listaDeVertices[v]!!
+        /**Entrada: un entero del valor del vértice a buscar su tiempo inicial y final
+         * Salida: un par de componentes enteros que representa el tiempo inicial y final de vértice
+         * Precondición: (v < g.listaDeVertices.size && g.listaDeVertices[v] != null)
+         * Postcondición: Par == (g.listaDeVertices[v].tiempoInicial, g.listaDeVertices[v].tiempoFinal)
+         */
+        val u: Vertice = g.listaDeVertices[v]!!
         if(v >= g.listaDeVertices.size || g.listaDeVertices[v] == null) throw RuntimeException("El vértice no se encuentra en el grafo")
-        return Pair(u!!.tiempoInicial, u.tiempoFinal)
+        return Pair(u.tiempoInicial, u.tiempoFinal)
     }
 
-    /*
-     Indica si hay camino desde el vértice inicial u hasta el vértice v.
-     Si el camino existe retorna true, de lo contrario falso
-     En caso de que alguno de los vértices no exista en el grafo se lanza una RuntimeException 
-     */ 
+    /** Método que dado dos enteros u y v, indica retornando un booleand si existe un camino desde el vértice inicial u hasta el vértice
+     * final v. Si alguno de los dos vértices no pertenece al grafo se lanza una RuntimeException
+     */
+
     fun hayCamino(u: Int, v: Int) : Boolean {
-        for(i in g.listaDeAdyacencia.indices) {
-            g.listaDeVertices[i]!!.pred = null
-            g.listaDeVertices[i]!!.color = Color.BLANCO
-        }
-        for (i in g.listaDeAdyacencia.indices){
-            if (g.listaDeVertices[i]!!.color == Color.BLANCO){
-                dfsVisit(g, g.listaDeVertices[u]!!.valor)
-            }
-        }
-        if( u >= g.listaDeVertices.size || g.listaDeVertices[u] == null|| v >= g.listaDeVertices.size || g.listaDeVertices[v] == null) throw kotlin.RuntimeException("El vértice no se encuentra en el grafo")
+        /**Entrada: dos enteros de valores del vértice inicial u y el vértice final v
+         * Salida: un booleano que representa si existe un camino desde el vértice u hasta el vértice v
+         * Precondición: (u < g.listaDeVertices.size && g.listaDeVertices[u] != null && v < g.listaDeVertices.size && g.listaDeVertices[v] != null)
+         * Postcondición: (g.listaDeVertices[u].tiempoInicial < g.listaDeVertices[v].tiempoInicial < g.listaDeVertices[v].tiempoFinal < g.listaDeVertices[u].tiempoFinal) || (crossEdges.contains(Arco(u,v)) || forwardEdges.contains(Arco(u,v)))
+         * Tiempo: O(1)
+         */
 
-        return (g.listaDeVertices[u]!!.tiempoInicial < g.listaDeVertices[v]!!.tiempoInicial && g.listaDeVertices[u]!!.tiempoFinal < g.listaDeVertices[v]!!.tiempoFinal)
+        if( u >= g.listaDeVertices.size || g.listaDeVertices[u] == null|| v >= g.listaDeVertices.size || g.listaDeVertices[v] == null) throw RuntimeException("El vértice no se encuentra en el grafo")
+
+        if(g.listaDeVertices[u]!!.tiempoInicial < g.listaDeVertices[v]!!.tiempoInicial && g.listaDeVertices[u]!!.tiempoFinal < g.listaDeVertices[v]!!.tiempoFinal){
+            return true
+        }else if(crossEdges.contains(Arco(u,v)) || forwardEdges.contains(Arco(u,v))){
+            return true
+        }
+        return false
     }
 
-    inner class CamDesdeHastaIterato(private val G: Grafo, private val u: Int, private val v: Int): Iterator<Int>{
-        private var i: Int = G.listaDeVertices[v]!!.tiempoInicial
-        private var j: Int = G.listaDeVertices[v]!!.tiempoFinal
-        private var n: Int = i
-        private var m: Int = j
+    inner class CamDesdeHastaIterato(private val G: Grafo, private val u: Int, private val v: Int): Iterator<Int> {
+        private var i: Vertice = G.listaDeVertices[u]!!
+        private var j: Vertice = G.listaDeVertices[v]!!
         private lateinit var result: Vertice
 
         override fun hasNext(): Boolean {
-            return i > G.listaDeVertices[u]!!.tiempoInicial && j < G.listaDeVertices[u]!!.tiempoFinal
+            return hayCamino(i.valor, j.valor)
         }
 
         override fun next(): Int {
-            n = i
-            m = j
-            result = G.listaDeVertices[v]!!
-            while(n>G.listaDeVertices[u]!!.tiempoInicial){
+            while(){
                 result = result.pred!!
-                n = G.listaDeVertices[result.valor]!!.tiempoInicial
-                m = G.listaDeVertices[result.valor]!!.tiempoFinal
             }
             return result.valor
         }
@@ -122,60 +147,120 @@ public class DFS(val g: Grafo) {
         override fun iterator(): Iterator<Int> = CamDesdeHastaIterato(G, u, v)
     }
 
-    /*
-     Retorna el camino desde el vértice  u hasta el un vértice v. 
-     El camino es representado como un objeto iterable con los vértices del camino desde u hasta v.
-     En caso de que no exista un camino desde u hasta v, se lanza una RuntimeException. 
-     En caso de que alguno de los vértices no exista en el grafo se lanza una RuntimeException.
-     */ 
+    /** Método que dado dos enteros que representan dos vértices, retorna iterable con los vértices del camino desde el vértice
+     *  inicial u hasta el vértice final v. Si no existe tal camino, o que no pertenezca algunos de los dos vértices al grafo
+     *  se lanza una RuntimeException
+     */
     fun caminoDesdeHasta(u: Int, v: Int) : Iterable<Int>{
+        if(!hayCamino(u, v)) throw RuntimeException("No existe camino desde el vértice $u hasta el vértice $v")
+        if(g.listaDeVertices[v] == null || g.listaDeVertices[u] == null) throw RuntimeException("Alguno de los vértices no se encuentran en el grafo")
         return CamDesdeHastaIterable(g, u, v)
     }
 
-    // Retorna true si hay lados del bosque o false en caso contrario.
+    /** Método que indica si existe lados del bosque en el grafo
+     */
     fun hayLadosDeBosque(): Boolean {
-        return g.numDeLados > 0
+        /** Salida: un booleano que determina si existen tree edges
+         *  Postcondición: result == treeEdges.isNotEmpty()
+         *  Tiempo: O(1)
+         */
+        return treeEdges.isNotEmpty()
     }
-    
-    // Retorna los lados del bosque obtenido por DFS.
-    // Si no existen ese tipo de lados, entonces se lanza una RuntimeException.
+
+    /** Método que retorna un iterador de lados en los que cada ellos son lados del bosque generado.
+     *  Si no hay este tipo de lados en el bosque, se lanza una RuntimeException
+     */
     fun ladosDeBosque() : Iterator<Lado>{
+        /** Salida: un iterador que retorna lados que representan tree edges
+         *  Precondición: hayLadosBosque()
+         *  Postcondición: treeEdges.iterator()
+         *  Tiempo: O(|E|)
+         */
+        if(!hayLadosDeBosque()) throw RuntimeException("No existe Tree Edges en este grafo")
+        return treeEdges.iterator()
     }
 
-    // Retorna true si hay forward edges o false en caso contrario.
+    /** Método que indica si existe lados de ida del bosque en el grafo
+     */
     fun hayLadosDeIda(): Boolean {
-        return forwardEdges.size > 0
+        /** Salida: un booleano que determina si existen forwards edges
+         *  Postcondición: result == forwardEdges.isNotEmpty()
+         *  Tiempo: O(1)
+         */
+        return forwardEdges.isNotEmpty()
     }
-    
-    // Retorna los forward edges del bosque obtenido por DFS.
-    // Si no existen ese tipo de lados, entonces se lanza una RuntimeException.
+
+    /** Método que retorna un iterador de lados en los que cada ellos son lados de ida del bosque generado.
+     *  Si no hay este tipo de lados en el bosque, se lanza una RuntimeException
+     */
     fun ladosDeIda() : Iterator<Lado> {
-
+        /** Salida: un iterador que retorna lados que representan forward edges
+         *  Precondición: hayLadosDeIda()
+         *  Postcondición: forwardEdges.iterator()
+         *  Tiempo: O(|E|)
+         */
+        if(!hayLadosDeIda()) throw RuntimeException("No existe Forward Edges en este grafo")
+        return forwardEdges.iterator()
     }
 
-    // Retorna true si hay back edges o false en caso contrario.
+    /** Método que indica si existe lados de vuelta del bosque en el grafo
+     */
     fun hayLadosDeVuelta(): Boolean {
-        return backEdges.size > 0
+        /** Salida: un booleano que determina si existen back edges
+         *  Postcondición: result == forwardEdges.isNotEmpty()
+         *  Tiempo: O(1)
+         */
+        return backEdges.isNotEmpty()
     }
-    
-    // Retorna los back edges del bosque obtenido por DFS.
-    // Si no existen ese tipo de lados, entonces se lanza una RuntimeException.
+
+    /** Método que retorna un iterador de lados en los que cada ellos son lados de vuelta del bosque generado.
+     *  Si no hay este tipo de lados en el bosque, se lanza una RuntimeException
+     */
     fun ladosDeVuelta() : Iterator<Lado> {
-
+        /** Salida: un iterador que retorna lados que representan back edges
+         *  Precondición: hayLadosDeVuelta()
+         *  Postcondición: forwardEdges.iterator()
+         *  Tiempo: O(|E|)
+         */
+        if(!hayLadosDeVuelta()) throw RuntimeException("No existe Back Edges en este grafo")
+        return backEdges.iterator()
     }
 
-    // Retorna true si hay cross edges o false en caso contrario.
+    /** Método que indica si existe lados cruzados del bosque en el grafo
+     */
     fun hayLadosCruzados(): Boolean{
-        return crossEdges.size > 0
+        /** Salida: un booleano que determina si existen cross edges
+         *  Postcondición: result == crossEdges.isNotEmpty()
+         *  Tiempo: O(1)
+         */
+        return crossEdges.isNotEmpty()
     }
-    
-    // Retorna los cross edges del bosque obtenido por DFS.
-    // Si no existen ese tipo de lados, entonces se lanza una RuntimeException.
+
+    /** Método que retorna un iterador de lados en los que cada ellos son lados cruzados del bosque generado.
+     *  Si no hay este tipo de lados en el bosque, se lanza una RuntimeException
+     */
     fun ladosCruzados() : Iterator<Lado> {
-
+        /** Salida: un iterador que retorna lados que representan cross edges
+         *  Precondición: hayLadosDeCruzados()
+         *  Postcondición: crossEdges.iterator()
+         *  Tiempo: O(|E|)
+         */
+        if(!hayLadosCruzados()) throw RuntimeException("No existe Cross Edges en este grafo")
+        return crossEdges.iterator()
     }
 
-    // Imprime por la salida estándar el depth-first forest.
-    fun mostrarBosqueDFS() { }
+    /** Metodo que imprime todos los valores de los vertices empezando por el vertice inicial hasta los vertices con mayor tiempo final,
+     *  en otras palabras se imprime el depth-first tree
+     */
+    fun mostrarBosqueDFS(){
+        /** Precondicion: g.listaDeAdyacencia != arrayOf(null)
+         *  Postcondicion: println(DFStree.remove().valor)
+         *  Tiempo: O(|E|)
+         */
+        if(DFStree.isEmpty()) throw RuntimeException("El grafo está vacío")
+        while(!DFStree.isEmpty()){
+            println(DFStree.remove().valor)
+        }
+    }
     
 }
