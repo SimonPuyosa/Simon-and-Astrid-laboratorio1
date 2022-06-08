@@ -1,6 +1,7 @@
 KC=	kotlinc
 KFLAG=	-cp
 GLIB=	ve/usb/libGrafo
+GLIBS=	libGrafoKt/ve/usb/libGrafo
 
 all:	libGrafoKt.jar
 
@@ -19,7 +20,7 @@ libGrafoKt.jar: $(GLIB)/RuntimeException.class\
 		$(GLIB)/GrafoDirigidoCosto.class\
 		$(GLIB)/GrafoNoDirigido.class\
 		$(GLIB)/GrafoNoDirigidoCosto.class
-	jar -cvf $@ $(GLIB)/*.class
+	jar -cvf $@ $(GLIBS)/*.class
 
 $(GLIB)/RuntimeException.class: $(GLIB)/RuntimeException.kt
 	$(KC) $(GLIB)/RuntimeException.kt
@@ -67,4 +68,4 @@ $(GLIB)/GrafoNoDirigidoCosto.class: $(GLIB)/GrafoNoDirigidoCosto.kt
 	$(KC) $(KFLAG) $(GLIB): $(GLIB)/GrafoNoDirigidoCosto.kt
 
 clean:
-	rm -rf libGrafoKt.jar META-INF $(GLIB)/*.class
+	rm -rf libGrafoKt.jar META-INF $(GLIB)/*.class libGrafoKt
