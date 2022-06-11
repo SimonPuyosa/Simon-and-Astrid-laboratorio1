@@ -297,21 +297,22 @@ public class GrafoDirigidoCosto : Grafo {
         private var i = 0
         private var it = AdyacenIterato(G,0)
         init {
-            while (i < G.numDeVertices - 1){
+            while (i < G.numDeVertices){
                 if (G.listaDeAdyacencia[i] != null) {
                     it = AdyacenIterato(G, i)
                     break
                 }
                 i++
             }
-            if (i == G.numDeVertices - 1) throw RuntimeException("El grafo esta vacio")
+            if (i >= G.numDeVertices ) throw RuntimeException("El grafo esta vacio")
         }
 
         override fun hasNext(): Boolean {
-            while (i < G.numDeVertices - 1){                            // se itera sobre el numero de vertices
+            while (i < G.numDeVertices){                            // se itera sobre el numero de vertices
                 if (it.hasNext()) return true
                 i++
-                if (i < G.numDeVertices - 1) it = AdyacenIterato(G, i)
+                if (i >= G.numDeVertices || G.listaDeAdyacencia[i] == null) continue
+                if (i < G.numDeVertices) it = AdyacenIterato(G, i)
             }
             return false
         }

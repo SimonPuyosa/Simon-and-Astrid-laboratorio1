@@ -1,23 +1,20 @@
 package libGrafoKt.ve.usb.libGrafo
-import kotlin.RuntimeException
+import java.util.*
 import java.util.concurrent.ConcurrentLinkedQueue
+import kotlin.collections.ArrayList
 
 
 /** Clase que realiza el algoritmo DFS desde todos los vértices cuando se llama,
  *  esta clase recibe un grafo (de cualquier tipo)
  */
-public class DFS(val g: Grafo, val u: Int = 0) {
+public class DFS(var g: Grafo, val orden: Array<Vertice?> = g.listaDeVertices) {
     private var tiempo = 0                                       // Variable Global
-    private var DFStree = ConcurrentLinkedQueue<Vertice>()       // Cola en la que se almacenará en DFStree
-    private var treeEdges =
-        ArrayList<Pair<Int, Int>>()                 // Arreglo donde se almacenará los lados del bosque generado por DFS
-    private var forwardEdges =
-        ArrayList<Pair<Int, Int>>()              // Arreglo donde se almacenará los lados de ida del bosque generado por DFS
-    private var backEdges =
-        ArrayList<Pair<Int, Int>>()                 // Arreglo donde se almacenará los lados de vuelta del bosque generado por DFS
-    private var crossEdges =
-        ArrayList<Pair<Int, Int>>()                // Arreglo donde se almacenará los lados cruzados del bosque generado por DFS
-    private var listaDeVertices = emptyArray<Vertice?>()
+    var DFStree = ConcurrentLinkedQueue<Vertice>()              // Cola en la que se almacenará en DFStree
+    var treeEdges = ArrayList<Pair<Int, Int>>()                 // Arreglo donde se almacenará los lados del bosque generado por DFS
+    var forwardEdges = ArrayList<Pair<Int, Int>>()              // Arreglo donde se almacenará los lados de ida del bosque generado por DFS
+    var backEdges = ArrayList<Pair<Int, Int>>()                 // Arreglo donde se almacenará los lados de vuelta del bosque generado por DFS
+    var crossEdges = ArrayList<Pair<Int, Int>>()                // Arreglo donde se almacenará los lados cruzados del bosque generado por DFS
+    var ordenTopologico = LinkedList<Vertice>()
 
     /** Constructor de la clase DFS el cual ejecuta dicho algoritmo tomando los valores del grafo
      *  previamente descrito, este constructor añade los valores correspondientes del color, tiempo inicial, tiempo final
@@ -35,14 +32,10 @@ public class DFS(val g: Grafo, val u: Int = 0) {
             g.listaDeVertices[i]!!.pred = null
             g.listaDeVertices[i]!!.color = Color.BLANCO
         }
-        listaDeVertices = g.listaDeVertices.copyOf()
-        if (g.listaDeVertices.size > u && g.listaDeVertices[u] != null && g.listaDeVertices[u]!!.color == Color.BLANCO) {
-            dfsVisit(g, g.listaDeVertices[u]!!.valor)
-        } else {
-            for (i in g.listaDeVertices.indices) {
-                if (g.listaDeVertices[i]!!.color == Color.BLANCO) {
-                    dfsVisit(g, g.listaDeVertices[i]!!.valor)
-                }
+        //listaDeVertices = g.listaDeVertices.copyOf()
+        for (i in orden) {
+            if (i != null && g.listaDeVertices[i.valor]!!.color == Color.BLANCO) {
+                dfsVisit(g, g.listaDeVertices[i.valor]!!.valor)
             }
         }
     }
@@ -105,6 +98,11 @@ public class DFS(val g: Grafo, val u: Int = 0) {
         tiempo += 1                                                //almacenamos el tiempo final
         temp.tiempoFinal = tiempo
         DFStree.add(temp)                                          //Guardamos el vértice en la cola
+        ordenTopologico.addFirst(temp)
+    }
+
+    fun obtenerOrdTop(): LinkedList<Vertice>{
+        return ordenTopologico
     }
 
     /** Método que retorna el valor del vértice predecesor del valor de un vértice dado, si el valor del vértice dado
@@ -230,11 +228,7 @@ public class DFS(val g: Grafo, val u: Int = 0) {
          */
         if (!hayCamino(u, v)) throw RuntimeException("No existe camino desde el vértice $u hasta el vértice $v")
         if (g.listaDeVertices[v] == null || g.listaDeVertices[u] == null) throw RuntimeException("Alguno de los vértices no se encuentran en el grafo")
-        val listaDeVerticesTemp = listaDeVertices.copyOf()
-        val grafoTemp = g
-        grafoTemp.listaDeVertices = listaDeVerticesTemp
-        DFS(grafoTemp, u)
-        return CamDesdeHastaIterable(grafoTemp, u, v)
+        return CamDesdeHastaIterable(g, u, v)
     }
 
     /** Método que indica si existe lados del bosque en el grafo
@@ -434,5 +428,5 @@ public class DFS(val g: Grafo, val u: Int = 0) {
             println(DFStree.remove().valor)
         }
     }
-    
+
 }
