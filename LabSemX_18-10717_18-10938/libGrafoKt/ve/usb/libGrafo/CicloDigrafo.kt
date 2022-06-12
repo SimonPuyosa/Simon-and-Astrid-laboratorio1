@@ -1,5 +1,4 @@
 package libGrafoKt.ve.usb.libGrafo
-import java.util.concurrent.ConcurrentLinkedQueue
 
 /** Clase que determina si el digrafo ingresado posee o no ciclos mediante la ejecución del algoritmo de DFS
 */
@@ -15,7 +14,7 @@ public class CicloDigrafo(val g: GrafoDirigido) {
     /** Clase interna que dado un grafo luego de haber realizado el algoritmo DFS, retorna un
      *  iterador de enteros en los que cada uno de ellos es el ciclo encontrado.
      */
-    inner class CicloEnconIterato(private val G: DFS) : Iterator<Int> {
+    inner class CicloEnconIterato(G: DFS) : Iterator<Int> {
         /** Entrada:
          *      G: un grafo en el cual se le aplicó el algoritmo de DFS
          *  Salida: una iterador que retorna enteros que representan los valores de los vertices del ciclo
@@ -24,12 +23,10 @@ public class CicloDigrafo(val g: GrafoDirigido) {
          *  Tiempo: O(|V|)
          */
         private val list = G.backEdges
-        private var ciclos = ConcurrentLinkedQueue<Vertice>()
-        private var i = g.listaDeVertices[list[0].first]!!.tiempoInicial - g.listaDeVertices[list[0].second]!!.tiempoInicial
-        private var j = g.listaDeVertices[list[0].second]!!.tiempoFinal - g.listaDeVertices[list[0].first]!!.tiempoFinal
+        private var i = g.listaDeVertices[list[0].first].tiempoInicial - g.listaDeVertices[list[0].second].tiempoInicial
+        private var j = g.listaDeVertices[list[0].second].tiempoFinal - g.listaDeVertices[list[0].first].tiempoFinal
         private var n: Int = i
         private var m: Int = j
-        private var k: Int = 0
         private lateinit var result: Vertice
 
         override fun hasNext(): Boolean {
@@ -44,7 +41,7 @@ public class CicloDigrafo(val g: GrafoDirigido) {
             }else{
                 n = i
                 m = j
-                result = g.listaDeVertices[list[0].first]!!
+                result = g.listaDeVertices[list[0].first]
                 while(n>0 && m>0){
                     result = result.pred!!
                     n--
@@ -72,8 +69,8 @@ public class CicloDigrafo(val g: GrafoDirigido) {
     /** Método que retorna un itetable con los vértices del ciclo encontrado en el digrafo g.
      *  Si el grafo no posee ciclos, se lanza una RuntimeException()
      */
-        fun cicloEncontrado(): Iterable<Int> {
-            if (!existeUnCiclo()) throw RuntimeException("El grafo ingresado no tiene ciclos")
-            return CicloEnconIterable(gDFS)
-        }
+    fun cicloEncontrado(): Iterable<Int> {
+        if (!existeUnCiclo()) throw RuntimeException("El grafo ingresado no tiene ciclos")
+        return CicloEnconIterable(gDFS)
+    }
 }

@@ -4,7 +4,6 @@ package libGrafoKt.ve.usb.libGrafo
  *  retornando para cada nivel un conjunto de vértices, además de retornar un booleano indicando que
  *  no hay ciclos. En caso de que el grafo de entrada no sea un DAG, entonces se indica que hay ciclo.
  */
-
 public class ParticionNiveles(val g: GrafoDirigido){
     //Inicialización de variables
     private var nvert: Int = 0
@@ -23,7 +22,7 @@ public class ParticionNiveles(val g: GrafoDirigido){
          */
 
         for (i in 0 until g.numDeVertices) {
-            gradoInterior.add(g.listaDeVertices[i]!!.gradoInterior)         //se almacenan los grados interiores en cada grafo
+            gradoInterior.add(g.listaDeVertices[i].gradoInterior)         //se almacenan los grados interiores en cada grafo
         }
 
         for(i in 0 until g.numDeVertices){
@@ -31,7 +30,7 @@ public class ParticionNiveles(val g: GrafoDirigido){
         }
 
         for (u in g.listaDeVertices) {                                      //se itera por la lista de vértices del digrafo y se almacenan en el arreglo particiones
-            if (gradoInterior[u!!.valor] == 0) {                            //aquellos vértices cuyo grado interior es 0
+            if (gradoInterior[u.valor] == 0) {                            //aquellos vértices cuyo grado interior es 0
                 particiones[nivel].add(u.valor)
                 nvert += 1                                                  //y aumentamos el número de vértices
             }
@@ -63,7 +62,7 @@ public class ParticionNiveles(val g: GrafoDirigido){
          *  Tiempo: O(1)
          */
         if(!OrdenamientoTopologico(g).esDAG()) throw RuntimeException("El grafo ingresado no es un Grafo Acíclico Directo")
-        return particiones.toTypedArray()
+        return particiones.distinct().toTypedArray()
     }
 
     /** Clase que retorna un booleano que indica si existe o no en el digrafo un ciclo

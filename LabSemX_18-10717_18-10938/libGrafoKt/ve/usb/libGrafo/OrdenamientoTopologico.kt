@@ -19,7 +19,7 @@ public class OrdenamientoTopologico(val g: GrafoDirigido) {
      *  iterador de enteros en los que cada uno de ellos es el orden topológico del difrafo.
      */
 
-    inner class OrdenTopoIterato(private val G: DFS) : Iterator<Int> {
+    inner class OrdenTopoIterato(G: DFS) : Iterator<Int> {
         /** Entrada:
          *      G: un grafo en el cual se le aplicó el algoritmo de DFS
          *  Salida: una iterador que retorna enteros que representan los valores de los vertices del ordenamiento topológico
