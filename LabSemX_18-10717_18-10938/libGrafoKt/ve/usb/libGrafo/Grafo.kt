@@ -1,10 +1,9 @@
 package libGrafoKt.ve.usb.libGrafo
-
 import java.util.*
 
 interface Grafo : Iterable<Lado> {
     var listaDeAdyacencia: Array<LinkedList<Vertice>?>
-    var listaDeVertices: Array<Vertice?>
+    var listaDeVertices: Array<Vertice>
     var numDeLados: Int
     var numDeVertices: Int
 

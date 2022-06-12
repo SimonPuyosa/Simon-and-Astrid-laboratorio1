@@ -1,31 +1,32 @@
 package libGrafoKt.ve.usb.libGrafo
-import libGrafoKt.ve.usb.libGrafo.Vertice
 import java.io.File
 import java.util.*
 import javax.management.openmbean.KeyAlreadyExistsException
 
 /** Grafo no Dirigido el cual tiene como propiedades:
  *      listaDeAdyacencia: un arreglo, que puede ser nulo, de linkedlist de vertices
- *      listaDeVertices: arreglo, que puede ser nulo, de vertices
+ *      listaDeVertices: arreglo de enteros
  *      numDeLados: entero que representa el numero de lados del grafo
  *      numDeVertices: entero que representa el numero de vertices del grafo
  */
 public class GrafoNoDirigido: Grafo {
     // Propiedades del grafo no dirigido
     override var listaDeAdyacencia: Array<LinkedList<Vertice>?> = arrayOf(null)
-    override var listaDeVertices: Array<Vertice?> = arrayOf(null)
+    override var listaDeVertices: Array<Vertice>
     override var numDeLados: Int = 0
     override var numDeVertices: Int = 0
 
     /** Contruye un grafo no dirigido partiendo de un entero que representaa el numero de vertices
      */
-    constructor(numDeVertices: Int) {
+    constructor(numeroDeVertices: Int) {
         /** Entrada: un entero que determina el numero de vertices que tendra el grafo no dirigido
-         *  Precondicion: numDeVertices > 0
-         *  Postcondicion: listaDeAdyacencia.size() == numDeVertices
+         *  Precondicion: numeroDeVertices > 0
+         *  Postcondicion: listaDeAdyacencia.size() == numeroDeVertices
          *  Tiempo: de operacion: O(|V|)
          */
-        listaDeAdyacencia = arrayOfNulls(numDeVertices)
+        listaDeAdyacencia = arrayOfNulls(numeroDeVertices)
+        listaDeVertices = Array(numeroDeVertices) { Vertice(it) }
+        numDeVertices = numeroDeVertices
     }
 
     /** Constructor que dado un String de la ubicacion de un archivo, lee el archivo y segun sus datos genera un grafo
@@ -44,7 +45,7 @@ public class GrafoNoDirigido: Grafo {
         val a = File(nombreArchivo).readLines()                   // Se guarda el archivo en la variable a de tipo List<String>
         numDeVertices = a[0].toInt()                             // Se obtiene de la primera linea linea el numero de vertices
         listaDeAdyacencia = arrayOfNulls(numDeVertices)          // Se genera la lista de adyacencia (array de listas enlazadas)
-        listaDeVertices = arrayOfNulls(numDeVertices)            // Se genera la lista de vertices la cual sera una lista enlazada
+        listaDeVertices = Array(numDeVertices) { Vertice(it) }   // Se genera un arreglo de vertices
         val numerodelados = a[1].toInt()                              // Se obtiene de la segunda linea el numero de lados
         numDeLados = 0
 
@@ -58,18 +59,10 @@ public class GrafoNoDirigido: Grafo {
             u = temp[0].toInt()                                     // valor del vértice v
             v = temp[1].toInt()                                     // valor del vértice u
 
-            if (listaDeAdyacencia[u] == null){        // si el elemento del arreglo es nulo se le asigna un linked list vacio
-                listaDeAdyacencia[u] = LinkedList<Vertice>()
-            }
-            if (listaDeAdyacencia[v] == null){        // si el elemento del arreglo es nulo se le asigna un linked list vacio
-                listaDeAdyacencia[v] = LinkedList<Vertice>()
-            }
-
-            if (u >= listaDeVertices.size || listaDeVertices[u] == null) listaDeVertices[u] = Vertice(u) // Se agregan los dos vértices a la lista de vértices, si estos ya se
-            if (v >= listaDeVertices.size || listaDeVertices[v] == null) listaDeVertices[v] = Vertice(v) // encuentran en la lista de vectores el programa continua y no los agrega           }
             if (! agregarArista(Arista(u, v))) throw KeyAlreadyExistsException("el objeto esta repetido")
             i++
         }
+        if (numDeLados != numerodelados) throw RuntimeException("hubo un error subiendo la data, el numero de lados es incorrecto")
     }
 
     /** Metodo que agrega al grafo no dirigido una Arista dado y retorna un Booleano determinando si la Arista ya estaba agregado o no,
@@ -82,14 +75,19 @@ public class GrafoNoDirigido: Grafo {
          *  Postcondicion: Arista in listaDeAdyacencia
          *  Tiempo: O(|E|)
          */
-        if (a.v >= listaDeVertices.size || a.u >= listaDeVertices.size ||
-            listaDeVertices[a.v] == null || listaDeVertices[a.u] == null){  // se verifica que los vertices existan
+        if (a.v >= listaDeVertices.size || a.u >= listaDeVertices.size){  // se verifica que los vertices existan
             throw RuntimeException("El lado a agregar contiene un vertice que no pertenece al grafo")
         }
-        if (listaDeAdyacencia[a.v]!!.indexOf(Vertice(a.u)) == -1){          // se verifica que el lado no exista
+        if (listaDeAdyacencia[a.v] == null || listaDeAdyacencia[a.v]!!.indexOf(Vertice(a.u)) == -1){          // se verifica que el lado no exista
+            if (listaDeAdyacencia[a.u] == null){        // si el elemento del arreglo es nulo se le asigna un linked list vacio
+                listaDeAdyacencia[a.u] = LinkedList<Vertice>()
+            }
+            if (listaDeAdyacencia[a.v] == null){        // si el elemento del arreglo es nulo se le asigna un linked list vacio
+                listaDeAdyacencia[a.v] = LinkedList<Vertice>()
+            }
             this.numDeLados += 1                                         // si el lado no existe se aumenta el numero de lados
-            listaDeVertices[a.v]!!.gradoExterior += 1                       // se aumenta el grado de los vertices
-            listaDeVertices[a.u]!!.gradoExterior += 1
+            listaDeVertices[a.v].gradoExterior += 1                       // se aumenta el grado de los vertices
+            listaDeVertices[a.u].gradoExterior += 1
             listaDeAdyacencia[a.v]!!.addFirst(Vertice(a.u))                 // se agrega los lados a la lista de adyacencia
             listaDeAdyacencia[a.u]!!.addFirst(Vertice(a.v))
             return true
@@ -164,7 +162,7 @@ public class GrafoNoDirigido: Grafo {
          *  Postcondicion: Arista in GrafoNoDirigidoCosto
          *  Tiempo: O(1)
          */
-        if (v >= listaDeVertices.size || listaDeVertices[v] == null) throw RuntimeException("no se encuentra el vertice en el grafo")
+        if (v >= listaDeVertices.size) throw RuntimeException("no se encuentra el vertice en el grafo")
         return AdyacenIterable(this, v)
     }
 
@@ -228,8 +226,8 @@ public class GrafoNoDirigido: Grafo {
          *  Postcondicion: Arista in GrafoNoDirigidoCosto
          *  Tiempo: O(|V| + |E|)
          */
-        if (l.v >= listaDeVertices.size || listaDeVertices[l.v] == null) throw RuntimeException("no se encuentra el vertice en el grafo")
-        if (l.u >= listaDeVertices.size || listaDeVertices[l.u] == null) throw RuntimeException("no se encuentra el vertice en el grafo")
+        if (l.v >= listaDeVertices.size) throw RuntimeException("no se encuentra el vertice en el grafo")
+        if (l.u >= listaDeVertices.size) throw RuntimeException("no se encuentra el vertice en el grafo")
 
         val temp = listaDeAdyacencia[l.v]!! // se verifica si el arco existe
         if (temp.indexOf(Vertice(l.u)) == -1) throw RuntimeException("no se encuentra el lado en el grafo")
@@ -247,7 +245,7 @@ public class GrafoNoDirigido: Grafo {
          *  Tiempo: O(|V| + |E|)
          */
         private var i = 0
-        private var it = AdyacenIterato(G, 0)
+        private lateinit var it: GrafoNoDirigido.AdyacenIterato
         init {
             while (i < G.numDeVertices){
                 if (G.listaDeAdyacencia[i] != null) {
@@ -256,7 +254,7 @@ public class GrafoNoDirigido: Grafo {
                 }
                 i++
             }
-            if (i >= G.numDeVertices) throw RuntimeException("El grafo esta vacio")
+            if (i >= G.numDeVertices) throw RuntimeException("El grafo no tiene lados")
         }
 
         override fun hasNext(): Boolean {
@@ -295,9 +293,9 @@ public class GrafoNoDirigido: Grafo {
          *  Postcondicion: grados.isInt() == true
          *  Tiempo: O(1)
          */
-        if (v >= listaDeVertices.size || listaDeVertices[v] == null) throw RuntimeException("El lado a agregar contiene un vertice que no pertenece al grafo")
+        if (v >= listaDeVertices.size) throw RuntimeException("El lado a agregar contiene un vertice que no pertenece al grafo")
         if (listaDeAdyacencia[v] == null) return 0
-        return listaDeVertices[v]!!.gradoExterior                                    // se retorna el grado exterior
+        return listaDeVertices[v].gradoExterior                                    // se retorna el grado exterior
     }
 
 

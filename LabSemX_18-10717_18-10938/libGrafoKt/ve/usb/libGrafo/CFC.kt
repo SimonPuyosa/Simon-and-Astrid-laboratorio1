@@ -1,103 +1,137 @@
 package libGrafoKt.ve.usb.libGrafo
-
 import java.util.*
 
-/*
-  Obtiene las componentes fuertementes conexas de un grafo 
-  La componentes fuertementes conexas se determinan cuando 
-  se crea un nuevo objeto de esta clase, es decir, en el constructor.
-*/
+/**
+ *  Clase que dado un grafo dorigido, calcula las componentes
+ *  fuertemente conexas de dicho grafo y se colocan en la propiedad
+ *  cfc la cual es una LinkedList de LinkedLists de enteros, estos
+ *  enteros representan los valores de los vertices y cada subLinkedList
+ *  representa un cfcs
+ */
 public class CFC(val g: GrafoDirigido) {
-    val CFCS = LinkedList<LinkedList<Int>>()
+    val cfc = LinkedList<LinkedList<Int>>()        // se crea la propiedad previamente explicada
 
     init {
-        val orden = DFS(g).obtenerOrdTop()
-        val grafInv = digrafoInverso(g)
-        val dfsInv = DFS(grafInv, orden.toTypedArray())
-        CFCS.addFirst(LinkedList<Int>())
+        // Se empieza a calcular los cfcs
+        val orden = DFS(g).obtenerOrdTop()          // Se busca la LinkedList del ordenamiento topologico
+        val grafInv = digrafoInverso(g)             // Se obtiene el grafo inverso del digrafo g
+        val dfsInv = DFS(grafInv, orden.toTypedArray()) // Se aplica dfs al digrafo inverso en el orden topologico previamente obtenido
+        cfc.addFirst(LinkedList<Int>())            // Se crea el primer subLinkedList
 
+        // Se tiene que los tree edges de dfsInv son vertices CFC del grafo, tambien se tiene que
+        // para que 2 vertices sean la misma CFCS debe haber un lado que los una, por lo que:
         var i = 0
-        val it = dfsInv.ladosDeBosque()
-        var actual: Lado
-        var anterior: Lado? = null
-        if (!it.hasNext() && (g.listaDeVertices.isEmpty() || g.listaDeAdyacencia.isEmpty())) throw RuntimeException("El grafo esta vacio")
+        if  (dfsInv.hayLadosDeBosque()){
+            val it = dfsInv.ladosDeBosque()             // guardamos el iterador de los tree edges de dfsInv
+            var actual: Lado                            // se crean variables en la que asignaremos los lados de los tree edges
+            var anterior: Lado? = null
+            if (!it.hasNext() && (g.listaDeVertices.isEmpty() || g.listaDeAdyacencia.isEmpty())) throw RuntimeException("El grafo esta vacio")
 
-        while (it.hasNext()) {
-            actual = it.next()
-            if (anterior == null || anterior.b == actual.a) {
-                CFCS[i].addFirst(actual.a)
-            } else if (anterior.b != actual.a) {
-                CFCS[i].addFirst(anterior.b)
-                CFCS.addLast(LinkedList<Int>())
-                i++
-                CFCS[i].addFirst(actual.a)
-            }
-            anterior = actual
-        }
-        CFCS[i].addFirst(anterior!!.b)
-        for (k in g.listaDeVertices) {
-            if (obtenerIdentificadorCFC(k!!.valor) == -1){
-                if (g.listaDeAdyacencia[k.valor] != null && g.listaDeAdyacencia[k.valor]!!.contains(k)) {
-                    CFCS.addLast(LinkedList<Int>())
+            while (it.hasNext()) {                      // se itera sobre los lados del bosque de dfsInv
+                actual = it.next()                      // se guarda el lado en actual
+                if (anterior == null || anterior.b == actual.a) {   // si es el primer lado a estudiar o este lado viene de una cfcs previamente creada
+                    cfc[i].addFirst(actual.a)                       // Se guarda solo el primer vertice
+                } else if (anterior.b != actual.a) {                // en caso contrario
+                    cfc[i].addFirst(anterior.b)                     // Se guarda el segundo vertice del lado anterior
+                    cfc.addLast(LinkedList<Int>())                    // Se crea un nuevo SubLinkedList en la primera posicion
                     i++
-                    CFCS[i].addFirst(k.valor)
+                    cfc[i].addFirst(actual.a)                       // Se guarda el primer vertice del lado actual
+                }
+                anterior = actual                                   // el lado actual se convierte en el anterior
+            }
+            if (anterior != null ) cfc[i].addFirst(anterior.b)      // se guarda el segundo vertide del lado anterior
+        }
+
+        // ahora buscaremos los cfcs de un solo vertice es decir los cfcs causados por un bucle
+        for (k in g.listaDeVertices) {                          // iteramos sobre los vertices
+            if (obtenerIdentificadorCFC(k.valor) == -1){      // se verifica que el vertice no se encuentra en ningun cfcs
+                if (g.listaDeAdyacencia[k.valor] != null && g.listaDeAdyacencia[k.valor]!!.contains(k)) {   // Si el vertice tiene un bucle
+                    cfc.addLast(LinkedList<Int>())            // Se crea otro SubLinkedList
+                    i++
+                    cfc[i].addFirst(k.valor)                // Se agrega el vertice bucle
                 }
             }
         }
     }
 
-    /*
-     Retorna true si dos vértices están en la misma CFC y
-     falso en caso contrario. Si el algunos de los dos vértices de
-     entrada, no pertenece al grafo, entonces se lanza un RuntineException
+    /** Metodo que dado dos enteros que representan dos vertices del grafo, retorna un booleano que dictamina
+     *  si ambos vertices se encuentran en el mismo cfcs. Si uno de estos dos vertices de entrada no se encuentra,
+     *  en el grafo se lanza un RuntimeException
      */
     fun estanEnLaMismaCFC(v: Int, u: Int): Boolean {
-        if (v >= g.listaDeVertices.size || u >= g.listaDeVertices.size ||
-            g.listaDeVertices[u] == null || g.listaDeVertices[v] == null
-        ) {   // se verifica que los vertices existan
+        /** Entrada: dos enteros que representan dos vertices del grafo
+         *  Salida: un booleano que determina si los dos vertices se encuentran en el mismo cfcs
+         *  Precondicion: v in g.listaDeVertices && u in g.listaDeVertices
+         *  Postcondicion: obtenerIdentificadorCFC(u) == obtenerIdentificadorCFC(v)
+         *  Tiempo: O(|V| + |E|)
+         */
+        if (v >= g.listaDeVertices.size || u >= g.listaDeVertices.size) {   // se verifica que los vertices existan
             throw RuntimeException("Los vertices no pertenecen al grafo")
         }
-        val it = CFCS.iterator()
+
+        val it = cfc.iterator()             // iterador sobre todos los cfcs
         var temp: LinkedList<Int>
-        while (it.hasNext()) {
-            temp = it.next()
-            if (temp.contains(v)) {
-                return temp.contains(u)
+        while (it.hasNext()) {              // Se itera sobre cada LinkedList perteneciente a cfc
+            temp = it.next()                // Se guarda la linkedList<Int> en temp
+            if (temp.contains(v)) {         // Si v se encuentra en el linked list
+                return temp.contains(u)     // Se retorna el booleano que es determinado si u pertenece a v
             }
         }
-        return false
+        return false                        // Si no se encuentra significa que el vertice v no es CFC
     }
 
-
-    // Indica el número de componentes fuertemente conexas del digrafo.
+    /** Metodo que retorna el numero de cfcs que contiene el grafoDirigido
+     */
     fun numeroDeCFC(): Int {
-        return CFCS.size
+        /** Salida: un entero del numero de cfcs que contiene el grafo
+         *  Precondicion: ! g.listaDeVertices.isEmpty() && g.listaDeADyacentes != arrayOf(nulls)
+         *  Postcondicion: cfc.size
+         *  Tiempo: O(1)
+         */
+        return cfc.size
     }
 
-    /*
-     Retorna el identificador de la componente fuertemente conexa donde está contenido 
-     el vértice v. El identificador es un número en el intervalo [0 , numeroDeCFC()-1].
-     Si el vértice v no pertenece al grafo g se lanza una RuntimeException
+    /** Metodo que dado un entero que representa un vertice del grafo, retorna el numero donde
+     *  se encuentra la cfcs en la cual el vertice esta ubicado, es decir un numero desde 0
+     *  hasta cfc.size - 1. Si el vertice no se encuentra en el grafo se lanza un RuntimeException
+     *  Si el vertice no se encuentra en ningun cfcs se retorna -1
      */
     fun obtenerIdentificadorCFC(v: Int): Int {
-        if (v >= g.listaDeVertices.size || g.listaDeVertices[v] == null) {   // se verifica que el vertice exista
+        /** Entrada: un entero que representan un vertice del grafo
+         *  Salida: un entero que determina la ubicacion en la que se encuentra el cfcs donde esta ubicado el entero dado
+         *  Precondicion: v in g.listaDeVertices
+         *  Postcondicion: -1 <= result < cfc.size
+         *  Tiempo: O(|V| + |E|)
+         */
+        if (v >= g.listaDeVertices.size) {   // se verifica que el vertice exista
             throw RuntimeException("El vertice no pertenece al grafo")
         }
-        val it = CFCS.iterator()
+
+        val it = cfc.iterator()             // iterador sobre todos los cfcs
         var temp: LinkedList<Int>
-        var result = 0
-        while (it.hasNext()) {
-            temp = it.next()
-            if (temp.contains(v)) {
-                return result
+        var result = 0                      // variable que indica el indice del cfcs que contiene a v
+        while (it.hasNext()) {              // Se itera sobre cada LinkedList perteneciente a cfc
+            temp = it.next()                // Se guarda la linkedList<Int> en temp
+            if (temp.contains(v)) {         // Si v se encuentra en el linked list
+                return result               // Se retorna result
             }
             result++
         }
-        return -1
+        return -1                           // Si no se encuentra significa que el vertice v no es CFC
     }
 
+    /** Metodo intero que dado un CFC retorna un iterador de MutableSet<Int> en donde cada set representa
+     *  un cfcs, este set es un conjunto de enteros representan vertices del grafo las cuales no pueden
+     *  estar repetidas en el MutableSet ni en otros cfcs
+     */
     inner class ObtenerCFiterato(C: CFC) : Iterator<MutableSet<Int>> {
-        val it = C.CFCS.iterator()
+        /** Entrada: un CFC en el cual se buscaran todos los cfcs que contenga
+         *  Salida: una iterador de MutableSet que contenga enteros de los vertices perteneciente a un cfcs
+         *  Precondicion: ! C.cfc.isEmpty()
+         *  Postcondicion: result in C.cfc
+         *  Tiempo: O(1)
+         */
+        private val it = C.cfc.iterator()
 
         override fun hasNext(): Boolean {
             return it.hasNext()
@@ -108,34 +142,59 @@ public class CFC(val g: GrafoDirigido) {
         }
     }
 
-
+    /** Clase interna que sobreescribe el metodo iterator y lo iguala a la clase ObtenerCFiterato
+     */
     inner class ObtenerCFCmutable(private val C: CFC): Iterable<MutableSet<Int>> {
-
+        /** Entrada: un CFC en el cual se buscaran todos los cfcs que contenga
+         *  Salida: una iterador de MutableSet que contenga enteros de los vertices perteneciente a un cfcs
+         *  Precondicion: ! C.cfc.isEmpty()
+         *  Postcondicion: result in C.cfc
+         *  Tiempo: O(1)
+         */
         override fun iterator(): Iterator<MutableSet<Int>> = ObtenerCFiterato(C)
     }
 
 
-    /*
-     Retorna un objeto iterable, el cual contiene CFCs. Cada CFC esta representada
-     como un  conjunto de vértices. El orden de las CFCs en el objeto iterable,
-     debe corresponder al que se indica en el método obtenerIdentificadorCFC
+    /** Metodo que retorna un iterable de todos los cfcs representados como un conjunto de enteros donde estos
+     *  enteros representan vertices los cuales no se pueden repetir en el propio conjunto ni en otros cfcs.
+     *  Estos cfcs son retornados en el orden en el que se encuentran en CFC
      */
-    fun obternerCFC() : Iterable<MutableSet<Int>> {
-	    return ObtenerCFCmutable(this)
+    fun obtenerCFC() : Iterable<MutableSet<Int>> {
+        /** Salida: un iterable de MutableSet que contenga enteros de los vertices perteneciente a un cfcs
+         *  Precondicion: ! C.cfc.isEmpty()
+         *  Postcondicion: result in C.cfc
+         *  Tiempo: O(1)
+         */
+        return ObtenerCFCmutable(this)
     }
 
-    /*
-     Retorna el grafo componente asociado a las componentes fuertemente conexas. 
-     El identificador de los vértices del grafo componente está asociado 
-     con los orden de la CFC en el objeto iterable que se obtiene del método obtenerCFC. 
-     Es decir, si por ejemplo si los vértices 5,6 y 8 de G pertenecen a la
-     componentemente fuertemente conexa cero, entonces 
-     obtenerIdentificadorCFC(5) = obtenerIdentificadorCFC(6) = obtenerIdentificadorCFC(8) = 0
-     y se va a tener que el en grafo componente el vértice 0 
-     representa a la CFC que contiene a los vértices 5,6 y 8 de G.
+    /** Metodo que retorna el grafo componente de las cfcs que estara representado por un grafo dirigido
+     *  en el cual los vertices de dicho grafo seran los cfcs en el orden de obtenerIdentificadorCFC()
+     *  a su vez que la lista de adyacencia de dicho grafo contendra los arcos de un CFC a otro
+     *  en caso de tenerlos
      */
-    fun obtenerGrafoComponente() : GrafoNoDirigido {
-        return GrafoNoDirigido(CFCS.size)
-    }
+    fun obtenerGrafoComponente() : GrafoDirigido {
+        /** Salida: un grafo dirigido que representa al grafo componente del CFC
+         *  Precondicion: ! C.cfc.isEmpty() && cfc.size > 0
+         *  Postcondicion: result.listaDeVertices.size > 0
+         *  Tiempo: O(|V| + |E|)
+         */
+        val grafoComponente = GrafoDirigido(cfc.size)               // Se crea el grafo con el tamaño del cfc
 
+        val it = g.iterator()                                       // se crea el iterador del grafo de la clase CFC
+        var temp: Arco
+        var u: Int
+        var v: Int
+        
+        while (it.hasNext()){                                       // se itera sobre cada arco del grafo g
+            temp = it.next()
+            if (!this.estanEnLaMismaCFC(temp.a, temp.b)){           // si el arco es de dos vertices que no se encuentran en el mismo cfcs
+                u = this.obtenerIdentificadorCFC(temp.a)
+                v = this.obtenerIdentificadorCFC(temp.b)
+                if (u != -1 && v != -1) grafoComponente.agregarArco(Arco(u, v))     // Se agrega a la lista de adyacencia de grafoComponente
+            }
+        }
+        
+        return grafoComponente                                      // Se retorna grafoComponente
+    }
 }

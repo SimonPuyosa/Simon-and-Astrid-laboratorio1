@@ -32,16 +32,25 @@ fun main(args: Array<String>) {
     println("estan en la misma cfc 2 y 3: ${clase2.estanEnLaMismaCFC(6, 5)}")
     println("indicador de 2 y 3: ${clase2.obtenerIdentificadorCFC(6)} y ${clase2.obtenerIdentificadorCFC(5)}")
 
-
-    var e = clase2.obternerCFC().iterator()
+    var e = clase2.obtenerCFC().iterator()
     println("iterador 1:")
     while (e.hasNext()) println(e.next())
     println()
 
-    val d = clase.iterator()
+    var d = clase.iterator()
     println("iterador 2:")
     while (d.hasNext()) println(d.next())
     println()
+
+    val grafocomp = clase2.obtenerGrafoComponente()
+
+    println()
+    d = grafocomp.iterator()
+    println("iterador 2:")
+    while (d.hasNext()) println(d.next())
+    println()
+
+
 
 }
 

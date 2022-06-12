@@ -1,31 +1,32 @@
 package libGrafoKt.ve.usb.libGrafo
-import libGrafoKt.ve.usb.libGrafo.Vertice
 import java.io.File
 import java.util.*
 import javax.management.openmbean.KeyAlreadyExistsException
 
 /** Digrafo el cual tiene como propiedades:
  *      listaDeAdyacencia: un arreglo, que puede ser nulo, de liskedList de vertices
- *      listaDeVertices: arreglo, que puede ser nulo, de vertices
+ *      listaDeVertices: arreglo de enteros
  *      numDeLados: entero que representa el número de lados del grafo
  *      numDeVertices: entero que representa el número de vertices del grafo
  */
 public class GrafoDirigidoCosto : Grafo {
     // Propiedades del grafo dirigido
     override var listaDeAdyacencia: Array<LinkedList<Vertice>?> = arrayOf(null)
-    override var listaDeVertices: Array<Vertice?> = arrayOf(null)
+    override var listaDeVertices: Array<Vertice>
     override var numDeLados: Int = 0
     override var numDeVertices: Int = 0
 
     /**Construye un grafo dirigido partiendo de un entero que representa el número de vértices
      */
-    constructor(numDeVertices: Int) {
+    constructor(numeroDeVertices: Int) {
         /** Entrada: un entero que determina el número de vertices que tendra el grafo
-         *  Precondicion: numDeVertices > 0
-         *  Postcondicion: listaDeAdyacencia.size() == numDeVertices
+         *  Precondicion: numeroDeVertices > 0
+         *  Postcondicion: listaDeAdyacencia.size() == numeroDeVertices
          *  Tiempo: de operacion: O(|V|)
          */
-        listaDeAdyacencia = arrayOfNulls(numDeVertices)
+        listaDeAdyacencia = arrayOfNulls(numeroDeVertices)
+        listaDeVertices = Array(numeroDeVertices) { Vertice(it) }
+        numDeVertices = numeroDeVertices
     }
 
     /** Constructor que dado un String de la ubicación de un archivo, lee el archivo y segun sus datos genera un grafo
@@ -44,7 +45,7 @@ public class GrafoDirigidoCosto : Grafo {
         val a = File(nombreArchivo).readLines()                 // Se guarda el archivo en la variable a de tipo List<String>
         numDeVertices = a[0].toInt()                            // Se obtiene de la primera linea linea el numero de vertices
         listaDeAdyacencia = arrayOfNulls(numDeVertices)         // Se genera la lista de adyacencia (array de listas enlazadas)
-        listaDeVertices = arrayOfNulls(numDeVertices)           // Se genera la lista de vertices la cual sera una lista enlazada
+        listaDeVertices = Array(numDeVertices) { Vertice(it) }  // Se genera un arreglo de vertices
         val numerodelados = a[1].toInt()                               // Se obtiene de la segunda linea el numero de lados
         numDeLados = 0
 
@@ -57,15 +58,11 @@ public class GrafoDirigidoCosto : Grafo {
             temp = a[i].split(" ").filter { it != "" }   // se separa cada linea por espacios
             u = temp[0].toInt()                                    // valor del vértice de inicio
             v = temp[1].toInt()                                    // valor del vértice de llegada
-            if (listaDeAdyacencia[u] == null) {     // si el elemento del arreglo es nulo se le asigna un linked list vacio
-                listaDeAdyacencia[u] = LinkedList<Vertice>()
-            }
 
-            if (listaDeVertices[u] == null) listaDeVertices[u] = Vertice(u)     // Se agregan los dos vertices a la lista de vertices, si estos ya se
-            if (listaDeVertices[v] == null) listaDeVertices[v] = Vertice(v)     // encuentran en la lista de vectores el programa continua y no los agrega
             if (! agregarArcoCosto(ArcoCosto(u, v, temp[2].toDouble()))) throw KeyAlreadyExistsException("el objeto esta repetido")
             i++
         }
+        if (numDeLados != numerodelados) throw RuntimeException("hubo un error subiendo la data, el numero de lados es incorrecto")
     }
 
     /** Metodo que agrega al digrafo un Arco dado y retorna un Booleano determinando si el Arco ya estaba agregado o no,
@@ -78,14 +75,16 @@ public class GrafoDirigidoCosto : Grafo {
          *  Postcondición: ArcoCosto in listaDeAdyacencia
          *  Tiempo: O(|E|)
          */
-        if (a.x >= listaDeVertices.size || a.y >= listaDeVertices.size ||
-            listaDeVertices[a.x] == null || listaDeVertices[a.y] == null){   // se verifica que los vertices existan
+        if (a.x >= listaDeVertices.size || a.y >= listaDeVertices.size){   // se verifica que los vertices existan
             throw RuntimeException("El lado a agregar contiene un vertice que no pertenece al grafo")
         }
-        if (listaDeAdyacencia[a.x]!!.indexOf(Vertice(a.y)) == -1) {                // se verifica que el lado no exista
+        if (listaDeAdyacencia[a.x] == null || listaDeAdyacencia[a.x]!!.indexOf(Vertice(a.y)) == -1) {                // se verifica que el lado no exista
+            if (listaDeAdyacencia[a.x] == null) {     // si el elemento del arreglo es nulo se le asigna un linked list vacio
+                listaDeAdyacencia[a.x] = LinkedList<Vertice>()
+            }
             this.numDeLados += 1                                                          // si el lado no existe se aumenta el número de lados
-            listaDeVertices[a.x]!!.gradoExterior += 1                                // se aumenta el grado exterior del vértice de inicio
-            listaDeVertices[a.y]!!.gradoInterior += 1                                   // se aumenta el grado interior del vértice final
+            listaDeVertices[a.x].gradoExterior += 1                                // se aumenta el grado exterior del vértice de inicio
+            listaDeVertices[a.y].gradoInterior += 1                                   // se aumenta el grado interior del vértice final
             listaDeAdyacencia[a.x]!!.addFirst(Vertice(a.fin))                        // se agrega el arco a la lista de adyacencia
             listaDeAdyacencia[a.x]!![0].Costo = a.costo                              // y se almacena el costo de los lados
             return true
@@ -103,7 +102,7 @@ public class GrafoDirigidoCosto : Grafo {
          *  Postcondicion: grados = gradosInterior + gradosExterior
          *  Tiempo: O(1)
          */
-        if (v >= listaDeVertices.size || listaDeVertices[v] == null) throw RuntimeException("El lado a agregar contiene un vertice que no pertenece al grafo")
+        if (v >= listaDeVertices.size) throw RuntimeException("El lado a agregar contiene un vertice que no pertenece al grafo")
         return gradoExterior(v) + gradoInterior(v)               // se retorna la suma de los grados interiores y exteriores
     }
 
@@ -117,9 +116,9 @@ public class GrafoDirigidoCosto : Grafo {
          *  Postcondicion: gradoExterior < grado
          *  Tiempo: O(1)
          */
-        if (v >= listaDeVertices.size || listaDeVertices[v] == null) throw RuntimeException("El lado a agregar contiene un vertice que no pertenece al grafo")
+        if (v >= listaDeVertices.size) throw RuntimeException("El lado a agregar contiene un vertice que no pertenece al grafo")
         val x = listaDeVertices[v]
-        return x!!.gradoExterior                                // se retorna el grado exterior del vertice
+        return x.gradoExterior                                // se retorna el grado exterior del vertice
     }
 
     /** Metodo que dado un entero que representa el valor de un vertice del grafo, retorna el grado interior de este vertice, si el
@@ -132,9 +131,9 @@ public class GrafoDirigidoCosto : Grafo {
          *  Postcondicion: gradoInterior < grado
          *  Tiempo: O(1)
          */
-        if (v >= listaDeVertices.size || listaDeVertices[v] == null) throw RuntimeException("El lado a agregar contiene un vertice que no pertenece al grafo")
+        if (v >= listaDeVertices.size) throw RuntimeException("El lado a agregar contiene un vertice que no pertenece al grafo")
         val x = listaDeVertices[v]
-        return x!!.gradoInterior                                // se retorna el grado interior del vertice
+        return x.gradoInterior                                // se retorna el grado interior del vertice
     }
 
     /** Metodo en el que retorna un entero que representa el numero de lados del grafo
@@ -205,7 +204,7 @@ public class GrafoDirigidoCosto : Grafo {
          *  Postcondicion: ArcosCosto in GrafoDirigidoCosto
          *  Tiempo: O(1)
          */
-        if (v >= listaDeVertices.size || listaDeVertices[v] == null) throw RuntimeException("no se encuentra el vertice en el grafo")
+        if (v >= listaDeVertices.size) throw RuntimeException("no se encuentra el vertice en el grafo")
         return AdyacenIterable(this, v)
     }
 
@@ -276,8 +275,8 @@ public class GrafoDirigidoCosto : Grafo {
          */
 
         // Se revisa si los vértices pertenecen al grafo
-        if (l.x >= listaDeVertices.size || listaDeVertices[l.x] == null) throw RuntimeException("no se encuentra el vertice en el grafo")
-        if (l.y >= listaDeVertices.size || listaDeVertices[l.y] == null) throw RuntimeException("no se encuentra el vertice en el grafo")
+        if (l.x >= listaDeVertices.size) throw RuntimeException("no se encuentra el vertice en el grafo")
+        if (l.y >= listaDeVertices.size) throw RuntimeException("no se encuentra el vertice en el grafo")
 
         val temp = listaDeAdyacencia[l.x]!!    // Se verifica si el arco existe
         if (temp.indexOf(Vertice(l.y)) == -1) throw RuntimeException("no se encuentra el lado en el grafo")
@@ -295,7 +294,7 @@ public class GrafoDirigidoCosto : Grafo {
          *  Tiempo: O(|V| + |E|)
          */
         private var i = 0
-        private var it = AdyacenIterato(G,0)
+        private lateinit var it: GrafoDirigidoCosto.AdyacenIterato
         init {
             while (i < G.numDeVertices){
                 if (G.listaDeAdyacencia[i] != null) {
@@ -304,7 +303,7 @@ public class GrafoDirigidoCosto : Grafo {
                 }
                 i++
             }
-            if (i >= G.numDeVertices ) throw RuntimeException("El grafo esta vacio")
+            if (i >= G.numDeVertices ) throw RuntimeException("El grafo no tiene lados")
         }
 
         override fun hasNext(): Boolean {
