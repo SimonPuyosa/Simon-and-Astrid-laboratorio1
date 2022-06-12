@@ -7,14 +7,14 @@ import kotlin.collections.ArrayList
 /** Clase que realiza el algoritmo DFS desde todos los vértices cuando se llama,
  *  esta clase recibe un grafo (de cualquier tipo)
  */
-public class DFS(var g: Grafo, orden: Array<Vertice> = g.listaDeVertices) {
+public class DFS(var g: Grafo, val orden: Array<Vertice?> = g.listaDeVertices) {
     private var tiempo = 0                                       // Variable Global
-    private var DFStree = ConcurrentLinkedQueue<Vertice>()              // Cola en la que se almacenará en DFStree
+    var DFStree = ConcurrentLinkedQueue<Vertice>()              // Cola en la que se almacenará en DFStree
     var treeEdges = ArrayList<Pair<Int, Int>>()                 // Arreglo donde se almacenará los lados del bosque generado por DFS
     var forwardEdges = ArrayList<Pair<Int, Int>>()              // Arreglo donde se almacenará los lados de ida del bosque generado por DFS
     var backEdges = ArrayList<Pair<Int, Int>>()                 // Arreglo donde se almacenará los lados de vuelta del bosque generado por DFS
     var crossEdges = ArrayList<Pair<Int, Int>>()                // Arreglo donde se almacenará los lados cruzados del bosque generado por DFS
-    private var ordenTopologico = LinkedList<Vertice>()
+    var ordenTopologico = LinkedList<Vertice>()
 
     /** Constructor de la clase DFS el cual ejecuta dicho algoritmo tomando los valores del grafo
      *  previamente descrito, este constructor añade los valores correspondientes del color, tiempo inicial, tiempo final
@@ -29,8 +29,8 @@ public class DFS(var g: Grafo, orden: Array<Vertice> = g.listaDeVertices) {
          *  Tiempo de operacion: O(|V| + |E|)
          */
         for (i in g.listaDeVertices.indices) {
-            g.listaDeVertices[i].pred = null
-            g.listaDeVertices[i].color = Color.BLANCO
+            g.listaDeVertices[i]!!.pred = null
+            g.listaDeVertices[i]!!.color = Color.BLANCO
         }
         //listaDeVertices = g.listaDeVertices.copyOf()
         for (i in orden) {
@@ -69,14 +69,14 @@ public class DFS(var g: Grafo, orden: Array<Vertice> = g.listaDeVertices) {
                     v.pred = temp                                      //Guardamos el vértice predecesor
                     g.listaDeVertices[v.valor].pred = temp
                     dfsVisit(g, v.valor)                               //y volvemos a llamar a visitDFS()
-                } else if (v.color == Color.GRIS) {
+                } else if (g.listaDeVertices[v.valor].color == Color.GRIS) {
                     backEdges.add(
                         Pair(
                             temp.valor,
                             v.valor
                         )
                     )           //Si el vértice adyacente al actual es gris, quiere decir que el vértice actual tiene un lado hasta su ancestro
-                } else if (v.color == Color.NEGRO && temp.tiempoInicial < v.tiempoInicial) {            //Si el vértice adyacente al actual es negro, quiere decir que el vértice actual tiene un lado hasta su descendiente
+                } else if (g.listaDeVertices[v.valor].color == Color.NEGRO && temp.tiempoInicial < v.tiempoInicial) {            //Si el vértice adyacente al actual es negro, quiere decir que el vértice actual tiene un lado hasta su descendiente
                     forwardEdges.add(
                         Pair(
                             temp.valor,
@@ -389,7 +389,7 @@ public class DFS(var g: Grafo, orden: Array<Vertice> = g.listaDeVertices) {
          *  Postcondición: results in crossEdges
          *  Tiempo: O(|E|)
          */
-        private val actual = D.crossEdges.iterator()
+        val actual = D.crossEdges.iterator()
 
         override fun hasNext(): Boolean {
             return actual.hasNext()
