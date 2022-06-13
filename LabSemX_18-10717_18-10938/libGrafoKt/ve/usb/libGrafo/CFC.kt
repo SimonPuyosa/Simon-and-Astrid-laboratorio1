@@ -1,4 +1,4 @@
-package libGrafoKt.ve.usb.libGrafo
+package ve.usb.libGrafo
 import java.util.*
 
 /**

@@ -1,3 +1,3 @@
-package libGrafoKt.ve.usb.libGrafo
+package ve.usb.libGrafo
 
 enum class Color { BLANCO, GRIS, NEGRO }

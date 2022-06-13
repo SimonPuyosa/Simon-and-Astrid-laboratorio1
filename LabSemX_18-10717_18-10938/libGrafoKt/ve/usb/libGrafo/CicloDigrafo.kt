@@ -1,4 +1,4 @@
-package libGrafoKt.ve.usb.libGrafo
+package ve.usb.libGrafo
 
 /** Clase que determina si el digrafo ingresado posee o no ciclos mediante la ejecución del algoritmo de DFS
 */

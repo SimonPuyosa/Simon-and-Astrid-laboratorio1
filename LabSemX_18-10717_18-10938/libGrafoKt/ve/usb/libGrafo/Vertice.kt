@@ -1,4 +1,4 @@
-package libGrafoKt.ve.usb.libGrafo
+package ve.usb.libGrafo
 import java.lang.Double.POSITIVE_INFINITY
 
 /** estructura que permite manejar valores, costo, grados y permite compararlo entre si:

@@ -1,4 +1,4 @@
-import libGrafoKt.ve.usb.libGrafo.*
+import ve.usb.libGrafo.*
 
 fun main(args: Array<String>) {
     var i = 0

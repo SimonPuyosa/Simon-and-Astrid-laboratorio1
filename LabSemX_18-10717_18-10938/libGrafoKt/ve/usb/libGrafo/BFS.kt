@@ -1,4 +1,4 @@
-package libGrafoKt.ve.usb.libGrafo
+package ve.usb.libGrafo
 import java.util.concurrent.ConcurrentLinkedQueue
 
 /** Clase que realiza el algoritmo BFS cuando se llama, esta recive un grafo (de cualquier tipo)

@@ -1,4 +1,4 @@
-package libGrafoKt.ve.usb.libGrafo
+package ve.usb.libGrafo
 
 /** Clase que dertermina el orden topológico de un Grafo Acíclico Directo,
 */

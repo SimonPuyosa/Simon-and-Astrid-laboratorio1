@@ -1,4 +1,4 @@
-package libGrafoKt.ve.usb.libGrafo
+package ve.usb.libGrafo
 
 public open class Arco(val inicio: Int, val fin: Int) : Lado(inicio, fin) {
 

@@ -1,4 +1,4 @@
-package libGrafoKt.ve.usb.libGrafo
+package ve.usb.libGrafo
 import java.io.File
 import java.util.*
 import javax.management.openmbean.KeyAlreadyExistsException

@@ -1,4 +1,4 @@
-package libGrafoKt.ve.usb.libGrafo
+package ve.usb.libGrafo
 
 /** Clase que realiza un partición por niveles de los vértices de un Grafo Acíclico Directo (DAG),
  *  retornando para cada nivel un conjunto de vértices, además de retornar un booleano indicando que
