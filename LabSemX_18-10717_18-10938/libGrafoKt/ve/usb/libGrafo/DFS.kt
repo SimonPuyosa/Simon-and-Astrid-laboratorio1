@@ -94,7 +94,7 @@ public class DFS(var g: Grafo, orden: Array<Vertice> = g.listaDeVertices) {
     fun obtenerPredecesor(v: Int): Int? {
         /** Entrada: un entero del valor del vértice a buscar su predecesor
          *  Salida: un entero que representa el valor del vértice predecesor o un valor nulo si este no tiene predecesor
-         *  Precondicion: (v < q.listaDeVertices.size && q.listaDeVertices[v] != null)
+         *  Precondicion: (v < q.listaDeVertices.size)
          *  Postcondicion: result == g.listaDeVertices[v].pred.valor
          *  Tiempo: O(1)
          */
@@ -110,7 +110,7 @@ public class DFS(var g: Grafo, orden: Array<Vertice> = g.listaDeVertices) {
     fun obtenerTiempos(v: Int): Pair<Int, Int> {
         /**Entrada: un entero del valor del vértice a buscar su tiempo inicial y final
          * Salida: un par de componentes enteros que representa el tiempo inicial y final de vértice
-         * Precondición: (v < g.listaDeVertices.size && g.listaDeVertices[v] != null)
+         * Precondición: (v < g.listaDeVertices.size)
          * Postcondición: Par == (g.listaDeVertices[v].tiempoInicial, g.listaDeVertices[v].tiempoFinal)
          */
         val u: Vertice = g.listaDeVertices[v]
@@ -118,18 +118,18 @@ public class DFS(var g: Grafo, orden: Array<Vertice> = g.listaDeVertices) {
         return Pair(u.tiempoInicial, u.tiempoFinal)
     }
 
-    /** Método que dado dos enteros u y v, indica retornando un booleand si existe un camino desde el vértice inicial u hasta el vértice
+    /** Método que dado dos enteros u y v, indica retornando un booleano si existe un camino desde el vértice inicial u hasta el vértice
      * final v. Si alguno de los dos vértices no pertenece al grafo se lanza una RuntimeException
      */
     fun hayCamino(u: Int, v: Int): Boolean {
         /**Entrada: dos enteros de valores del vértice inicial u y el vértice final v
          * Salida: un booleano que representa si existe un camino desde el vértice u hasta el vértice v
-         * Precondición: (u < g.listaDeVertices.size && g.listaDeVertices[u] != null && v < g.listaDeVertices.size && g.listaDeVertices[v] != null)
+         * Precondición: (u < g.listaDeVertices.size && v < g.listaDeVertices.size)
          * Postcondición: (g.listaDeVertices[u].tiempoInicial < g.listaDeVertices[v].tiempoInicial < g.listaDeVertices[v].tiempoFinal < g.listaDeVertices[u].tiempoFinal) || (crossEdges.contains(Pair(u,v)) || forwardEdges.contains(Pair(u,v)))
          * Tiempo: O(1)
          */
         if (0 > u || u >= g.listaDeVertices.size || 0 > v || v >= g.listaDeVertices.size) throw RuntimeException(
-            "El vértice no se encuentra en el grafo"
+            "Los vertices no se encuentran en el grafo"
         )
 
         if (u == v) return true
@@ -151,7 +151,7 @@ public class DFS(var g: Grafo, orden: Array<Vertice> = g.listaDeVertices) {
          *      u: un entero que representa el valor del vértice desde donde se empieza a buscar el camino
          *      v: un entero que representa el valor del vértice hasta donde se termina el camino
          *  Salida: una iterador que retorna enteros que representan los valores de los vertices desde el vertice inicial hasta el vertice final
-         *  Precondicion: (u < g.listaDeVertices.size && v < g.listaDeVertices.size && g.listaDeVertices[u] != null && g.listaDeVertices[v] != null && hayCamino(u,v))
+         *  Precondicion: (u < g.listaDeVertices.size && v < g.listaDeVertices.size && hayCamino(u,v))
          *  Postcondicion: (results <= g.listaDeVertices.size && g.listaDeVertices[results] != null)
          *  Tiempo: O(|E|)
          */
@@ -188,7 +188,7 @@ public class DFS(var g: Grafo, orden: Array<Vertice> = g.listaDeVertices) {
          *      u: un entero que representa el valor del vertice inicial desde donde se empieza a buscar el camino
          *      v: un entero que representa el valor del vertice final hasta donde termina el camino
          *  Salida: una iterador que retorna enteros que representan los valores de los vertices desde el vertice inicial hasta el vertice final
-         *  Precondicion: (u < g.listaDeVertices.size && v < g.listaDeVertices.size && g.listaDeVertices[u] != null && g.listaDeVertices[v] != null && hayCamino(u,v))
+         *  Precondicion: (u < g.listaDeVertices.size && v < g.listaDeVertices.size && hayCamino(u,v))
          *  Postcondicion: (results <= g.listaDeVertices.size && g.listaDeVertices[results] != null)
          *  Tiempo: O(|E|)
          */
@@ -205,7 +205,7 @@ public class DFS(var g: Grafo, orden: Array<Vertice> = g.listaDeVertices) {
          *      u: un entero que representa el valor del vertice inicial desde donde se empieza a buscar el camino
          *      v: un entero que representa el valor del vertice final hasta donde termina el camino
          *  Salida: una iterador que retorna enteros que representan los valores de los vertices desde el vertice inicial hasta el vertice final
-         *  Precondicion: (u < g.listaDeVertices.size && v < g.listaDeVertices.size && g.listaDeVertices[u] != null && g.listaDeVertices[v] != null && hayCamino(u,v))
+         *  Precondicion: (u < g.listaDeVertices.size && v < g.listaDeVertices.size && hayCamino(u,v))
          *  Postcondicion: (results <= g.listaDeVertices.size && g.listaDeVertices[results] != null)
          *  Tiempo: O(|E|)
          */

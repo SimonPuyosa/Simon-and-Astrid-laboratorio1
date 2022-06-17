@@ -79,7 +79,7 @@ public class BFS(val g: Grafo, val s: Int) {
     fun obtenerPredecesor(v: Int) : Int? {
         /** Entrada: un entero del valor del vertice a buscar su predecesor
          *  Salida: un entero que representa el valor del vertice predecesor o un valor nulo si este no tiene predecesor
-         *  Precondicion: (v < q.listaDeVertices.size && q.listaDeVertices[v] != null)
+         *  Precondicion: (v < q.listaDeVertices.size)
          *  Postcondicion: result == g.listaDeVertices[v].pred.valor
          *  Tiempo: O(1)
          */
@@ -94,7 +94,7 @@ public class BFS(val g: Grafo, val s: Int) {
     fun obtenerDistancia(v: Int) : Int {
         /** Entrada: un entero del valor del vertice a buscar la distancia al vertice inicial
          *  Salida: un entero que representa la distancia del vertice dado al vertice inicial o -1 si este no es alcanzable
-         *  Precondicion: (v < q.listaDeVertices.size && q.listaDeVertices[v] != null)
+         *  Precondicion: (v < q.listaDeVertices.size)
          *  Postcondicion: -1 || result == g.listaDeVertices[v].distancia
          *  Tiempo: O(1)
          */
@@ -110,7 +110,7 @@ public class BFS(val g: Grafo, val s: Int) {
     fun hayCaminoHasta(v: Int) : Boolean {
         /** Entrada: un entero del valor del vertice a buscar si es alcanzable por el vertice inicial
          *  Salida: uun booleano que representa si existe un camino desde el vertice dado hasta el vertice inicial
-         *  Precondicion: (v < q.listaDeVertices.size && q.listaDeVertices[v] != null)
+         *  Precondicion: (v < q.listaDeVertices.size)
          *  Postcondicion: (v == s || g.listaDeVertices[v].distancia != 0)
          *  Tiempo: O(1)
          */

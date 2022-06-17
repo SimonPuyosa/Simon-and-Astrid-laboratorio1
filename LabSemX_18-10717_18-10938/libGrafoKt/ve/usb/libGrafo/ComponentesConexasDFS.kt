@@ -1,30 +1,40 @@
 package ve.usb.libGrafo
 
-/*
-  Determina las componentes conexas de un grafo no dirigido usando DFS. 
-  La componentes conexas se determinan cuando 
-  se crea un nuevo objeto de esta clase.
-*/
+/**
+ *  Clase que determina las componentes conexas de un grafo no dirigido
+ *  usando el algoritmo de busqueda en profundidad (DFS)
+ */
 public class ComponentesConexasDFS(val g: GrafoNoDirigido) {
     private val dfs = DFS(g)
 
-    /*
-     Retorna true si los dos vertices están en la misma componente conexa y
-     falso en caso contrario. Si el algunos de los dos vértices de
-     entrada, no pertenece al grafo, entonces se lanza un RuntineException
+    /** Método que dado dos enteros u y v, indica retornando un booleano si los dos vertices estan en la
+     *  misma componente conexa, esto lo hace llamando al metodo hayCamino(u, v) que se encuentra en la
+     *  clase DFS.
+     *  Si alguno de los dos vértices no pertenece al grafo se lanza una RuntimeException
      */
     fun estanMismaComponente(v: Int, u: Int) : Boolean {
-        if (0 > u || u >= g.listaDeVertices.size || 0 > v || v >= g.listaDeVertices.size) {
-            throw RuntimeException("Los vértices no se encuentran en el grafo")
-        }
-        return g.listaDeVertices[v].cc == g.listaDeVertices[u].cc
+        /**Entrada: dos enteros de valores del vértice inicial u y el vértice final v
+         * Salida: un booleano que representa si ambos vertices se encuentran en la misma componente
+         * Precondición: (u < g.listaDeVertices.size && v < g.listaDeVertices.size)
+         * Postcondición: (g.listaDeVertices[u].cc == g.listaDeVertices[v].cc)
+         * Tiempo: O(1)
+         */
+        return dfs.hayCamino(v,u)
     }
 
-    // Indica el número de componentes conexas
+    /** Metodo que indica el numero de componentes conexas que tiene el grafo no dirigid
+     */
     fun nCC() : Int {
+        /**Salida: un entero que muestra el numero de componentes conexas
+         * Precondición: (0 < g.listaDeVertices.size && g.listaDeAdyacencia != null)
+         * Tiempo: O(1)
+         */
 	    return dfs.contCC
     }
 
+    /** Metodo
+     *
+     */
     /*
      Retorna el identificador de la componente conexa donde está contenido 
      el vértice v. El identificador es un número en el intervalo [0 , nCC()-1].
