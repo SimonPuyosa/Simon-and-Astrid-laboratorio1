@@ -65,7 +65,7 @@ public class CFC(val g: GrafoDirigido) {
          *  Postcondicion: obtenerIdentificadorCFC(u) == obtenerIdentificadorCFC(v)
          *  Tiempo: O(|V| + |E|)
          */
-        if (v >= g.listaDeVertices.size || u >= g.listaDeVertices.size) {   // se verifica que los vertices existan
+        if (0 > v || v >= g.listaDeVertices.size || 0 > u || u >= g.listaDeVertices.size) {   // se verifica que los vertices existan
             throw RuntimeException("Los vertices no pertenecen al grafo")
         }
 
@@ -103,7 +103,7 @@ public class CFC(val g: GrafoDirigido) {
          *  Postcondicion: -1 <= result < cfc.size
          *  Tiempo: O(|V| + |E|)
          */
-        if (v >= g.listaDeVertices.size) {   // se verifica que el vertice exista
+        if (0 > v || v >= g.listaDeVertices.size) {   // se verifica que el vertice exista
             throw RuntimeException("El vertice no pertenece al grafo")
         }
 

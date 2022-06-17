@@ -75,7 +75,7 @@ public class GrafoNoDirigido: Grafo {
          *  Postcondicion: Arista in listaDeAdyacencia
          *  Tiempo: O(|E|)
          */
-        if (a.v >= listaDeVertices.size || a.u >= listaDeVertices.size){  // se verifica que los vertices existan
+        if (0 > a.v || a.v >= listaDeVertices.size || 0 > a.u || a.u >= listaDeVertices.size){  // se verifica que los vertices existan
             throw RuntimeException("El lado a agregar contiene un vertice que no pertenece al grafo")
         }
         if (listaDeAdyacencia[a.v] == null || listaDeAdyacencia[a.v]!!.indexOf(Vertice(a.u)) == -1){          // se verifica que el lado no exista
@@ -162,7 +162,7 @@ public class GrafoNoDirigido: Grafo {
          *  Postcondicion: Arista in GrafoNoDirigidoCosto
          *  Tiempo: O(1)
          */
-        if (v >= listaDeVertices.size) throw RuntimeException("no se encuentra el vertice en el grafo")
+        if (0 > v || v >= listaDeVertices.size) throw RuntimeException("no se encuentra el vertice en el grafo")
         return AdyacenIterable(this, v)
     }
 
@@ -226,8 +226,8 @@ public class GrafoNoDirigido: Grafo {
          *  Postcondicion: Arista in GrafoNoDirigidoCosto
          *  Tiempo: O(|V| + |E|)
          */
-        if (l.v >= listaDeVertices.size) throw RuntimeException("no se encuentra el vertice en el grafo")
-        if (l.u >= listaDeVertices.size) throw RuntimeException("no se encuentra el vertice en el grafo")
+        if (0 > l.v || l.v >= listaDeVertices.size) throw RuntimeException("no se encuentra el vertice en el grafo")
+        if (0 > l.u || l.u >= listaDeVertices.size) throw RuntimeException("no se encuentra el vertice en el grafo")
 
         val temp = listaDeAdyacencia[l.v]!! // se verifica si el arco existe
         if (temp.indexOf(Vertice(l.u)) == -1) throw RuntimeException("no se encuentra el lado en el grafo")
@@ -293,7 +293,7 @@ public class GrafoNoDirigido: Grafo {
          *  Postcondicion: grados.isInt() == true
          *  Tiempo: O(1)
          */
-        if (v >= listaDeVertices.size) throw RuntimeException("El lado a agregar contiene un vertice que no pertenece al grafo")
+        if (0 > v || v >= listaDeVertices.size) throw RuntimeException("El lado a agregar contiene un vertice que no pertenece al grafo")
         if (listaDeAdyacencia[v] == null) return 0
         return listaDeVertices[v].gradoExterior                                    // se retorna el grado exterior
     }

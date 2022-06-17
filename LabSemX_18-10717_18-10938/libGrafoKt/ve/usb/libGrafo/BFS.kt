@@ -41,18 +41,22 @@ public class BFS(val g: Grafo, val s: Int) {
                 }
             }
         }
+
         var u = Vertice(s)                              // se toma el vertice de inicio
         u.distancia = 0
         u.color = Color.GRIS
         u.pred = null
         cola.add(u)                                     // se añade el vertice de inicio
+
         while (!cola.isEmpty()){
             u = cola.remove()                           // se desencola el primer elemento de la cola
             BFStree.add(u)                              // se agrega este elemento al BFStree
             if (g.listaDeAdyacencia[u.valor] != null){  // se verifica si el vertice tiene adyacencias
+
                 it = g.listaDeAdyacencia[u.valor]!!.iterator()  // se itera sobre todos los elementos de las linkedlist
                 while (it.hasNext()){
                     temp = it.next()
+
                     if (g.listaDeVertices[temp.valor].color == Color.BLANCO){ // si el vertice es de color blanco entonces se trabaja sobre el
                         temp.color = Color.GRIS
                         temp.distancia = u.distancia + 1
@@ -79,7 +83,7 @@ public class BFS(val g: Grafo, val s: Int) {
          *  Postcondicion: result == g.listaDeVertices[v].pred.valor
          *  Tiempo: O(1)
          */
-        if (v >= g.listaDeVertices.size) throw RuntimeException("El vertice no se encuentra")
+        if (0 > v || v >= g.listaDeVertices.size) throw RuntimeException("El vertice no se encuentra")
         return g.listaDeVertices[v].pred?.valor
     }
 
@@ -94,7 +98,7 @@ public class BFS(val g: Grafo, val s: Int) {
          *  Postcondicion: -1 || result == g.listaDeVertices[v].distancia
          *  Tiempo: O(1)
          */
-        if (v >= g.listaDeVertices.size) throw RuntimeException("El vertice no se encuentra")
+        if (0 > v || v >= g.listaDeVertices.size) throw RuntimeException("El vertice no se encuentra")
         if (v == s) return 0
         else if (g.listaDeVertices[v].distancia == 0) return -1
         return g.listaDeVertices[v].distancia
@@ -111,7 +115,7 @@ public class BFS(val g: Grafo, val s: Int) {
          *  Tiempo: O(1)
          */
 
-        if (v >= g.listaDeVertices.size) throw RuntimeException("El vertice no se encuentra")
+        if (0 > v || v >= g.listaDeVertices.size) throw RuntimeException("El vertice no se encuentra")
         if (v == s) return true                                             // el vertice es el vertice inicial
         else if (g.listaDeVertices[v].distancia == 0) return false        // el vertice no se le cambio la distancia por lo que no hay camino hasta el
         return true
@@ -178,7 +182,7 @@ public class BFS(val g: Grafo, val s: Int) {
          *  Postcondicion: (results <= g.listaDeVertices.size && g.listaDeVertices[results] != null)
          *  Tiempo: O(|E|)
          */
-        if (v >= g.listaDeVertices.size) throw RuntimeException("El vertice no se encuentra")
+        if (0 > v || v >= g.listaDeVertices.size) throw RuntimeException("El vertice no se encuentra")
         if (! hayCaminoHasta(v)) throw RuntimeException("El vertice no es alcanzable")
 
         return CamHastaIterable(g, v)

@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentLinkedQueue
  */
 public class DFS(var g: Grafo, orden: Array<Vertice> = g.listaDeVertices) {
     private var tiempo = 0                                       // Variable Global
+    var contCC = 0                                               // Variable Global
     private var DFStree = ConcurrentLinkedQueue<Vertice>()              // Cola en la que se almacenará en DFStree
     var treeEdges = ArrayList<Pair<Int, Int>>()                 // Arreglo donde se almacenará los lados del bosque generado por DFS
     var forwardEdges = ArrayList<Pair<Int, Int>>()              // Arreglo donde se almacenará los lados de ida del bosque generado por DFS
@@ -30,9 +31,10 @@ public class DFS(var g: Grafo, orden: Array<Vertice> = g.listaDeVertices) {
             g.listaDeVertices[i].pred = null
             g.listaDeVertices[i].color = Color.BLANCO
         }
-        //listaDeVertices = g.listaDeVertices.copyOf()
+
         for (i in orden) {
             if (g.listaDeVertices[i.valor].color == Color.BLANCO) {
+                contCC++
                 dfsVisit(g, g.listaDeVertices[i.valor].valor)
             }
         }
@@ -49,45 +51,28 @@ public class DFS(var g: Grafo, orden: Array<Vertice> = g.listaDeVertices) {
 
         val temp: Vertice = g.listaDeVertices[u]
         var v: Vertice
-
         tiempo += 1                              //Se empieza a explorar
         temp.tiempoInicial = tiempo              //Actualizamos el tiempo inicial
         temp.color = Color.GRIS                  //y el color del vértice
+        temp.cc = contCC
+
         if (g.listaDeAdyacencia[u] != null) {
             val it = g.listaDeAdyacencia[u]!!.iterator()
             while (it.hasNext()) {                                       //Iteramos sobre los vértices adyacentes del vértice actual
                 v = it.next()
+
                 if (g.listaDeVertices[v.valor].color == Color.BLANCO) {
-                    treeEdges.add(
-                        Pair(
-                            temp.valor,
-                            v.valor
-                        )
-                    )            //Si el vértice es blanco, el algoritmo se ejecuta y por lo tanto genera un lado del bosque
+                    treeEdges.add(Pair(temp.valor, v.valor))            //Si el vértice es blanco, el algoritmo se ejecuta y por lo tanto genera un lado del bosque
                     v.pred = temp                                      //Guardamos el vértice predecesor
                     g.listaDeVertices[v.valor].pred = temp
                     dfsVisit(g, v.valor)                               //y volvemos a llamar a visitDFS()
+
                 } else if (g.listaDeVertices[v.valor].color == Color.GRIS) {
-                    backEdges.add(
-                        Pair(
-                            temp.valor,
-                            v.valor
-                        )
-                    )           //Si el vértice adyacente al actual es gris, quiere decir que el vértice actual tiene un lado hasta su ancestro
+                    backEdges.add(Pair(temp.valor, v.valor))           //Si el vértice adyacente al actual es gris, quiere decir que el vértice actual tiene un lado hasta su ancestro
                 } else if (g.listaDeVertices[v.valor].color == Color.NEGRO && temp.tiempoInicial < v.tiempoInicial) {            //Si el vértice adyacente al actual es negro, quiere decir que el vértice actual tiene un lado hasta su descendiente
-                    forwardEdges.add(
-                        Pair(
-                            temp.valor,
-                            v.valor
-                        )
-                    )                                         //Además, si el tiempo inicial del vértice actual es menor a su adyacente, indica que dicho lado no pertenece a DFSTree
+                    forwardEdges.add(Pair(temp.valor, v.valor))         //Además, si el tiempo inicial del vértice actual es menor a su adyacente, indica que dicho lado no pertenece a DFSTree
                 } else {
-                    crossEdges.add(
-                        Pair(
-                            temp.valor,
-                            v.valor
-                        )
-                    )          //En cambio, si el vértice adyacente al actual es negro, pero el tiempo inicial del vértice actual es mayor al adyacente, indica que hay un lado cualquiera
+                    crossEdges.add(Pair(temp.valor, v.valor))          //En cambio, si el vértice adyacente al actual es negro, pero el tiempo inicial del vértice actual es mayor al adyacente, indica que hay un lado cualquiera
                 }                                                      //que no pertenece al bosque generado
             }
         }
@@ -113,7 +98,7 @@ public class DFS(var g: Grafo, orden: Array<Vertice> = g.listaDeVertices) {
          *  Postcondicion: result == g.listaDeVertices[v].pred.valor
          *  Tiempo: O(1)
          */
-        if (v >= g.listaDeVertices.size) throw RuntimeException("El vértice no se encuentra en el grafo")
+        if (0 > v || v >= g.listaDeVertices.size) throw RuntimeException("El vértice no se encuentra en el grafo")
         return g.listaDeVertices[v].pred?.valor
     }
 
@@ -129,7 +114,7 @@ public class DFS(var g: Grafo, orden: Array<Vertice> = g.listaDeVertices) {
          * Postcondición: Par == (g.listaDeVertices[v].tiempoInicial, g.listaDeVertices[v].tiempoFinal)
          */
         val u: Vertice = g.listaDeVertices[v]
-        if (v >= g.listaDeVertices.size) throw RuntimeException("El vértice no se encuentra en el grafo")
+        if (0 > v || v >= g.listaDeVertices.size) throw RuntimeException("El vértice no se encuentra en el grafo")
         return Pair(u.tiempoInicial, u.tiempoFinal)
     }
 
@@ -143,7 +128,7 @@ public class DFS(var g: Grafo, orden: Array<Vertice> = g.listaDeVertices) {
          * Postcondición: (g.listaDeVertices[u].tiempoInicial < g.listaDeVertices[v].tiempoInicial < g.listaDeVertices[v].tiempoFinal < g.listaDeVertices[u].tiempoFinal) || (crossEdges.contains(Pair(u,v)) || forwardEdges.contains(Pair(u,v)))
          * Tiempo: O(1)
          */
-        if (u >= g.listaDeVertices.size || v >= g.listaDeVertices.size) throw RuntimeException(
+        if (0 > u || u >= g.listaDeVertices.size || 0 > v || v >= g.listaDeVertices.size) throw RuntimeException(
             "El vértice no se encuentra en el grafo"
         )
 
