@@ -32,28 +32,36 @@ public class ComponentesConexasDFS(val g: GrafoNoDirigido) {
 	    return dfs.contCC
     }
 
-    /** Metodo
-     *
-     */
-    /*
-     Retorna el identificador de la componente conexa donde está contenido 
-     el vértice v. El identificador es un número en el intervalo [0 , nCC()-1].
-     Si el vértice v no pertenece al grafo g se lanza una RuntimeException
+    /** Metodo que dado un entero que representa un vertice, retorna el identificador de
+     *  la componente conexa donde este se encuentra, es decir un entero desde 0 hasta nCC()-1
+     *  Si el vertice no se encuentra en el grafo se lanza un RuntimeException
      */
     fun obtenerComponente(v: Int) : Int {
+        /** Entrada: un entero del valor del vertice del cual se pide el componente
+         *  Salida: un entero del componente en el que se encuentra el vertice dado
+         *  Precondicion: v in g.ListaDeVertices
+         *  Postcondicion: 0 < result < nCC()
+         *  Tiempo: O(1)
+         */
         if (0 > v || v >= g.listaDeVertices.size) {
             throw RuntimeException("Los vértices no se encuentran en el grafo")
         }
         return g.listaDeVertices[v].cc
     }
 
-    /* Retorna el número de vértices que conforman una componente conexa dada.
-     Se recibe como entrada el identificado de la componente conexa.
-     El identificador es un número en el intervalo [0 , nCC()-1].
-     Si el identificador no pertenece a ninguna componente conexa, entonces se lanza una RuntimeException
+    /** Metodo que dado un entero que representa un identificador de la componente conexa, es decir,
+     *  un numero entre el 1 y nCC(), se retorna un entero del numero de vertices que se encuentran
+     *  en esa componente.
+     *  Si el identificador no pertenece a ninguna componente conexa, entonces se lanza una RuntimeException
      */
     fun numVerticesDeLaComponente(compID: Int) : Int {
-        if (0 > compID || compID >= dfs.contCC) throw RuntimeException("el identificador no pertenece a ninguna componente conexa")
+        /** Entrada: un entero del identificador de la componente conexa a buscar
+         *  Salida: un entero del numero de vertices que se encuentran en el identificador
+         *  Precondicion: 0 < compID <= nCC()
+         *  Postcondicion: 0 < result < g.numDeVertices
+         *  Tiempo: O(|V|)
+         */
+        if (0 >= compID || compID > dfs.contCC) throw RuntimeException("el identificador no pertenece a ninguna componente conexa")
         var result = 0
         for (v in g.listaDeVertices){
             if (v.cc == compID) result++
@@ -61,5 +69,4 @@ public class ComponentesConexasDFS(val g: GrafoNoDirigido) {
         if (result == 0) throw RuntimeException("el identificador no pertenece a ninguna componente conexa")
         return result
     }
-
 }

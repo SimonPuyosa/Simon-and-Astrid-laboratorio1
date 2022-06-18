@@ -24,6 +24,7 @@ fun main(args: Array<String>) {
             throw RuntimeException("el tipo de grafo debe ser uno de las 4 opciones especificadas")
         }
     }
+
     var tiempo: Double
     tiempo = -System.nanoTime().toDouble()
     val clase2 = ComponentesConexasDFS(clase as GrafoNoDirigido)
@@ -41,4 +42,14 @@ fun main(args: Array<String>) {
     tiempo /= 1000000.0
     println("El tiempo que ha tomado ComponentesConexasCD es: ${tiempo}ms")
     println("El numero de componentes conexas en ComponentesConexasCD es: ${comp}")
+
+    /*
+    borrar
+    println()
+    for (i in 1..clase2.nCC()) {
+        println(clase2.numVerticesDeLaComponente(i))
+    }
+
+     */
+
 }
