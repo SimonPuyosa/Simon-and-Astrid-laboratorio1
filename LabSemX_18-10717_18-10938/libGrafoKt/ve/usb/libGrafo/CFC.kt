@@ -2,7 +2,7 @@ package ve.usb.libGrafo
 import java.util.*
 
 /**
- *  Clase que dado un grafo dorigido, calcula las componentes
+ *  Clase que dado un grafo dirigido, calcula las componentes
  *  fuertemente conexas de dicho grafo y se colocan en la propiedad
  *  cfc la cual es una LinkedList de LinkedLists de enteros, estos
  *  enteros representan los valores de los vertices y cada subLinkedList
