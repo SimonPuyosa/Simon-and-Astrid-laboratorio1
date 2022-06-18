@@ -17,15 +17,13 @@ public class ConjuntosDisjuntos(val n: Int) {
      *  Postcondición: treeConjuntosDisjuntos.isNotEmpty()
      *  Tiempo: O(n)
      */
-    var treeConjuntosDisjuntos = Array(n){Vertice(it)}
-    var verticesCD = ArrayList<Int>()
+    private var treeConjuntosDisjuntos = Array(n){Vertice(it)}
+    var verticesCD = Array<Int>(n, {1})
     var ConjuntosDisjuntos = ArrayList<Int>()
 
     init{
         for(i in 0 until n){
-            treeConjuntosDisjuntos[i] = Vertice(i)
             ConjuntosDisjuntos.add(i)
-            verticesCD.add(i, 1)
         }
     }
 
@@ -44,7 +42,7 @@ public class ConjuntosDisjuntos(val n: Int) {
         val x = treeConjuntosDisjuntos[v]
         val y = treeConjuntosDisjuntos[u]
 
-        if (x.padre != y.padre) {
+        if (x.padre.valor != y.padre.valor) {
             if (x.rank > y.rank) {
                 y.padre = x
                 verticesCD[u]--
@@ -76,7 +74,7 @@ public class ConjuntosDisjuntos(val n: Int) {
          *  Postcondición treeConjuntosDisjuntos[v].padre != treeConjuntosDisjuntos[u].padre
          *  Tiempo: O(rank)
          */
-        if(v>=n || u>=n) throw RuntimeException("Alguno de los dos enteros no pertenecen a ningún conjunto")
+        if(0 > v || v >= n || 0 > u || u>=n) throw RuntimeException("Alguno de los dos enteros no pertenecen a ningún conjunto")
         return link(encontrarConjunto(v), encontrarConjunto(u))
     }
 
@@ -91,10 +89,10 @@ public class ConjuntosDisjuntos(val n: Int) {
          *  Postcondición result = treeConjuntosDisjuntos[v].padre.valor
          *  Tiempo: O(rank)
          */
-        if(v>=n) throw RuntimeException("El identificador no pertenece a ningun elemento")
+        if(0 > v || v>=n) throw RuntimeException("El identificador no pertenece a ningun elemento")
         var temp = treeConjuntosDisjuntos[v]
 
-        if(temp != temp.padre){
+        if(temp.valor != temp.padre.valor){
             temp = treeConjuntosDisjuntos[encontrarConjunto(temp.padre.valor)]
         }
         return temp.padre.valor

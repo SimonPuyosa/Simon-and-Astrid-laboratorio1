@@ -34,8 +34,8 @@ public class DFS(var g: Grafo, orden: Array<Vertice> = g.listaDeVertices) {
 
         for (i in orden) {
             if (g.listaDeVertices[i.valor].color == Color.BLANCO) {
-                contCC++
                 dfsVisit(g, g.listaDeVertices[i.valor].valor)
+                contCC++
             }
         }
     }

@@ -8,8 +8,7 @@ public class ComponentesConexasDFS(val g: GrafoNoDirigido) {
     private val dfs = DFS(g)
 
     /** Método que dado dos enteros u y v, indica retornando un booleano si los dos vertices estan en la
-     *  misma componente conexa, esto lo hace llamando al metodo hayCamino(u, v) que se encuentra en la
-     *  clase DFS.
+     *  misma componente conexa, esto lo hace comprobando el numero de la componente conexa del vertice
      *  Si alguno de los dos vértices no pertenece al grafo se lanza una RuntimeException
      */
     fun estanMismaComponente(v: Int, u: Int) : Boolean {
@@ -19,7 +18,10 @@ public class ComponentesConexasDFS(val g: GrafoNoDirigido) {
          * Postcondición: (g.listaDeVertices[u].cc == g.listaDeVertices[v].cc)
          * Tiempo: O(1)
          */
-        return dfs.hayCamino(v,u)
+        if (0 > u || u >= g.listaDeVertices.size || 0 > v || v >= g.listaDeVertices.size) throw RuntimeException(
+            "Los vertices no se encuentran en el grafo"
+        )
+        return g.listaDeVertices[u].cc == g.listaDeVertices[v].cc
     }
 
     /** Metodo que indica el numero de componentes conexas que tiene el grafo no dirigid
@@ -40,7 +42,7 @@ public class ComponentesConexasDFS(val g: GrafoNoDirigido) {
         /** Entrada: un entero del valor del vertice del cual se pide el componente
          *  Salida: un entero del componente en el que se encuentra el vertice dado
          *  Precondicion: v in g.ListaDeVertices
-         *  Postcondicion: 0 < result < nCC()
+         *  Postcondicion: 0 <= result < nCC()
          *  Tiempo: O(1)
          */
         if (0 > v || v >= g.listaDeVertices.size) {
@@ -50,18 +52,18 @@ public class ComponentesConexasDFS(val g: GrafoNoDirigido) {
     }
 
     /** Metodo que dado un entero que representa un identificador de la componente conexa, es decir,
-     *  un numero entre el 1 y nCC(), se retorna un entero del numero de vertices que se encuentran
+     *  un numero entre el 0 y nCC()-1, se retorna un entero del numero de vertices que se encuentran
      *  en esa componente.
      *  Si el identificador no pertenece a ninguna componente conexa, entonces se lanza una RuntimeException
      */
     fun numVerticesDeLaComponente(compID: Int) : Int {
         /** Entrada: un entero del identificador de la componente conexa a buscar
          *  Salida: un entero del numero de vertices que se encuentran en el identificador
-         *  Precondicion: 0 < compID <= nCC()
+         *  Precondicion: 0 <= compID < nCC()
          *  Postcondicion: 0 < result < g.numDeVertices
          *  Tiempo: O(|V|)
          */
-        if (0 >= compID || compID > dfs.contCC) throw RuntimeException("el identificador no pertenece a ninguna componente conexa")
+        if (0 > compID || compID >= dfs.contCC) throw RuntimeException("el identificador no pertenece a ninguna componente conexa")
         var result = 0
         for (v in g.listaDeVertices){
             if (v.cc == compID) result++
