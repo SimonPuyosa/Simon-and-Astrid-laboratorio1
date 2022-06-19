@@ -5,7 +5,56 @@ package ve.usb.libGrafo
  *  usando el algoritmo de busqueda en profundidad (DFS)
  */
 public class ComponentesConexasDFS(val g: GrafoNoDirigido) {
-    private val dfs = DFS(g)
+    private var contCC = 0                                               // Variable Global
+
+    init {
+        /** Entrada: un grafo no dirigido no vacio
+         *  Precondicion: (q.listaDeVertices.size > 0)
+         *  Postcondicion: contCC != 0
+         *  Tiempo de operacion: O(|V| + |E|)
+         */
+        for (i in g.listaDeVertices.indices) {
+            g.listaDeVertices[i].pred = null
+            g.listaDeVertices[i].color = Color.BLANCO
+        }
+
+        for (i in g.listaDeVertices) {
+            if (g.listaDeVertices[i.valor].color == Color.BLANCO) {
+                dfsVisit(g, g.listaDeVertices[i.valor].valor)
+                contCC++
+            }
+        }
+    }
+
+    private fun dfsVisit(g: GrafoNoDirigido, u: Int) {
+        /** Entrada:
+         *      g: un grafo no dirigido no vacio
+         *      u: un entero del valor del vértice a estudiar
+         *  Precondicion: (q.listaDeVertices[u].color == Color.BLANCO)
+         *  Postcondicion: contCC != 0
+         *  Tiempo de operacion: O(|E|)
+         */
+
+        val temp: Vertice = g.listaDeVertices[u]
+        var v: Vertice
+        temp.color = Color.GRIS                  //y el color del vértice
+        temp.cc = contCC
+
+        if (g.listaDeAdyacencia[u] != null) {
+            val it = g.listaDeAdyacencia[u]!!.iterator()
+            while (it.hasNext()) {                                       //Iteramos sobre los vértices adyacentes del vértice actual
+                v = it.next()
+
+                if (g.listaDeVertices[v.valor].color == Color.BLANCO) {
+                    v.pred = temp                                      //Guardamos el vértice predecesor
+                    g.listaDeVertices[v.valor].pred = temp
+                    dfsVisit(g, v.valor)                               //y volvemos a llamar a visitDFS()
+                }
+            }
+        }
+        temp.color = Color.NEGRO                                   //se termina de explorar
+    }
+
 
     /** Método que dado dos enteros u y v, indica retornando un booleano si los dos vertices estan en la
      *  misma componente conexa, esto lo hace comprobando el numero de la componente conexa del vertice
@@ -31,7 +80,7 @@ public class ComponentesConexasDFS(val g: GrafoNoDirigido) {
          * Precondición: (0 < g.listaDeVertices.size && g.listaDeAdyacencia != null)
          * Tiempo: O(1)
          */
-	    return dfs.contCC
+	    return contCC
     }
 
     /** Metodo que dado un entero que representa un vertice, retorna el identificador de
@@ -63,7 +112,7 @@ public class ComponentesConexasDFS(val g: GrafoNoDirigido) {
          *  Postcondicion: 0 < result < g.numDeVertices
          *  Tiempo: O(|V|)
          */
-        if (0 > compID || compID >= dfs.contCC) throw RuntimeException("el identificador no pertenece a ninguna componente conexa")
+        if (0 > compID || compID >= contCC) throw RuntimeException("el identificador no pertenece a ninguna componente conexa")
         var result = 0
         for (v in g.listaDeVertices){
             if (v.cc == compID) result++

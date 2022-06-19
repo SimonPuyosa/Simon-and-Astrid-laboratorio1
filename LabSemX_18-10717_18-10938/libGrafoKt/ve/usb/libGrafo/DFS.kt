@@ -7,7 +7,6 @@ import java.util.concurrent.ConcurrentLinkedQueue
  */
 public class DFS(var g: Grafo, orden: Array<Vertice> = g.listaDeVertices) {
     private var tiempo = 0                                       // Variable Global
-    var contCC = 0                                               // Variable Global
     private var DFStree = ConcurrentLinkedQueue<Vertice>()              // Cola en la que se almacenará en DFStree
     var treeEdges = ArrayList<Pair<Int, Int>>()                 // Arreglo donde se almacenará los lados del bosque generado por DFS
     var forwardEdges = ArrayList<Pair<Int, Int>>()              // Arreglo donde se almacenará los lados de ida del bosque generado por DFS
@@ -35,7 +34,6 @@ public class DFS(var g: Grafo, orden: Array<Vertice> = g.listaDeVertices) {
         for (i in orden) {
             if (g.listaDeVertices[i.valor].color == Color.BLANCO) {
                 dfsVisit(g, g.listaDeVertices[i.valor].valor)
-                contCC++
             }
         }
     }
@@ -54,7 +52,6 @@ public class DFS(var g: Grafo, orden: Array<Vertice> = g.listaDeVertices) {
         tiempo += 1                              //Se empieza a explorar
         temp.tiempoInicial = tiempo              //Actualizamos el tiempo inicial
         temp.color = Color.GRIS                  //y el color del vértice
-        temp.cc = contCC
 
         if (g.listaDeAdyacencia[u] != null) {
             val it = g.listaDeAdyacencia[u]!!.iterator()

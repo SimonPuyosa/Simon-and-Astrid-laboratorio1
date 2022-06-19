@@ -16,8 +16,6 @@ public class ComponentesConexasCD(val g: GrafoNoDirigido) {
         val e = g.iterator()
         while(e.hasNext()){                                     //Iteramos sobre las aristas del grafo
             val arista = e.next()
-            println()
-            println("${arista.u} && ${arista.v}")
             if(compConexas.encontrarConjunto(arista.u) != compConexas.encontrarConjunto(arista.v)){     //y si los vértices que conforman dicha arista se encuentran en diferentes conjuntos
                 compConexas.union(arista.u, arista.v)                                                   //se realiza la unión de estos, obteniendo así las componentes conexas del grafo
             }
