@@ -1,14 +1,7 @@
 package ve.usb.libGrafo
 
 /** Clase para representar la estructura de datos Conjuntos Disjuntos, implementados con áboles
- *
- Implementación de las estructuras de datos para conjuntos disjuntos.
- Los conjuntos disjuntos son representado como árboles.
- El constructor recibe como entrada en número elementos que van a conformar los cojuntos disjuntos.
- Los elementos de los conjuntos disjuntos están identificados en el intervalo [0 .. n-1].
- Cuando se ejecuta el constructor, se crean n conjuntos disjuntos iniciales, es decir,
- se debe ejecutar make-set(i) para todo i en el intervalo [0 .. n-1].
-*/
+ */
 public class ConjuntosDisjuntos(val n: Int) {
     /** Entrada:
      *      n: número de elementos que van a conformar los conjuntos disjuntos
@@ -17,13 +10,14 @@ public class ConjuntosDisjuntos(val n: Int) {
      *  Postcondición: treeConjuntosDisjuntos.isNotEmpty()
      *  Tiempo: O(n)
      */
-    private var treeConjuntosDisjuntos = Array(n){Vertice(it)}
-    var verticesCD = Array<Int>(n, {1})
+    private var treeConjuntosDisjuntos = Array(n){Vertice(it)}      //Array que representa la ejecución de make-set para
+    var verticesCD = ArrayList<Int>()
     var ConjuntosDisjuntos = ArrayList<Int>()
 
     init{
         for(i in 0 until n){
             ConjuntosDisjuntos.add(i)
+            verticesCD.add(1)
         }
     }
 
@@ -45,13 +39,13 @@ public class ConjuntosDisjuntos(val n: Int) {
         if (x.padre.valor != y.padre.valor) {
             if (x.rank > y.rank) {
                 y.padre = x
-                verticesCD[u]--
-                verticesCD[v]++
+                verticesCD[ConjuntosDisjuntos.indexOf(v)] += verticesCD.get(ConjuntosDisjuntos.indexOf(u))
+                verticesCD.removeAt(ConjuntosDisjuntos.indexOf(u))
                 ConjuntosDisjuntos.remove(u)
             } else{
                 x.padre = y
-                verticesCD[v]--
-                verticesCD[u]++
+                verticesCD[ConjuntosDisjuntos.indexOf(u)] += verticesCD.get(ConjuntosDisjuntos.indexOf(v))
+                verticesCD.removeAt(ConjuntosDisjuntos.indexOf(v))
                 ConjuntosDisjuntos.remove(v)
                 if(x.rank == y.rank){
                     y.rank++
@@ -72,7 +66,7 @@ public class ConjuntosDisjuntos(val n: Int) {
          *  Salida: booleano que indica si la unión de los conjuntos que contienen a v y u se realizó o no
          *  Precondición: v<n && u<n
          *  Postcondición treeConjuntosDisjuntos[v].padre != treeConjuntosDisjuntos[u].padre
-         *  Tiempo: O(rank)
+         *  Tiempo: O(|V|)
          */
         if(0 > v || v >= n || 0 > u || u>=n) throw RuntimeException("Alguno de los dos enteros no pertenecen a ningún conjunto")
         return link(encontrarConjunto(v), encontrarConjunto(u))
@@ -87,7 +81,7 @@ public class ConjuntosDisjuntos(val n: Int) {
          *  Salida: entero que indica el elemento representativo del conjunto disjunto de v
          *  Precondición: v<n
          *  Postcondición result = treeConjuntosDisjuntos[v].padre.valor
-         *  Tiempo: O(rank)
+         *  Tiempo: O(|V|)
          */
         if(0 > v || v>=n) throw RuntimeException("El identificador no pertenece a ningun elemento")
         var temp = treeConjuntosDisjuntos[v]
