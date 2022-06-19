@@ -33,7 +33,7 @@ public class ComponentesConexasCD(val g: GrafoNoDirigido) {
          *  Salida: Booleano que indica si ambos vértices pertenecen a una misma componente conexa
          *  Precondición: 0 <= v && v<g.listaDeVertices.size && 0 <= u && u<g.listaDeVertices.size
          *  Postcondición: compConexas.encontrarConjunto(u) == compConexas.encontrarConjunto(v)
-         *  Tiempo: O(rank)
+         *  Tiempo: O(|V|)
          */
         if(0 > v || v>=g.listaDeVertices.size || 0 > u || u>=g.listaDeVertices.size) throw RuntimeException("El vértice no se encuentra en el grafo")
         return compConexas.encontrarConjunto(u) == compConexas.encontrarConjunto(v)
@@ -60,7 +60,7 @@ public class ComponentesConexasCD(val g: GrafoNoDirigido) {
          *  Salida: entero que representa el identificador de la componente conexa a la cual v pertenece
          *  Precondición: 0 <= v && v<g.listaDeVertices.size
          *  Postcondición: result in [0, nCC-1]
-         *  Tiempo: O(rank)
+         *  Tiempo: O(|V|)
          */
         if(0 > v || v>=g.listaDeVertices.size) throw RuntimeException("El vértice no se encuentra en el grafo")
         val repr = compConexas.encontrarConjunto(v)
@@ -80,8 +80,7 @@ public class ComponentesConexasCD(val g: GrafoNoDirigido) {
          *  Tiempo: O(1)
          */
         if(0 > compID || compID >= compConexas.numConjuntosDisjuntos()) throw RuntimeException("El identificador no está asociado a ninguna componente conexa")
-        val repr = compConexas.ConjuntosDisjuntos[compID]
-        return compConexas.verticesCD[repr]
+        return compConexas.verticesCD[compID]
     }
 
 
