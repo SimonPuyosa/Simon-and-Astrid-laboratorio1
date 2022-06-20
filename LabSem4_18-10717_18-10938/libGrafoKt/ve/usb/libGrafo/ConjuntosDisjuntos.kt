@@ -1,4 +1,5 @@
 package ve.usb.libGrafo
+import kotlin.collections.ArrayList
 
 /** Clase para representar la estructura de datos Conjuntos Disjuntos, implementados con áboles
  */
@@ -11,13 +12,12 @@ public class ConjuntosDisjuntos(val n: Int) {
      *  Tiempo: O(n)
      */
     private var treeConjuntosDisjuntos = Array(n){Vertice(it)}      //Array que representa la ejecución de make-set para
-    var verticesCD = ArrayList<Int>()
+    var verticesCD = Array(n, {1})
     var ConjuntosDisjuntos = ArrayList<Int>()
 
     init{
         for(i in 0 until n){
             ConjuntosDisjuntos.add(i)
-            verticesCD.add(1)
         }
     }
 
@@ -39,13 +39,13 @@ public class ConjuntosDisjuntos(val n: Int) {
         if (x.padre.valor != y.padre.valor) {
             if (x.rank > y.rank) {
                 y.padre = x
-                verticesCD[ConjuntosDisjuntos.indexOf(v)] += verticesCD.get(ConjuntosDisjuntos.indexOf(u))
-                verticesCD.removeAt(ConjuntosDisjuntos.indexOf(u))
+                verticesCD[u]--
+                verticesCD[v]++
                 ConjuntosDisjuntos.remove(u)
             } else{
                 x.padre = y
-                verticesCD[ConjuntosDisjuntos.indexOf(u)] += verticesCD.get(ConjuntosDisjuntos.indexOf(v))
-                verticesCD.removeAt(ConjuntosDisjuntos.indexOf(v))
+                verticesCD[v]--
+                verticesCD[u]++
                 ConjuntosDisjuntos.remove(v)
                 if(x.rank == y.rank){
                     y.rank++

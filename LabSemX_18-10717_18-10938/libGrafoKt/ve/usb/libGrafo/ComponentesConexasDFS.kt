@@ -20,7 +20,7 @@ public class ComponentesConexasDFS(val g: GrafoNoDirigido) {
 
         for (i in g.listaDeVertices) {
             if (g.listaDeVertices[i.valor].color == Color.BLANCO) {
-                dfsVisit(g, g.listaDeVertices[i.valor].valor)
+                if (g.listaDeAdyacencia[i.valor] != null) dfsVisit(g, i.valor)
                 contCC++
             }
         }
@@ -34,22 +34,19 @@ public class ComponentesConexasDFS(val g: GrafoNoDirigido) {
          *  Postcondicion: contCC != 0
          *  Tiempo de operacion: O(|E|)
          */
-
         val temp: Vertice = g.listaDeVertices[u]
         var v: Vertice
         temp.color = Color.GRIS                  //y el color del vértice
         temp.cc = contCC
 
-        if (g.listaDeAdyacencia[u] != null) {
-            val it = g.listaDeAdyacencia[u]!!.iterator()
-            while (it.hasNext()) {                                       //Iteramos sobre los vértices adyacentes del vértice actual
-                v = it.next()
+        val it = g.listaDeAdyacencia[u]!!.iterator()
+        while (it.hasNext()) {                                       //Iteramos sobre los vértices adyacentes del vértice actual
+            v = it.next()
 
-                if (g.listaDeVertices[v.valor].color == Color.BLANCO) {
-                    v.pred = temp                                      //Guardamos el vértice predecesor
-                    g.listaDeVertices[v.valor].pred = temp
-                    dfsVisit(g, v.valor)                               //y volvemos a llamar a visitDFS()
-                }
+            if (g.listaDeVertices[v.valor].color == Color.BLANCO) {
+                v.pred = temp                                      //Guardamos el vértice predecesor
+                g.listaDeVertices[v.valor].pred = temp
+                if (g.listaDeAdyacencia[v.valor] != null) dfsVisit(g, v.valor)                               //y volvemos a llamar a visitDFS()
             }
         }
         temp.color = Color.NEGRO                                   //se termina de explorar

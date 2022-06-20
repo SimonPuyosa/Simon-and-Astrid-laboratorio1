@@ -1,7 +1,6 @@
 KC=	kotlinc
 KFLAG=	-cp
 GLIB=	ve/usb/libGrafo
-GLIBS=	libGrafoKt/ve/usb/libGrafo
 
 all:	libGrafoKt.jar
 
@@ -19,8 +18,16 @@ libGrafoKt.jar: $(GLIB)/RuntimeException.class\
 		$(GLIB)/GrafoDirigido.class\
 		$(GLIB)/GrafoDirigidoCosto.class\
 		$(GLIB)/GrafoNoDirigido.class\
-		$(GLIB)/GrafoNoDirigidoCosto.class
-	jar -cvf $@ $(GLIBS)/*.class
+		$(GLIB)/GrafoNoDirigidoCosto.class\
+		$(GLIB)/CicloDigrafo.class\
+		$(GLIB)/OrdenamientoTopologico.class\
+		$(GLIB)/ParticionNiveles.class\
+		$(GLIB)/Utilidades.class\
+		$(GLIB)/CFC.class\
+		$(GLIB)/ConjuntosDisjuntos.class\
+		$(GLIB)/ComponentesConexasDFS.class\
+		$(GLIB)/ComponentesConexasCD.class
+	jar -cvf $@ $(GLIB)/*.class
 
 $(GLIB)/RuntimeException.class: $(GLIB)/RuntimeException.kt
 	$(KC) $(GLIB)/RuntimeException.kt
@@ -66,6 +73,30 @@ $(GLIB)/GrafoNoDirigido.class: $(GLIB)/GrafoNoDirigido.kt
 
 $(GLIB)/GrafoNoDirigidoCosto.class: $(GLIB)/GrafoNoDirigidoCosto.kt
 	$(KC) $(KFLAG) $(GLIB): $(GLIB)/GrafoNoDirigidoCosto.kt
+	
+$(GLIB)/Utilidades.class: $(GLIB)/Utilidades.kt
+	$(KC) $(KFLAG) $(GLIB): $(GLIB)/Utilidades.kt
+
+$(GLIB)/CFC.class: $(GLIB)/CFC.kt
+	$(KC) $(KFLAG) $(GLIB): $(GLIB)/Utilidades.kt $(GLIB)/CFC.kt
+
+$(GLIB)/CicloDigrafo.class: $(GLIB)/CicloDigrafo.kt
+	$(KC) $(KFLAG) $(GLIB): $(GLIB)/CicloDigrafo.kt
+
+$(GLIB)/OrdenamientoTopologico.class: $(GLIB)/OrdenamientoTopologico.kt
+	$(KC) $(KFLAG) $(GLIB): $(GLIB)/OrdenamientoTopologico.kt
+
+$(GLIB)/ParticionNiveles.class: $(GLIB)/ParticionNiveles.kt
+	$(KC) $(KFLAG) $(GLIB): $(GLIB)/ParticionNiveles.kt
+	
+$(GLIB)/ConjuntosDisjuntos.class: $(GLIB)/ConjuntosDisjuntos.kt
+	$(KC) $(KFLAG) $(GLIB): $(GLIB)/ConjuntosDisjuntos.kt
+
+$(GLIB)/ComponentesConexasDFS.class: $(GLIB)/ComponentesConexasDFS.kt
+	$(KC) $(KFLAG) $(GLIB): $(GLIB)/ComponentesConexasDFS.kt
+
+$(GLIB)/ComponentesConexasCD.class: $(GLIB)/ComponentesConexasCD.kt
+	$(KC) $(KFLAG) $(GLIB): $(GLIB)/ComponentesConexasCD.kt
 
 clean:
 	rm -rf libGrafoKt.jar META-INF $(GLIB)/*.class libGrafoKt

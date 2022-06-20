@@ -80,8 +80,8 @@ public class ComponentesConexasCD(val g: GrafoNoDirigido) {
          *  Tiempo: O(1)
          */
         if(0 > compID || compID >= compConexas.numConjuntosDisjuntos()) throw RuntimeException("El identificador no está asociado a ninguna componente conexa")
-        return compConexas.verticesCD[compID]
+        if (compID == 0 && nCC() == 1) return g.numDeVertices
+        val repr = compConexas.ConjuntosDisjuntos[compID]
+        return compConexas.verticesCD[repr]
     }
-
-
 }
