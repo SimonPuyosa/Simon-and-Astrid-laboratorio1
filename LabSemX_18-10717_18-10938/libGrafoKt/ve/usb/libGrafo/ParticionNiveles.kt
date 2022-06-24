@@ -6,11 +6,10 @@ package ve.usb.libGrafo
  */
 public class ParticionNiveles(val g: GrafoDirigido){
     //Inicialización de variables
-    private var nvert: Int = 0
-    private var nivel: Int = 0
-    private var hayCiclo: Boolean = false
-    private var gradoInterior = ArrayList<Int>()                      //Array donde se almacenan el grado interior de cada vértice
-    private var particiones = ArrayList<MutableSet<Int>>()            //Array de conjuntos donde se almacenará la partición
+    var nvert: Int = 0
+    var nivel: Int = 0
+    var gradoInterior = ArrayList<Int>()                      //Array donde se almacenan el grado interior de cada vértice
+    var particiones = ArrayList<MutableSet<Int>>()            //Array de conjuntos donde se almacenará la partición
 
     init{
         /** Entrada:
@@ -21,11 +20,8 @@ public class ParticionNiveles(val g: GrafoDirigido){
          *  Tiempo: O(máx(|V|,|E|))
          */
 
-        for (i in 0 until g.numDeVertices) {
-            gradoInterior.add(g.listaDeVertices[i].gradoInterior)         //se almacenan los grados interiores en cada grafo
-        }
-
-        for(i in 0 until g.numDeVertices){
+        for (i in g.listaDeVertices) {
+            gradoInterior.add(i.gradoInterior)         //se almacenan los grados interiores en cada grafo
             particiones.add(mutableSetOf<Int>())                            //se inicializa el arreglo de particiones con conjuntos vacíos
         }
 
@@ -37,13 +33,15 @@ public class ParticionNiveles(val g: GrafoDirigido){
         }
         while (nvert < g.numDeVertices && particiones[nivel].isNotEmpty()) {
             for (u in particiones[nivel]){                                  //se vuelve a iterar sombre la lista de vértices del digrafo
-                val it = g.listaDeAdyacencia[u]!!.iterator()                //y vamos consultando sus vértices adyacentes
-                while (it.hasNext()) {
-                    val v = it.next()
-                    gradoInterior[v.valor] -= 1                             //si al disminuir el grado interior de vértice actual este se hace 0,
-                    if (gradoInterior[v.valor] == 0) {                      //añadimos al arreglo el vértice en su nivel correspondiente
-                        particiones[nivel + 1].add(v.valor)
-                        nvert += 1                                          //y aumentamos el número de vértices
+                if (g.listaDeAdyacencia[u] != null) {
+                    val it = g.listaDeAdyacencia[u]!!.iterator()                //y vamos consultando sus vértices adyacentes
+                    while (it.hasNext()) {
+                        val v = it.next()
+                        gradoInterior[v.valor] -= 1                             //si al disminuir el grado interior de vértice actual este se hace 0,
+                        if (gradoInterior[v.valor] == 0) {                      //añadimos al arreglo el vértice en su nivel correspondiente
+                            particiones[nivel + 1].add(v.valor)
+                            nvert += 1                                          //y aumentamos el número de vértices
+                        }
                     }
                 }
             }
@@ -73,7 +71,6 @@ public class ParticionNiveles(val g: GrafoDirigido){
          *  Postcondición: nvert < g.numDeVertices
          *  Tiempo: O(1)
          */
-        hayCiclo = nvert < g.numDeVertices
-        return hayCiclo
+        return nvert < g.numDeVertices
     }
 }
