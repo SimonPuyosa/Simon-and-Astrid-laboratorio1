@@ -22,20 +22,19 @@ public class TablaGrafoNoDirigido(val nombreArchivo: String) {
     var numDeVertices: Int = 0
     var mapeo: Map<Int, String>
     var mapeoDeVuelta: Map<String, Int>
-    lateinit var grafoDeSalida: GrafoNoDirigido
+    var grafoDeSalida: GrafoNoDirigido
 
     init {
         val a = File(nombreArchivo).readLines()                 // Se guarda el archivo en la variable a de tipo List<String>
         numDeVertices = a[0].toInt()                            // Se obtiene de la primera linea linea el numero de vertices
         listaDeAdyacencia = arrayOfNulls(numDeVertices)         // Se genera la lista de adyacencia (array de listas enlazadas)
         listaDeVertices = Array(numDeVertices) { Vertice(it) }  // Se genera un arreglo de vertices
-        val numerodelados = a[1].toInt()                               // Se obtiene de la segunda linea el numero de lados
-        numDeLados = 0
+        numDeLados = a[1].toInt()                               // Se obtiene de la segunda linea el numero de lados
 
         var temp: List<String>
-        temp = a[3].split(" ").filter {it != ""}   // se separa cada linea por espacios
-        mapeo = temp.associateBy { it.length }
-        mapeoDeVuelta = temp.associateWith { it.length }
+        temp = a[2].split("\t").filter {it != ""}   // se separa cada linea por tabulaciones
+        mapeo = mutableMapOf<Int, String>().apply { for (i in 0 until numDeVertices) this[i] = temp[i] }
+        mapeoDeVuelta = mutableMapOf<String, Int>().apply { for (i in 0 until numDeVertices) this[temp[i]] = i }
         grafoDeSalida = GrafoNoDirigido(numDeVertices)
 
 
@@ -43,15 +42,14 @@ public class TablaGrafoNoDirigido(val nombreArchivo: String) {
         var i = 3
         var v: Int
         var u: Int
-        while (i < 3 + numerodelados && a[i] != ""){            // se itera por las demas lineas del archivo hasta que este se acabe
-            temp = a[i].split(" ").filter {it != ""}   // se separa cada linea por espacios
+        while (i < 3 + numDeLados && a[i] != ""){            // se itera por las demas lineas del archivo hasta que este se acabe
+            temp = a[i].split("\t").filter {it != ""}   // se separa cada linea por espacios
             u = mapeoDeVuelta[temp[0]]!!                          // valor del vertice de inicio
             v = mapeoDeVuelta[temp[1]]!!                          // valor del vertice de llegada
 
             if (! grafoDeSalida.agregarArista(Arista(u, v))) throw KeyAlreadyExistsException("el objeto esta repetido")
             i++
         }
-        if (numDeLados != numerodelados) throw RuntimeException("hubo un error subiendo la data, el numero de lados es incorrecto")
     }
 
     /*
