@@ -18,23 +18,12 @@ public class PrimAMC(val g: GrafoNoDirigidoCosto) {
         g.listaDeVertices[0].Costo = 0.0
         val Q = PriorityQueue<Vertice>()
         Q.addAll(g.listaDeVertices)
-        println("Imprimimos q")
-        val it2 = Q.iterator()
-        while(it2.hasNext()) println(it2.next().valor)
         var u: Vertice
         var it: MutableIterator<Vertice>
         var V: Vertice
-        println("u")
+
         while (Q.isNotEmpty()){
             u = Q.remove()
-            println(u.valor)
-            println(u.Costo)
-            /*
-            println("siguiente")
-            println(Q.element().valor)
-            println(Q.element().Costo)
-             */
-            println()
             if (g.listaDeAdyacencia[u.valor] != null){
                 it = g.listaDeAdyacencia[u.valor]!!.iterator()
                 while (it.hasNext()){
@@ -42,10 +31,11 @@ public class PrimAMC(val g: GrafoNoDirigidoCosto) {
                     if (Q.contains(V) && V.Costo < g.listaDeVertices[V.valor].Costo && u.valor != V.valor){
                         g.listaDeVertices[V.valor].pred = u
                         g.listaDeVertices[V.valor].Costo = V.Costo
-                        println("yeyyyyy ${V.Costo}")
                     }
                 }
-            } else println("NOOOOOOOOOOOOOOOOOOOOOOOO")
+            }
+            Q.add(Vertice(-1, -5.0))
+            Q.remove()
         }
     }
 
@@ -84,7 +74,6 @@ public class PrimAMC(val g: GrafoNoDirigidoCosto) {
     fun obtenerCosto() : Double {
         var sum = 0.0
         for (V in g.listaDeVertices){
-            println(V.Costo)
             sum += V.Costo
         }
         return sum

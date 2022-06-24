@@ -54,11 +54,10 @@ public class TablaGrafoNoDirigido(val nombreArchivo: String) {
 
     /*
      Retorna True si el índice de un vértice pertenece a un grafo no dirigido,
-     de lo contrario retorna False. 
-     Si el índice no pertenece al grafo no dirigido, entonces se lanza una RuntimeException.
+     de lo contrario retorna False.
      El tiempo de esta función es O(1).
      */
-    fun contieneVertice(v: Int) : Boolean { return mapeo[v] != null } // TODO
+    fun contieneVertice(v: Int) : Boolean { return mapeo[v] != null }
 
     /*
      Dado el nombre de un vértice, retorna el índice del vertice. Si no existe ningún vértice
