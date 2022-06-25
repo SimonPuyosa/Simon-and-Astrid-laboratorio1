@@ -9,6 +9,10 @@ import java.util.*
  *  representa un cfcs
  */
 public class CFC(val g: GrafoDirigido) {
+    /** Entrada: un grafo Dirigido no vacio
+     *  Precondicion: g.listaDeVertices.size > 0
+     *  Tiempo: O(|V| + |E|)
+     */
     val cfc = LinkedList<LinkedList<Int>>()        // se crea la propiedad previamente explicada
 
     init {
@@ -42,14 +46,12 @@ public class CFC(val g: GrafoDirigido) {
             if (anterior != null ) cfc[i].addFirst(anterior.b)      // se guarda el segundo vertide del lado anterior
         }
 
-        // ahora buscaremos los cfcs de un solo vertice es decir los cfcs causados por un bucle
+        // ahora buscaremos los cfcs de un solo vertice es decir los cfcs causados por un unico vertice
         for (k in g.listaDeVertices) {                          // iteramos sobre los vertices
             if (obtenerIdentificadorCFC(k.valor) == -1){      // se verifica que el vertice no se encuentra en ningun cfcs
-                if (g.listaDeAdyacencia[k.valor] != null && g.listaDeAdyacencia[k.valor]!!.contains(k)) {   // Si el vertice tiene un bucle
-                    cfc.addLast(LinkedList<Int>())            // Se crea otro SubLinkedList
-                    i++
-                    cfc[i].addFirst(k.valor)                // Se agrega el vertice bucle
-                }
+                cfc.addLast(LinkedList<Int>())            // Se crea otro SubLinkedList
+                i++
+                cfc[i].addFirst(k.valor)                // Se agrega el vertice bucle
             }
         }
     }

@@ -3,18 +3,16 @@ import java.io.File
 import java.util.*
 import javax.management.openmbean.KeyAlreadyExistsException
 
-/*
- Esta clase recibe como entrada un archivo que contiene un grafo 
- dirigido, en donde los vértices están identificados con un String, en 
- lugar de un entero. Se crea un objeto que tiene una estructura de datos
- que permite asociar cada nombre de vértice, con un índice que es un número entero. 
- Si |V| = n, entonces a cada vértice se le asigna un índice que es número entero
- en el intervalo [0, n-1]. También se crea una estructura que dado un índice de un 
- vértice, permite obtener el nombre del vértice. Por último, cuando 
- se llama al constructor, Se crea un grafo dirigido en el que los
- vértices están identificados con los índices de los vértices del grafo. 
-*/
+/** Clase que dado la ubicacion de un archivo que contiene los datos de un grafo dirigido,
+ *  identificando a los vertices como string, genera un mapeo para crear un grafo dirigido de
+ *  enteros a traves de la tabla del mapeo
+ */
 public class TablaGrafoDirigido(val nombreArchivo: String) {
+    /** Entrada: un string de la ubicacion del archivo
+     *  Precondicion: Exist File(nombreArchivo)
+     *  Postcondicion: grafoDeSalida.listaDeVertices.size = File(nombreArchivo).readLines()[0]
+     *  Tiempo: O(|E|)
+     */
     var listaDeAdyacencia: Array<LinkedList<Vertice>?> = arrayOf(null)
     var listaDeVertices: Array<Vertice>
     var numDeLados: Int = 0
@@ -50,40 +48,46 @@ public class TablaGrafoDirigido(val nombreArchivo: String) {
         }
     }
 
-
-    /*
-     Retorna True si el índice de un vértice pertenece a un grafo dirigido,
-     de lo contrario retorna False.
-     El tiempo de esta función es O(1).
+    /** Metodo que dado un entero que representa un posible vertice del grafo dirigido
+     *  retorna true si el indice pertenece al grafo y false si no pertenece
      */
     fun contieneVertice(v: Int) : Boolean { return mapeo[v] != null }
+        /** Entrada: un entero v que representa un posible vertice del grafo
+         *  Postcondicion: v in mapeo
+         *  Tiempo: O(1)
+         */
 
-    /*
-     Dado el nombre de un vértice, retorna el índice del vertice. Si no existe ningún vértice
-     con ese nombre, entonces se lanza una RuntimeException.
-     El tiempo de esta función es O(1).
-     */
+    /** Metodo que dado un string que representa un vertice se retorna el indice del vertice.
+     *  Si no existe un vertice con ese nombre se lanza un RuntimeException
+      */
     fun indiceVertice(nombre: String) : Int {
+        /** Entrada: un string que representa el nombre de un vertice
+         *  Salida: un entero del indice del vertice
+         *  Precondicion: nombre in mapeo
+         *  Tiempo: O(1)
+         */
         if (mapeoDeVuelta[nombre] == null) throw RuntimeException("No existe ningun vertice con ese nombre")
         return mapeoDeVuelta[nombre]!!
     }
 
-    /*
-     Dado el índice de un vértice, retorna el nombre del vértice. Si el entero de la entrada
-     no corresponde a ningún índice que corresponde a un vértice del grafo dirigido,
-     entonces, se lanza una RuntimeException. 
-     El tiempo de esta función es O(1).
+    /** Metodo que dado un indice de un vertice retorna el nombre del vertice, si no se encuentra ningun
+     *  vertice con ese indice, se lanza un RuntimeException
      */
     fun nombreVertice(v: Int) : String {
+        /** Entrada: un entero v del indice del vertice
+         *  Salida: el nombre del vertice
+         *  Precondicion: v in mapeo
+         *  Tiempo: O(1)
+         */
         if (mapeo[v] == null) throw RuntimeException("No existe ningun vertice con ese nombre")
         return mapeo[v]!!
     }
 
-    /*
-     Retorna el grafo dirigido asociado al grafo con vértices con nombres, indicado
-     en el archivo de entrada. 
-     El tiempo de esta función es O(1).
+    /** Metodo que retorna el grafoDirigido generado previamente con los nombres como vertices
      */
     fun obtenerGrafoDirigido() : GrafoDirigido { return grafoDeSalida }
-    
+        /** Salida: un grafoDirigido
+         *  Postcondicion: grafoDeSalida.listaDeVertices.size > 0
+         *  Tiempo: O(1)
+         */
 }

@@ -5,6 +5,13 @@ package ve.usb.libGrafo
  *  no hay ciclos. En caso de que el grafo de entrada no sea un DAG, entonces se indica que hay ciclo.
  */
 public class ParticionNiveles(val g: GrafoDirigido){
+    /** Entrada: g: un Grafo Dirigido sin ciclos
+     *  Salida: un arreglo de conjuntos mutables que contienen los vértices del digrafo particionados por nivel
+     *  Precondición: OrdenamientoTopológico(g).esDAG()
+     *  Postcondición: particiones.isNotEmpty
+     *  Tiempo: O(máx(|V|,|E|))
+     */
+
     //Inicialización de variables
     var nvert: Int = 0
     var nivel: Int = 0
@@ -12,14 +19,6 @@ public class ParticionNiveles(val g: GrafoDirigido){
     var particiones = ArrayList<MutableSet<Int>>()            //Array de conjuntos donde se almacenará la partición
 
     init{
-        /** Entrada:
-         *      g: un Grafo Dirigido sin ciclos
-         *  Salida: un arreglo de conjuntos mutables que contienen los vértices del digrafo particionados por nivel
-         *  Precondición: OrdenamientoTopológico(g).esDAG()
-         *  Postcondición: particiones.isNotEmpty
-         *  Tiempo: O(máx(|V|,|E|))
-         */
-
         for (i in g.listaDeVertices) {
             gradoInterior.add(i.gradoInterior)         //se almacenan los grados interiores en cada grafo
             particiones.add(mutableSetOf<Int>())                            //se inicializa el arreglo de particiones con conjuntos vacíos

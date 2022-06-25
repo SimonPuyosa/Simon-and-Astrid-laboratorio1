@@ -81,7 +81,13 @@ public class DFS(var g: Grafo, orden: Array<Vertice> = g.listaDeVertices) {
         ordenTopologico.addFirst(temp)
     }
 
+    /** Metodo que retorna un LinkedList de vertices que representa el orden topologico
+     */
     fun obtenerOrdTop(): LinkedList<Vertice>{
+        /** Salida: una lista enlazada de Vertices
+         *  Postcondicion: ordenTopologico.size = g.listaDeVertices.size
+         *  Tiempo: O(1)
+         */
         return ordenTopologico
     }
 
