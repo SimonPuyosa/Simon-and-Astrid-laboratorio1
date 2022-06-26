@@ -7,8 +7,7 @@ import java.util.*
  */
 
 public class KruskalAMC(val g: GrafoNoDirigidoCosto) {
-    /** Entrada:
-     *      g: grafo no dirigido con costo no vacío
+    /** Entrada: g: grafo no dirigido con costo no vacío
      *  Salida: Árbol Mínimo Cobertor
      *  Precondición: (g.listaDeVertices.size > 0) && nCC() == 1
      *  Postcondición: AMC.isNotEmpty() && obtenerCosto() > 0.0
@@ -51,14 +50,14 @@ public class KruskalAMC(val g: GrafoNoDirigidoCosto) {
     /** Clase privada interna que dado un grafo costo no dirigido retorna un iterator de los lados del Árbol Mínimo Cobertor
      */
 
-    private inner class obtenerLadosIterato(g: GrafoNoDirigidoCosto): Iterator<Arista>{
+    private inner class obtenerLadosIterato(krustal: KruskalAMC): Iterator<Arista>{
         /** Entrada: un grafo no dirigido costo no vacio
          *  Salida: un iterador de aristas del árbol mínimo cobertor
          *  Precondicion: AMC.size > 0
          *  Tiempo de operacion: O(|E|)
          */
 
-        private var temp = AMC
+        private var temp = krustal.AMC
         private var i = 0
         private lateinit var result: AristaCosto
 
@@ -76,13 +75,13 @@ public class KruskalAMC(val g: GrafoNoDirigidoCosto) {
     /** Clase privada interna que dado un grafo costo no dirigido sobreescribe la funcián iterator
      *  y la iguala a obtenerLadosIterato
      */
-    private inner class obtenerLadosIterable(val g: GrafoNoDirigidoCosto): Iterable<Arista> {
+    private inner class obtenerLadosIterable(val krustal: KruskalAMC): Iterable<Arista> {
         /** Entrada: un grafo no dirigido costo no vacio
          *  Salida: un iterable de aristas del arbol minimo cobertor
          *  Precondicion: AMC.size > 0
          *  Tiempo de operacion: O(|E|)
          */
-        override fun iterator(): Iterator<Arista> = obtenerLadosIterato(g)
+        override fun iterator(): Iterator<Arista> = obtenerLadosIterato(krustal)
     }
 
     /** Método que retorna un iterable que contiene todas las aristas de Árbol Mínimo Cobertor generado
@@ -92,7 +91,7 @@ public class KruskalAMC(val g: GrafoNoDirigidoCosto) {
          *  Precondicion: AMC.size > 0
          *  Tiempo de operacion: O(|E|)
          */
-        return obtenerLadosIterable(g)
+        return obtenerLadosIterable(this)
     }
 
     /** Metodo que retorna un double que representa el costo total del Árbol Mínimo Cobertor
