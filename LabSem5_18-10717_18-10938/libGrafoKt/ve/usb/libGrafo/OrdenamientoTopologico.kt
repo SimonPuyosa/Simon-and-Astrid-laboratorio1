@@ -3,7 +3,7 @@ package ve.usb.libGrafo
 /** Clase que dertermina el orden topológico de un Grafo Acíclico Directo,
 */
 public class OrdenamientoTopologico(val g: GrafoDirigido) {
-    private val gDFS = DFS(g)                             //Se ejecuta el algoritmo de DFS para obtener el orden topológico del mismo
+    private val gDFS = DFS(g)                             //Se ejecuta el algoritmo de DFS para obtener el ordenamiento topológico del mismo
 
     /** Método que retorna un booleano que indica si el digrafo es un Grafo Acíclico Directo
      */
@@ -12,7 +12,7 @@ public class OrdenamientoTopologico(val g: GrafoDirigido) {
          *  Postcondición: !CicloDigrafo(g).existeUnCiclo()
          *  Tiempo: O(1)
          */
-        return !CicloDigrafo(g).existeUnCiclo()
+        return !CicloDigrafo(g).existeUnCiclo()                                  //Un grafo se considera DAG si no posee ningún ciclo
     }
 
     /** Clase interna que dado un grafo luego de haberle sido aplicado el algoritmo DFS, retorna un
@@ -28,15 +28,15 @@ public class OrdenamientoTopologico(val g: GrafoDirigido) {
          *  Tiempo: O(|V|)
          */
         private val list = G.obtenerOrdTop()
-        private var i: Int = 1
+        private var i: Int = 0
         private lateinit var result: Vertice
 
         override fun hasNext(): Boolean {
-            return i <= list.size
+            return i < list.size
         }
 
         override fun next(): Int {
-            result = list[i-1]
+            result = list[i]
             i++
             return result.valor
         }
