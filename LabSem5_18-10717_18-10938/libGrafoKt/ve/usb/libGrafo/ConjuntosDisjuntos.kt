@@ -11,13 +11,13 @@ public class ConjuntosDisjuntos(val n: Int) {
      *  Postcondición: treeConjuntosDisjuntos.isNotEmpty()
      *  Tiempo: O(n)
      */
-    private var treeConjuntosDisjuntos = Array(n){Vertice(it)}      //Array que representa la ejecución de make-set para
-    var verticesCD = Array(n, {1})
-    var ConjuntosDisjuntos = ArrayList<Int>()
+    private var treeConjuntosDisjuntos = Array(n){Vertice(it)}      //Array que representa la ejecución de make-set para n vértices
+    var verticesCD = Array(n, {1})                                  //Array donde se almacena la cantidad de vértices que hay en cada conjunto
+    var ConjuntosDisjuntos = ArrayList<Int>()                       //ArrayList donde se almacenan los representantes de cada conjunto
 
     init{
         for(i in 0 until n){
-            ConjuntosDisjuntos.add(i)
+            ConjuntosDisjuntos.add(i)                               //Se inicializa la clase añadiendo los representantes de cada conjunto disjunto creado
         }
     }
 
@@ -36,24 +36,26 @@ public class ConjuntosDisjuntos(val n: Int) {
         val x = treeConjuntosDisjuntos[v]
         val y = treeConjuntosDisjuntos[u]
 
-        if (x.padre.valor != y.padre.valor) {
-            if (x.rank > y.rank) {
-                y.padre = x
-                verticesCD[u]--
-                verticesCD[v]++
-                ConjuntosDisjuntos.remove(u)
+        if (x.padre.valor != y.padre.valor) {                 //Para realizar la unión de conjuntos disjuntos, se verifica que los padres de ambos vértices sean distintos
+            if (x.rank > y.rank) {                            //Se busca cual de los dos vértices tiene mayor altura
+                val w = verticesCD[u]
+                y.padre = x                                   //Para reasignar al padre del nodo con menor altura, realizando así la unión de los conjuntos
+                verticesCD[u]-= w                             //Se actualiza la cantidad de vértices que posee el conjunto cuyo representante corresponde al de mayor altura
+                verticesCD[v]+= w                             //Y se elimina la cantidad de vértices del conjunto cuyo representante corresponde al de menor altura
+                ConjuntosDisjuntos.remove(u)                  //Además, se elimina dicho representante de la lista
             } else{
+                val z = verticesCD[v]
                 x.padre = y
-                verticesCD[v]--
-                verticesCD[u]++
+                verticesCD[v]-= z
+                verticesCD[u]+= z
                 ConjuntosDisjuntos.remove(v)
-                if(x.rank == y.rank){
+                if(x.rank == y.rank){                         //En caso de que ambos árboles tienen la misma altura, se aumenta la misma
                     y.rank++
                 }
             }
-            return true
+            return true                                       //Se retorna True una vez la unión fue realizada
         }
-        return false
+        return false                                          //Y False en caso contrario
     }
     /** Método que dado dos enteros v, u realiza la unión entre los dos conjuntos disjuntos y retorna un
      *  booleano indicando si dicha unión se realizó o no. Si el algunos de los dos elementos de
