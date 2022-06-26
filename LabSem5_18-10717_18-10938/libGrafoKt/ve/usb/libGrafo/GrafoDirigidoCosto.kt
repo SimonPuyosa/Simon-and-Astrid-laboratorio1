@@ -40,7 +40,7 @@ public class GrafoDirigidoCosto : Grafo {
          *      numDeVertice == Archivo[0]
          *      numDeLados == Archivo[1]
          *      listaDeAdyacencia.sizes == listaDeVertices.size == numDeVertices
-         *  Tiempo de operacion: O(|V| + |E|)
+         *  Tiempo de operacion: O(|E|)
          */
         val a = File(nombreArchivo).readLines()                 // Se guarda el archivo en la variable a de tipo List<String>
         numDeVertices = a[0].toInt()                            // Se obtiene de la primera linea linea el numero de vertices
@@ -73,7 +73,7 @@ public class GrafoDirigidoCosto : Grafo {
          *  Salida: Un booleano que indica si el arco ya estaba agregado previamente o no
          *  Precondición: (ArcoCosto.x in listaDeVertices && ArcoCosto.y in listaDeVertices)
          *  Postcondición: ArcoCosto in listaDeAdyacencia
-         *  Tiempo: O(|E|)
+         *  Tiempo: O(1)
          */
         if (0 > a.x || a.x >= listaDeVertices.size || 0 > a.y || a.y >= listaDeVertices.size){   // se verifica que los vertices existan
             throw RuntimeException("El lado a agregar contiene un vertice que no pertenece al grafo")

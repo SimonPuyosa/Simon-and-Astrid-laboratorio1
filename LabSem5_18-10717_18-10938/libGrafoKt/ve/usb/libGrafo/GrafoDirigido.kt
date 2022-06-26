@@ -40,7 +40,7 @@ public class GrafoDirigido : Grafo {
          *      numDeVertice == Archivo[0]
          *      numDeLados == Archivo[1]
          *      listaDeAdyacencia.sizes == listaDeVertices.size == numDeVertices
-         *  Tiempo de operacion: O(|V| + |E|)
+         *  Tiempo de operacion: O(|E|)
          */
         val a = File(nombreArchivo).readLines()                 // Se guarda el archivo en la variable a de tipo List<String>
         numDeVertices = a[0].toInt()                            // Se obtiene de la primera linea linea el numero de vertices
@@ -73,7 +73,7 @@ public class GrafoDirigido : Grafo {
          *  Salida: Un booleano que indica si el arco ya estaba agregado previamente o no
          *  Precondicion: (Arco.inicio in listaDeVertices && Arco.fin  in listaDeVertices)
          *  Postcondicion: Arco in listaDeAdyacencia
-         *  Tiempo: O(|E|)
+         *  Tiempo: O(1)
          */
         if (0 > a.inicio || a.inicio >= listaDeVertices.size ||
             0 > a.fin || a.fin >= listaDeVertices.size){   // se verifica que los vertices existan

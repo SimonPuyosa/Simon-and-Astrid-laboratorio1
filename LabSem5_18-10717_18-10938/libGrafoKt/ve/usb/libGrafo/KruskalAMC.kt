@@ -1,5 +1,4 @@
 package ve.usb.libGrafo
-
 import java.util.*
 
 /** Método que dado un grafo no dirigido determina el Árbol Mínimo Cobertor empleando el algoritmo de Kruskal.

@@ -26,7 +26,11 @@ libGrafoKt.jar: $(GLIB)/RuntimeException.class\
 		$(GLIB)/CFC.class\
 		$(GLIB)/ConjuntosDisjuntos.class\
 		$(GLIB)/ComponentesConexasDFS.class\
-		$(GLIB)/ComponentesConexasCD.class
+		$(GLIB)/ComponentesConexasCD.class\
+		$(GLIB)/TablaGrafoDirigido.class\
+		$(GLIB)/TablaGrafoNoDirigido.class\
+		$(GLIB)/KruskalAMC.class\
+		$(GLIB)/PrimAMC.class
 	jar -cvf $@ $(GLIB)/*.class
 
 $(GLIB)/RuntimeException.class: $(GLIB)/RuntimeException.kt
@@ -97,6 +101,18 @@ $(GLIB)/ComponentesConexasDFS.class: $(GLIB)/ComponentesConexasDFS.kt
 
 $(GLIB)/ComponentesConexasCD.class: $(GLIB)/ComponentesConexasCD.kt
 	$(KC) $(KFLAG) $(GLIB): $(GLIB)/ComponentesConexasCD.kt
+
+$(GLIB)/TablaGrafoDirigido.class: $(GLIB)/TablaGrafoDirigido.kt
+	$(KC) $(KFLAG) $(GLIB): $(GLIB)/TablaGrafoDirigido.kt
+
+$(GLIB)/TablaGrafoNoDirigido.class: $(GLIB)/TablaGrafoNoDirigido.kt
+	$(KC) $(KFLAG) $(GLIB): $(GLIB)/TablaGrafoNoDirigido.kt
+
+$(GLIB)/KruskalAMC.class: $(GLIB)/KruskalAMC.kt
+	$(KC) $(KFLAG) $(GLIB): $(GLIB)/KruskalAMC.kt
+
+$(GLIB)/PrimAMC.class: $(GLIB)/PrimAMC.kt
+	$(KC) $(KFLAG) $(GLIB): $(GLIB)/PrimAMC.kt
 
 clean:
 	rm -rf libGrafoKt.jar META-INF $(GLIB)/*.class libGrafoKt
