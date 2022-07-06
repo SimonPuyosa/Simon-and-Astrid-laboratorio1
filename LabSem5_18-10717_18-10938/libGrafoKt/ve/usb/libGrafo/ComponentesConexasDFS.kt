@@ -13,14 +13,14 @@ public class ComponentesConexasDFS(val g: GrafoNoDirigido) {
          *  Postcondicion: contCC != 0
          *  Tiempo de operacion: O(|V| + |E|)
          */
-        for (i in g.listaDeVertices.indices) {
-            g.listaDeVertices[i].pred = null
-            g.listaDeVertices[i].color = Color.BLANCO
+        for (V in g.listaDeVertices) {
+            V.pred = null
+            V.color = Color.BLANCO
         }
 
-        for (i in g.listaDeVertices) {
-            if (g.listaDeVertices[i.valor].color == Color.BLANCO) {
-                if (g.listaDeAdyacencia[i.valor] != null) dfsVisit(g, i.valor)
+        for (V in g.listaDeVertices) {
+            if (V.color == Color.BLANCO) {
+                if (g.listaDeAdyacencia[V.valor] != null) dfsVisit(g, V.valor)
                 contCC++
             }
         }

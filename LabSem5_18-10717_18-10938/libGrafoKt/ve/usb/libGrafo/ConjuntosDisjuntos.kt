@@ -1,4 +1,5 @@
 package ve.usb.libGrafo
+import java.util.*
 import kotlin.collections.ArrayList
 
 /** Clase para representar la estructura de datos Conjuntos Disjuntos, implementados con áboles
@@ -13,12 +14,13 @@ public class ConjuntosDisjuntos(val n: Int) {
      */
     private var treeConjuntosDisjuntos = Array(n){Vertice(it)}      //Array que representa la ejecución de make-set para n vértices
     var verticesCD = Array(n, {1})                                  //Array donde se almacena la cantidad de vértices que hay en cada conjunto
-    var ConjuntosDisjuntos = ArrayList<Int>()                       //ArrayList donde se almacenan los representantes de cada conjunto
+    var ConjuntosDisjuntos = LinkedList<Int>()                       //ArrayList donde se almacenan los representantes de cada conjunto
 
     init{
         for(i in 0 until n){
-            ConjuntosDisjuntos.add(i)                               //Se inicializa la clase añadiendo los representantes de cada conjunto disjunto creado
+            ConjuntosDisjuntos.addFirst(i)                               //Se inicializa la clase añadiendo los representantes de cada conjunto disjunto creado
         }
+
     }
 
     /** Método que dado dos enteros v, u, retornan un booleano que inidica que la unión entre sus conjuntos disjuntos se

@@ -8,10 +8,10 @@ import java.util.concurrent.ConcurrentLinkedQueue
 public class DFS(var g: Grafo, orden: Array<Vertice> = g.listaDeVertices) {
     private var tiempo = 0                                       // Variable Global
     private var DFStree = ConcurrentLinkedQueue<Vertice>()              // Cola en la que se almacenará en DFStree
-    var treeEdges = ArrayList<Pair<Int, Int>>()                 // Arreglo donde se almacenará los lados del bosque generado por DFS
-    var forwardEdges = ArrayList<Pair<Int, Int>>()              // Arreglo donde se almacenará los lados de ida del bosque generado por DFS
-    var backEdges = ArrayList<Pair<Int, Int>>()                 // Arreglo donde se almacenará los lados de vuelta del bosque generado por DFS
-    var crossEdges = ArrayList<Pair<Int, Int>>()                // Arreglo donde se almacenará los lados cruzados del bosque generado por DFS
+    var treeEdges = LinkedList<Pair<Int, Int>>()                 // Arreglo donde se almacenará los lados del bosque generado por DFS
+    var forwardEdges = LinkedList<Pair<Int, Int>>()              // Arreglo donde se almacenará los lados de ida del bosque generado por DFS
+    var backEdges = LinkedList<Pair<Int, Int>>()                 // Arreglo donde se almacenará los lados de vuelta del bosque generado por DFS
+    var crossEdges = LinkedList<Pair<Int, Int>>()                // Arreglo donde se almacenará los lados cruzados del bosque generado por DFS
     private var ordenTopologico = LinkedList<Vertice>()
 
     /** Constructor de la clase DFS el cual ejecuta dicho algoritmo tomando los valores del grafo
@@ -26,14 +26,14 @@ public class DFS(var g: Grafo, orden: Array<Vertice> = g.listaDeVertices) {
          *  Postcondicion: ! DFStree.isEmpty()
          *  Tiempo de operacion: O(|V| + |E|)
          */
-        for (i in g.listaDeVertices.indices) {
-            g.listaDeVertices[i].pred = null
-            g.listaDeVertices[i].color = Color.BLANCO
+        for (V in g.listaDeVertices) {
+            V.pred = null
+            V.color = Color.BLANCO
         }
 
-        for (i in orden) {
-            if (g.listaDeVertices[i.valor].color == Color.BLANCO) {
-                dfsVisit(g, g.listaDeVertices[i.valor].valor)
+        for (V in orden) {
+            if (V.color == Color.BLANCO) {
+                dfsVisit(g, V.valor)
             }
         }
     }
@@ -59,17 +59,16 @@ public class DFS(var g: Grafo, orden: Array<Vertice> = g.listaDeVertices) {
                 v = it.next()
 
                 if (g.listaDeVertices[v.valor].color == Color.BLANCO) {
-                    treeEdges.add(Pair(temp.valor, v.valor))            //Si el vértice es blanco, el algoritmo se ejecuta y por lo tanto genera un lado del bosque
-                    v.pred = temp                                      //Guardamos el vértice predecesor
-                    g.listaDeVertices[v.valor].pred = temp
+                    treeEdges.addFirst(Pair(temp.valor, v.valor))            //Si el vértice es blanco, el algoritmo se ejecuta y por lo tanto genera un lado del bosque
+                    g.listaDeVertices[v.valor].pred = temp              //Guardamos el vértice predecesor
                     dfsVisit(g, v.valor)                               //y volvemos a llamar a visitDFS()
 
                 } else if (g.listaDeVertices[v.valor].color == Color.GRIS) {
-                    backEdges.add(Pair(temp.valor, v.valor))           //Si el vértice adyacente al actual es gris, quiere decir que el vértice actual tiene un lado hasta su ancestro
+                    backEdges.addFirst(Pair(temp.valor, v.valor))           //Si el vértice adyacente al actual es gris, quiere decir que el vértice actual tiene un lado hasta su ancestro
                 } else if (g.listaDeVertices[v.valor].color == Color.NEGRO && temp.tiempoInicial < v.tiempoInicial) {            //Si el vértice adyacente al actual es negro, quiere decir que el vértice actual tiene un lado hasta su descendiente
-                    forwardEdges.add(Pair(temp.valor, v.valor))         //Además, si el tiempo inicial del vértice actual es menor a su adyacente, indica que dicho lado no pertenece a DFSTree
+                    forwardEdges.addFirst(Pair(temp.valor, v.valor))         //Además, si el tiempo inicial del vértice actual es menor a su adyacente, indica que dicho lado no pertenece a DFSTree
                 } else {
-                    crossEdges.add(Pair(temp.valor, v.valor))          //En cambio, si el vértice adyacente al actual es negro, pero el tiempo inicial del vértice actual es mayor al adyacente, indica que hay un lado cualquiera
+                    crossEdges.addFirst(Pair(temp.valor, v.valor))          //En cambio, si el vértice adyacente al actual es negro, pero el tiempo inicial del vértice actual es mayor al adyacente, indica que hay un lado cualquiera
                 }                                                      //que no pertenece al bosque generado
             }
         }

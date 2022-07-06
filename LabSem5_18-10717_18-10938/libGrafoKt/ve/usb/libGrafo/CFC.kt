@@ -1,5 +1,6 @@
 package ve.usb.libGrafo
 import java.util.*
+import java.util.concurrent.ConcurrentLinkedQueue
 
 /**
  *  Clase que dado un grafo dirigido, calcula las componentes
@@ -17,9 +18,9 @@ public class CFC(val g: GrafoDirigido) {
 
     init {
         // Se empieza a calcular los cfcs
-        val orden = DFS(g).obtenerOrdTop()          // Se busca la LinkedList del ordenamiento topologico
+        val ordenTopologico = OrdenamientoTopologico(g).ordenTopologico          // Se busca la LinkedList del ordenamiento topologico
         val grafInv = digrafoInverso(g)             // Se obtiene el grafo inverso del digrafo g
-        val dfsInv = DFS(grafInv, orden.toTypedArray()) // Se aplica dfs al digrafo inverso en el orden topologico previamente obtenido
+        val dfsInv = DFS(grafInv, ordenTopologico.toTypedArray()) // Se aplica dfs al digrafo inverso en el orden topologico previamente obtenido
         cfc.addFirst(LinkedList<Int>())            // Se crea el primer subLinkedList
 
         // Se tiene que los tree edges de dfsInv son vertices CFC del grafo, tambien se tiene que
@@ -187,7 +188,7 @@ public class CFC(val g: GrafoDirigido) {
         var temp: Arco
         var u: Int
         var v: Int
-        
+
         while (it.hasNext()){                                       // se itera sobre cada arco del grafo g
             temp = it.next()
             if (!this.estanEnLaMismaCFC(temp.a, temp.b)){           // si el arco es de dos vertices que no se encuentran en el mismo cfcs
@@ -196,7 +197,7 @@ public class CFC(val g: GrafoDirigido) {
                 if (u != -1 && v != -1) grafoComponente.agregarArco(Arco(u, v))     // Se agrega a la lista de adyacencia de grafoComponente
             }
         }
-        
+
         return grafoComponente                                      // Se retorna grafoComponente
     }
 }

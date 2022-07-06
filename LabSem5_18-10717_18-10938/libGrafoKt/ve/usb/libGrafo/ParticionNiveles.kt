@@ -1,5 +1,8 @@
 package ve.usb.libGrafo
 
+import java.util.*
+import kotlin.collections.ArrayList
+
 /** Clase que realiza un partición por niveles de los vértices de un Grafo Acíclico Directo (DAG),
  *  retornando para cada nivel un conjunto de vértices, además de retornar un booleano indicando que
  *  no hay ciclos. En caso de que el grafo de entrada no sea un DAG, entonces se indica que hay ciclo.
@@ -15,13 +18,13 @@ public class ParticionNiveles(val g: GrafoDirigido){
     //Inicialización de variables
     var nvert: Int = 0
     var nivel: Int = 0
-    var gradoInterior = ArrayList<Int>()                      //Array donde se almacenan el grado interior de cada vértice
-    var particiones = ArrayList<MutableSet<Int>>()            //Array de conjuntos donde se almacenará la partición
+    var gradoInterior = LinkedList<Int>()                      //Array donde se almacenan el grado interior de cada vértice
+    var particiones = LinkedList<MutableSet<Int>>()            //Array de conjuntos donde se almacenará la partición
 
     init{
         for (i in g.listaDeVertices) {
-            gradoInterior.add(i.gradoInterior)         //se almacenan los grados interiores en cada grafo
-            particiones.add(mutableSetOf<Int>())                            //se inicializa el arreglo de particiones con conjuntos vacíos
+            gradoInterior.addFirst(i.gradoInterior)         //se almacenan los grados interiores en cada grafo
+            particiones.addFirst(mutableSetOf())                            //se inicializa el arreglo de particiones con conjuntos vacíos
         }
 
         for (u in g.listaDeVertices) {                                      //se itera por la lista de vértices del digrafo y se almacenan en el arreglo particiones
