@@ -21,23 +21,25 @@ public class BFS(val g: Grafo, val s: Int) {
          *  Postcondicion: ! BFStree.isEmpty()
          *  Tiempo de operacion: O(|V| + |E|)
          */
-        var it: MutableIterator<Vertice>                // variable temporal que nos permitira recorrer las listas enlazadas
-        var temp: Vertice
+        val it = g.listaDeVertices.iterator()
+        var it2: MutableIterator<Vertice>                // variable temporal que nos permitira recorrer las listas enlazadas
+        var V: Vertice
         val cola = ConcurrentLinkedQueue<Vertice>()     // cola en la cual se almacenan los vertices por colorear
 
         // se verifica que las propiedades de los nodos sean las correctas antes de iniciar bfs
-        for (i in g.listaDeAdyacencia.indices){         // se itera sobre cada elemento del arreglo
-            g.listaDeVertices[i].distancia = 0
-            g.listaDeVertices[i].pred = null
-            g.listaDeVertices[i].color = Color.BLANCO
+        while (it.hasNext()){         // se itera sobre cada elemento del arreglo
+            V = it.next()
+            V.distancia = 0
+            V.pred = null
+            V.color = Color.BLANCO
 
-            if(g.listaDeAdyacencia[i] != null){         // si el vertice tiene adyacencias entonces se verifica la correctitud de las adyacencias
-                it = g.listaDeAdyacencia[i]!!.iterator()
-                while(it.hasNext()){                    // se itera sobre todas las incidencias del vertice de valor i
-                    temp = it.next()
-                    temp.distancia = 0                  // se verifica que los valores sean correctos
-                    temp.color = Color.BLANCO
-                    temp.pred = null
+            if(g.listaDeAdyacencia[V.valor] != null){         // si el vertice tiene adyacencias entonces se verifica la correctitud de las adyacencias
+                it2 = g.listaDeAdyacencia[V.valor]!!.iterator()
+                while(it2.hasNext()){                    // se itera sobre todas las incidencias del vertice de valor i
+                    V = it2.next()
+                    V.distancia = 0                  // se verifica que los valores sean correctos
+                    V.color = Color.BLANCO
+                    V.pred = null
                 }
             }
         }
@@ -53,18 +55,18 @@ public class BFS(val g: Grafo, val s: Int) {
             BFStree.add(u)                              // se agrega este elemento al BFStree
             if (g.listaDeAdyacencia[u.valor] != null){  // se verifica si el vertice tiene adyacencias
 
-                it = g.listaDeAdyacencia[u.valor]!!.iterator()  // se itera sobre todos los elementos de las linkedlist
-                while (it.hasNext()){
-                    temp = it.next()
+                it2 = g.listaDeAdyacencia[u.valor]!!.iterator()  // se itera sobre todos los elementos de las linkedlist
+                while (it2.hasNext()){
+                    V = it2.next()
 
-                    if (g.listaDeVertices[temp.valor].color == Color.BLANCO){ // si el vertice es de color blanco entonces se trabaja sobre el
-                        temp.color = Color.GRIS
-                        temp.distancia = u.distancia + 1
-                        temp.pred = u
-                        g.listaDeVertices[temp.valor].color = Color.GRIS
-                        g.listaDeVertices[temp.valor].distancia = u.distancia + 1
-                        g.listaDeVertices[temp.valor].pred = u
-                        cola.add(temp)                  // se añade el vertice gris a la cola
+                    if (g.listaDeVertices[V.valor].color == Color.BLANCO){ // si el vertice es de color blanco entonces se trabaja sobre el
+                        V.color = Color.GRIS
+                        V.distancia = u.distancia + 1
+                        V.pred = u
+                        g.listaDeVertices[V.valor].color = Color.GRIS
+                        g.listaDeVertices[V.valor].distancia = u.distancia + 1
+                        g.listaDeVertices[V.valor].pred = u
+                        cola.add(V)                  // se añade el vertice gris a la cola
                     }
                 }
             }
