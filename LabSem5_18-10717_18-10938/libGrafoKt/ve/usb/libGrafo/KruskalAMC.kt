@@ -33,8 +33,7 @@ public class KruskalAMC(val g: GrafoNoDirigidoCosto) {
         //Se inicializa la lista con los lados del grafo
         val it = g.iterator()
         while (it.hasNext()){
-            val v = it.next()
-            ladosGNDC.add(v)
+            ladosGNDC.add(it.next())
         }
         ladosGNDC.sortBy{it.costo}                                            //Y se ordenan de forma ascendente por su costo
 
